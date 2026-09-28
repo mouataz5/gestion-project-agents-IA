@@ -1,6 +1,161 @@
 {
   "components": {
     "schemas": {
+      "ApplicationDefaults-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "earliest_start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Earliest Start Date"
+          },
+          "languages": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SpokenLanguage"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Languages"
+          },
+          "notice_period": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice Period"
+          },
+          "preferred_work_modes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/WorkMode"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Work Modes"
+          },
+          "salary_expectations": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SalaryExpectation-Input"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Expectations"
+          }
+        },
+        "title": "ApplicationDefaults",
+        "type": "object"
+      },
+      "ApplicationDefaults-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "earliest_start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Earliest Start Date"
+          },
+          "languages": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SpokenLanguage"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Languages"
+          },
+          "notice_period": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice Period"
+          },
+          "preferred_work_modes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/WorkMode"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Work Modes"
+          },
+          "salary_expectations": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SalaryExpectation-Output"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Expectations"
+          }
+        },
+        "required": [
+          "notice_period",
+          "salary_expectations",
+          "earliest_start_date",
+          "languages",
+          "preferred_work_modes"
+        ],
+        "title": "ApplicationDefaults",
+        "type": "object"
+      },
       "AuditLogEntry": {
         "properties": {
           "action": {
@@ -109,6 +264,263 @@
         "title": "AuditLogPage",
         "type": "object"
       },
+      "AuthorizationStatus": {
+        "enum": [
+          "citizen",
+          "permanent_resident",
+          "work_permit",
+          "other"
+        ],
+        "title": "AuthorizationStatus",
+        "type": "string"
+      },
+      "Body_upload_master_cv_api_v1_candidate_master_cv_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "description": "The CV file (.docx or .pdf)",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_master_cv_api_v1_candidate_master_cv_post",
+        "type": "object"
+      },
+      "CandidateProfile-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "application_defaults": {
+            "$ref": "#/components/schemas/ApplicationDefaults-Input"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Contact-Input"
+          },
+          "core_skills": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Core Skills",
+            "type": "array"
+          },
+          "cv_policy": {
+            "$ref": "#/components/schemas/CvPolicy-Input"
+          },
+          "identity": {
+            "$ref": "#/components/schemas/Identity-Input"
+          },
+          "relocation": {
+            "$ref": "#/components/schemas/Relocation-Input"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "targets": {
+            "$ref": "#/components/schemas/Targets-Input"
+          },
+          "work_authorization": {
+            "$ref": "#/components/schemas/WorkAuthorization-Input"
+          }
+        },
+        "required": [
+          "identity"
+        ],
+        "title": "CandidateProfile",
+        "type": "object"
+      },
+      "CandidateProfile-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "application_defaults": {
+            "$ref": "#/components/schemas/ApplicationDefaults-Output"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Contact-Output"
+          },
+          "core_skills": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Core Skills",
+            "type": "array"
+          },
+          "cv_policy": {
+            "$ref": "#/components/schemas/CvPolicy-Output"
+          },
+          "identity": {
+            "$ref": "#/components/schemas/Identity-Output"
+          },
+          "relocation": {
+            "$ref": "#/components/schemas/Relocation-Output"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "targets": {
+            "$ref": "#/components/schemas/Targets-Output"
+          },
+          "work_authorization": {
+            "$ref": "#/components/schemas/WorkAuthorization-Output"
+          }
+        },
+        "required": [
+          "schema_version",
+          "identity",
+          "contact",
+          "work_authorization",
+          "relocation",
+          "targets",
+          "core_skills",
+          "application_defaults",
+          "cv_policy"
+        ],
+        "title": "CandidateProfile",
+        "type": "object"
+      },
+      "CandidateRead": {
+        "properties": {
+          "active_master_cv": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CvVersionSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "needs_user_input": {
+            "description": "Profile fields that are empty and must be provided by the user",
+            "items": {
+              "type": "string"
+            },
+            "title": "Needs User Input",
+            "type": "array"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/CandidateProfile-Output"
+          },
+          "profile_version": {
+            "title": "Profile Version",
+            "type": "integer"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "profile",
+          "profile_version",
+          "needs_user_input",
+          "active_master_cv",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CandidateRead",
+        "type": "object"
+      },
+      "CandidateSkillRead": {
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItem"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "normalized_name": {
+            "title": "Normalized Name",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SkillSource"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "strength": {
+            "$ref": "#/components/schemas/SkillStrength"
+          }
+        },
+        "required": [
+          "name",
+          "normalized_name",
+          "category",
+          "strength",
+          "sources",
+          "evidence"
+        ],
+        "title": "CandidateSkillRead",
+        "type": "object"
+      },
+      "CandidateUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/CandidateProfile-Input"
+          },
+          "profile_version": {
+            "description": "The version being edited; a stale version is rejected with 409",
+            "minimum": 1.0,
+            "title": "Profile Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "profile_version",
+          "profile"
+        ],
+        "title": "CandidateUpdate",
+        "type": "object"
+      },
       "ComponentHealth": {
         "properties": {
           "critical": {
@@ -161,6 +573,699 @@
         ],
         "title": "ComponentStatus",
         "type": "string"
+      },
+      "Contact-Input": {
+        "additionalProperties": false,
+        "description": "Private: stored in the database, never committed to Git, hidden from default exports.",
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 254,
+                "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "github_url": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Url"
+          },
+          "linkedin_url": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linkedin Url"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "portfolio_url": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Portfolio Url"
+          }
+        },
+        "title": "Contact",
+        "type": "object"
+      },
+      "Contact-Output": {
+        "additionalProperties": false,
+        "description": "Private: stored in the database, never committed to Git, hidden from default exports.",
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 254,
+                "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "github_url": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Url"
+          },
+          "linkedin_url": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linkedin Url"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "portfolio_url": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Portfolio Url"
+          }
+        },
+        "required": [
+          "email",
+          "phone",
+          "address",
+          "linkedin_url",
+          "github_url",
+          "portfolio_url"
+        ],
+        "title": "Contact",
+        "type": "object"
+      },
+      "ContactInfo-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "emails": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Emails",
+            "type": "array"
+          },
+          "links": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Links",
+            "type": "array"
+          },
+          "phones": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Phones",
+            "type": "array"
+          }
+        },
+        "title": "ContactInfo",
+        "type": "object"
+      },
+      "ContactInfo-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "emails": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Emails",
+            "type": "array"
+          },
+          "links": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Links",
+            "type": "array"
+          },
+          "phones": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Phones",
+            "type": "array"
+          }
+        },
+        "required": [
+          "emails",
+          "phones",
+          "links"
+        ],
+        "title": "ContactInfo",
+        "type": "object"
+      },
+      "CvKind": {
+        "enum": [
+          "MASTER",
+          "TAILORED"
+        ],
+        "title": "CvKind",
+        "type": "string"
+      },
+      "CvPolicy-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "allow_title_changes": {
+            "default": false,
+            "title": "Allow Title Changes",
+            "type": "boolean"
+          }
+        },
+        "title": "CvPolicy",
+        "type": "object"
+      },
+      "CvPolicy-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "allow_title_changes": {
+            "default": false,
+            "title": "Allow Title Changes",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "allow_title_changes"
+        ],
+        "title": "CvPolicy",
+        "type": "object"
+      },
+      "CvStatus": {
+        "enum": [
+          "PARSED",
+          "CONFIRMED",
+          "SUPERSEDED"
+        ],
+        "title": "CvStatus",
+        "type": "string"
+      },
+      "CvVersionDetail": {
+        "properties": {
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At"
+          },
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "extracted_text": {
+            "description": "Plain text extracted from the uploaded file",
+            "title": "Extracted Text",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/CvKind"
+          },
+          "original_filename": {
+            "title": "Original Filename",
+            "type": "string"
+          },
+          "parser_version": {
+            "title": "Parser Version",
+            "type": "string"
+          },
+          "revised_from_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revised From Id"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CvStatus"
+          },
+          "structure": {
+            "$ref": "#/components/schemas/ParsedCV-Output"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "warning_count": {
+            "description": "Warnings to review in the parsed structure",
+            "title": "Warning Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "version",
+          "status",
+          "original_filename",
+          "content_type",
+          "size_bytes",
+          "sha256",
+          "parser_version",
+          "warning_count",
+          "revised_from_id",
+          "confirmed_at",
+          "created_at",
+          "updated_at",
+          "structure",
+          "extracted_text"
+        ],
+        "title": "CvVersionDetail",
+        "type": "object"
+      },
+      "CvVersionSummary": {
+        "properties": {
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At"
+          },
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/CvKind"
+          },
+          "original_filename": {
+            "title": "Original Filename",
+            "type": "string"
+          },
+          "parser_version": {
+            "title": "Parser Version",
+            "type": "string"
+          },
+          "revised_from_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revised From Id"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CvStatus"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "warning_count": {
+            "description": "Warnings to review in the parsed structure",
+            "title": "Warning Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "version",
+          "status",
+          "original_filename",
+          "content_type",
+          "size_bytes",
+          "sha256",
+          "parser_version",
+          "warning_count",
+          "revised_from_id",
+          "confirmed_at",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CvVersionSummary",
+        "type": "object"
+      },
+      "DateRange-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/YearMonth-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_current": {
+            "default": false,
+            "title": "Is Current",
+            "type": "boolean"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/YearMonth-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "text": {
+            "description": "The dates as written in the CV",
+            "maxLength": 200,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "DateRange",
+        "type": "object"
+      },
+      "DateRange-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/YearMonth-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_current": {
+            "default": false,
+            "title": "Is Current",
+            "type": "boolean"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/YearMonth-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "text": {
+            "description": "The dates as written in the CV",
+            "maxLength": 200,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "start",
+          "end",
+          "is_current"
+        ],
+        "title": "DateRange",
+        "type": "object"
+      },
+      "EducationEntry-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "bullets": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Bullets",
+            "type": "array"
+          },
+          "dates": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateRange-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "degree": {
+            "maxLength": 300,
+            "title": "Degree",
+            "type": "string"
+          },
+          "details": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Details",
+            "type": "array"
+          },
+          "institution": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institution"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          }
+        },
+        "required": [
+          "degree"
+        ],
+        "title": "EducationEntry",
+        "type": "object"
+      },
+      "EducationEntry-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "bullets": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Bullets",
+            "type": "array"
+          },
+          "dates": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateRange-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "degree": {
+            "maxLength": 300,
+            "title": "Degree",
+            "type": "string"
+          },
+          "details": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Details",
+            "type": "array"
+          },
+          "institution": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institution"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          }
+        },
+        "required": [
+          "degree",
+          "institution",
+          "location",
+          "dates",
+          "bullets",
+          "details"
+        ],
+        "title": "EducationEntry",
+        "type": "object"
       },
       "ErrorDetail": {
         "properties": {
@@ -223,6 +1328,155 @@
         "title": "EventLevel",
         "type": "string"
       },
+      "EvidenceItem": {
+        "properties": {
+          "excerpt": {
+            "title": "Excerpt",
+            "type": "string"
+          },
+          "section": {
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "section",
+          "excerpt"
+        ],
+        "title": "EvidenceItem",
+        "type": "object"
+      },
+      "ExperienceEntry-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "bullets": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Bullets",
+            "type": "array"
+          },
+          "dates": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateRange-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "details": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Details",
+            "type": "array"
+          },
+          "employer": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employer"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "title": {
+            "maxLength": 300,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "ExperienceEntry",
+        "type": "object"
+      },
+      "ExperienceEntry-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "bullets": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Bullets",
+            "type": "array"
+          },
+          "dates": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateRange-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "details": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Details",
+            "type": "array"
+          },
+          "employer": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employer"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "title": {
+            "maxLength": 300,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "employer",
+          "location",
+          "dates",
+          "bullets",
+          "details"
+        ],
+        "title": "ExperienceEntry",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -235,6 +1489,110 @@
         },
         "title": "HTTPValidationError",
         "type": "object"
+      },
+      "Identity-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "full_name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Full Name",
+            "type": "string"
+          },
+          "headline": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headline"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location-Input"
+          },
+          "nationality": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nationality"
+          }
+        },
+        "required": [
+          "full_name"
+        ],
+        "title": "Identity",
+        "type": "object"
+      },
+      "Identity-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "full_name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Full Name",
+            "type": "string"
+          },
+          "headline": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headline"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location-Output"
+          },
+          "nationality": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nationality"
+          }
+        },
+        "required": [
+          "full_name",
+          "headline",
+          "nationality",
+          "location"
+        ],
+        "title": "Identity",
+        "type": "object"
+      },
+      "LanguageLevel": {
+        "enum": [
+          "native",
+          "fluent",
+          "professional",
+          "intermediate",
+          "basic"
+        ],
+        "title": "LanguageLevel",
+        "type": "string"
       },
       "LivenessResponse": {
         "properties": {
@@ -258,6 +1616,359 @@
           "version"
         ],
         "title": "LivenessResponse",
+        "type": "object"
+      },
+      "Location-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "city": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "description": "ISO 3166-1 alpha-2 country code",
+                "examples": [
+                  "FR"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code"
+          }
+        },
+        "title": "Location",
+        "type": "object"
+      },
+      "Location-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "city": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "description": "ISO 3166-1 alpha-2 country code",
+                "examples": [
+                  "FR"
+                ],
+                "pattern": "^[A-Z]{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code"
+          }
+        },
+        "required": [
+          "city",
+          "country",
+          "country_code"
+        ],
+        "title": "Location",
+        "type": "object"
+      },
+      "OtherSection-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "heading": {
+            "maxLength": 200,
+            "title": "Heading",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Lines",
+            "type": "array"
+          }
+        },
+        "required": [
+          "heading"
+        ],
+        "title": "OtherSection",
+        "type": "object"
+      },
+      "OtherSection-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "heading": {
+            "maxLength": 200,
+            "title": "Heading",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Lines",
+            "type": "array"
+          }
+        },
+        "required": [
+          "heading",
+          "lines"
+        ],
+        "title": "OtherSection",
+        "type": "object"
+      },
+      "ParsedCV-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "certifications": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Certifications",
+            "type": "array"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/ContactInfo-Input"
+          },
+          "education": {
+            "items": {
+              "$ref": "#/components/schemas/EducationEntry-Input"
+            },
+            "title": "Education",
+            "type": "array"
+          },
+          "experiences": {
+            "items": {
+              "$ref": "#/components/schemas/ExperienceEntry-Input"
+            },
+            "title": "Experiences",
+            "type": "array"
+          },
+          "header_lines": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Header Lines",
+            "type": "array"
+          },
+          "language": {
+            "default": "unknown",
+            "maxLength": 10,
+            "title": "Language",
+            "type": "string"
+          },
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "other_sections": {
+            "items": {
+              "$ref": "#/components/schemas/OtherSection-Input"
+            },
+            "title": "Other Sections",
+            "type": "array"
+          },
+          "parser_version": {
+            "title": "Parser Version",
+            "type": "string"
+          },
+          "projects": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectEntry-Input"
+            },
+            "title": "Projects",
+            "type": "array"
+          },
+          "skills": {
+            "items": {
+              "$ref": "#/components/schemas/SkillItem-Input"
+            },
+            "title": "Skills",
+            "type": "array"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "parser_version"
+        ],
+        "title": "ParsedCV",
+        "type": "object"
+      },
+      "ParsedCV-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "certifications": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Certifications",
+            "type": "array"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/ContactInfo-Output"
+          },
+          "education": {
+            "items": {
+              "$ref": "#/components/schemas/EducationEntry-Output"
+            },
+            "title": "Education",
+            "type": "array"
+          },
+          "experiences": {
+            "items": {
+              "$ref": "#/components/schemas/ExperienceEntry-Output"
+            },
+            "title": "Experiences",
+            "type": "array"
+          },
+          "header_lines": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Header Lines",
+            "type": "array"
+          },
+          "language": {
+            "default": "unknown",
+            "maxLength": 10,
+            "title": "Language",
+            "type": "string"
+          },
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "other_sections": {
+            "items": {
+              "$ref": "#/components/schemas/OtherSection-Output"
+            },
+            "title": "Other Sections",
+            "type": "array"
+          },
+          "parser_version": {
+            "title": "Parser Version",
+            "type": "string"
+          },
+          "projects": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectEntry-Output"
+            },
+            "title": "Projects",
+            "type": "array"
+          },
+          "skills": {
+            "items": {
+              "$ref": "#/components/schemas/SkillItem-Output"
+            },
+            "title": "Skills",
+            "type": "array"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "parser_version",
+          "language",
+          "header_lines",
+          "contact",
+          "summary",
+          "experiences",
+          "education",
+          "projects",
+          "skills",
+          "certifications",
+          "languages",
+          "other_sections",
+          "warnings"
+        ],
+        "title": "ParsedCV",
         "type": "object"
       },
       "PhaseInfo": {
@@ -288,6 +1999,87 @@
         "title": "PhaseInfo",
         "type": "object"
       },
+      "ProjectEntry-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "bullets": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Bullets",
+            "type": "array"
+          },
+          "dates": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateRange-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "details": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Details",
+            "type": "array"
+          },
+          "name": {
+            "maxLength": 300,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "ProjectEntry",
+        "type": "object"
+      },
+      "ProjectEntry-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "bullets": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Bullets",
+            "type": "array"
+          },
+          "dates": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateRange-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "details": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Details",
+            "type": "array"
+          },
+          "name": {
+            "maxLength": 300,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "dates",
+          "bullets",
+          "details"
+        ],
+        "title": "ProjectEntry",
+        "type": "object"
+      },
       "ReadinessResponse": {
         "properties": {
           "checked_at": {
@@ -312,6 +2104,45 @@
           "checked_at"
         ],
         "title": "ReadinessResponse",
+        "type": "object"
+      },
+      "Relocation-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "willing_to_relocate": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Willing To Relocate"
+          }
+        },
+        "title": "Relocation",
+        "type": "object"
+      },
+      "Relocation-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "willing_to_relocate": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Willing To Relocate"
+          }
+        },
+        "required": [
+          "willing_to_relocate"
+        ],
+        "title": "Relocation",
         "type": "object"
       },
       "RunCreated": {
@@ -746,6 +2577,150 @@
         "title": "RunType",
         "type": "string"
       },
+      "SalaryExpectation-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "country_code": {
+            "anyOf": [
+              {
+                "description": "ISO 3166-1 alpha-2 country code",
+                "examples": [
+                  "FR"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Applies to this country only; null = default",
+            "title": "Country Code"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "maximum": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum"
+          },
+          "minimum": {
+            "minimum": 0.0,
+            "title": "Minimum",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "period": {
+            "default": "year",
+            "enum": [
+              "year",
+              "month"
+            ],
+            "title": "Period",
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "minimum"
+        ],
+        "title": "SalaryExpectation",
+        "type": "object"
+      },
+      "SalaryExpectation-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "country_code": {
+            "anyOf": [
+              {
+                "description": "ISO 3166-1 alpha-2 country code",
+                "examples": [
+                  "FR"
+                ],
+                "pattern": "^[A-Z]{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Applies to this country only; null = default",
+            "title": "Country Code"
+          },
+          "currency": {
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency",
+            "type": "string"
+          },
+          "maximum": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum"
+          },
+          "minimum": {
+            "minimum": 0.0,
+            "title": "Minimum",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "period": {
+            "default": "year",
+            "enum": [
+              "year",
+              "month"
+            ],
+            "title": "Period",
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "minimum",
+          "maximum",
+          "period",
+          "country_code",
+          "note"
+        ],
+        "title": "SalaryExpectation",
+        "type": "object"
+      },
       "SecretsStatus": {
         "description": "Whether each secret is configured \u2014 values are never exposed.",
         "properties": {
@@ -785,6 +2760,98 @@
         "title": "SecretsStatus",
         "type": "object"
       },
+      "SkillItem-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "name": {
+            "maxLength": 200,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "SkillItem",
+        "type": "object"
+      },
+      "SkillItem-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "name": {
+            "maxLength": 200,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "category"
+        ],
+        "title": "SkillItem",
+        "type": "object"
+      },
+      "SkillSource": {
+        "enum": [
+          "MASTER_CV",
+          "PROFILE_DECLARED"
+        ],
+        "title": "SkillSource",
+        "type": "string"
+      },
+      "SkillStrength": {
+        "enum": [
+          "NONE",
+          "LISTED",
+          "DEMONSTRATED"
+        ],
+        "title": "SkillStrength",
+        "type": "string"
+      },
+      "SpokenLanguage": {
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Language",
+            "type": "string"
+          },
+          "level": {
+            "$ref": "#/components/schemas/LanguageLevel"
+          }
+        },
+        "required": [
+          "language",
+          "level"
+        ],
+        "title": "SpokenLanguage",
+        "type": "object"
+      },
       "SystemConfig": {
         "properties": {
           "ats_max_iterations": {
@@ -819,6 +2886,10 @@
             "title": "Log Level",
             "type": "string"
           },
+          "max_upload_mb": {
+            "title": "Max Upload Mb",
+            "type": "integer"
+          },
           "notification_channels": {
             "items": {
               "type": "string"
@@ -850,6 +2921,7 @@
           "llm_model",
           "notification_channels",
           "storage_backend",
+          "max_upload_mb",
           "log_level",
           "log_format"
         ],
@@ -949,6 +3021,147 @@
         "title": "SystemStatus",
         "type": "object"
       },
+      "TargetCountries-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "primary": {
+            "items": {
+              "$ref": "#/components/schemas/TargetCountry-Input"
+            },
+            "title": "Primary",
+            "type": "array"
+          },
+          "secondary": {
+            "items": {
+              "$ref": "#/components/schemas/TargetCountry-Input"
+            },
+            "title": "Secondary",
+            "type": "array"
+          }
+        },
+        "title": "TargetCountries",
+        "type": "object"
+      },
+      "TargetCountries-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "primary": {
+            "items": {
+              "$ref": "#/components/schemas/TargetCountry-Output"
+            },
+            "title": "Primary",
+            "type": "array"
+          },
+          "secondary": {
+            "items": {
+              "$ref": "#/components/schemas/TargetCountry-Output"
+            },
+            "title": "Secondary",
+            "type": "array"
+          }
+        },
+        "required": [
+          "primary",
+          "secondary"
+        ],
+        "title": "TargetCountries",
+        "type": "object"
+      },
+      "TargetCountry-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "description": "ISO 3166-1 alpha-2 country code",
+            "examples": [
+              "FR"
+            ],
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "code"
+        ],
+        "title": "TargetCountry",
+        "type": "object"
+      },
+      "TargetCountry-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "description": "ISO 3166-1 alpha-2 country code",
+            "examples": [
+              "FR"
+            ],
+            "pattern": "^[A-Z]{2}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "code"
+        ],
+        "title": "TargetCountry",
+        "type": "object"
+      },
+      "Targets-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "countries": {
+            "$ref": "#/components/schemas/TargetCountries-Input"
+          },
+          "roles": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Roles",
+            "type": "array"
+          }
+        },
+        "title": "Targets",
+        "type": "object"
+      },
+      "Targets-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "countries": {
+            "$ref": "#/components/schemas/TargetCountries-Output"
+          },
+          "roles": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Roles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "roles",
+          "countries"
+        ],
+        "title": "Targets",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -987,6 +3200,206 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "WorkAuthorization-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "current_work_authorizations": {
+            "items": {
+              "$ref": "#/components/schemas/WorkAuthorizationEntry-Input"
+            },
+            "title": "Current Work Authorizations",
+            "type": "array"
+          },
+          "sponsorship_required_when": {
+            "anyOf": [
+              {
+                "enum": [
+                  "always",
+                  "work_permit_needed",
+                  "never"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sponsorship Required When"
+          },
+          "visa_sponsorship_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visa Sponsorship Required"
+          }
+        },
+        "title": "WorkAuthorization",
+        "type": "object"
+      },
+      "WorkAuthorization-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "current_work_authorizations": {
+            "items": {
+              "$ref": "#/components/schemas/WorkAuthorizationEntry-Output"
+            },
+            "title": "Current Work Authorizations",
+            "type": "array"
+          },
+          "sponsorship_required_when": {
+            "anyOf": [
+              {
+                "enum": [
+                  "always",
+                  "work_permit_needed",
+                  "never"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sponsorship Required When"
+          },
+          "visa_sponsorship_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visa Sponsorship Required"
+          }
+        },
+        "required": [
+          "visa_sponsorship_required",
+          "sponsorship_required_when",
+          "current_work_authorizations"
+        ],
+        "title": "WorkAuthorization",
+        "type": "object"
+      },
+      "WorkAuthorizationEntry-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "country_code": {
+            "description": "ISO 3166-1 alpha-2 country code",
+            "examples": [
+              "FR"
+            ],
+            "title": "Country Code",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AuthorizationStatus"
+          }
+        },
+        "required": [
+          "country_code",
+          "status"
+        ],
+        "title": "WorkAuthorizationEntry",
+        "type": "object"
+      },
+      "WorkAuthorizationEntry-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "country_code": {
+            "description": "ISO 3166-1 alpha-2 country code",
+            "examples": [
+              "FR"
+            ],
+            "pattern": "^[A-Z]{2}$",
+            "title": "Country Code",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AuthorizationStatus"
+          }
+        },
+        "required": [
+          "country_code",
+          "status"
+        ],
+        "title": "WorkAuthorizationEntry",
+        "type": "object"
+      },
+      "WorkMode": {
+        "enum": [
+          "onsite",
+          "hybrid",
+          "remote"
+        ],
+        "title": "WorkMode",
+        "type": "string"
+      },
+      "YearMonth-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "month": {
+            "anyOf": [
+              {
+                "maximum": 12.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Month"
+          },
+          "year": {
+            "maximum": 2100.0,
+            "minimum": 1900.0,
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year"
+        ],
+        "title": "YearMonth",
+        "type": "object"
+      },
+      "YearMonth-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "month": {
+            "anyOf": [
+              {
+                "maximum": 12.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Month"
+          },
+          "year": {
+            "maximum": 2100.0,
+            "minimum": 1900.0,
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "month"
+        ],
+        "title": "YearMonth",
         "type": "object"
       }
     },
@@ -1111,6 +3524,658 @@
         "summary": "List audit entries (newest first)",
         "tags": [
           "audit"
+        ]
+      }
+    },
+    "/api/v1/candidate": {
+      "get": {
+        "operationId": "get_candidate_api_v1_candidate_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "The candidate profile (imported from candidate/profile.yaml on first use)",
+        "tags": [
+          "candidate"
+        ]
+      },
+      "put": {
+        "operationId": "update_candidate_api_v1_candidate_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CandidateUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Replace the profile (optimistic concurrency on profile_version)",
+        "tags": [
+          "candidate"
+        ]
+      }
+    },
+    "/api/v1/candidate/export": {
+      "get": {
+        "operationId": "export_candidate_api_v1_candidate_export_get",
+        "parameters": [
+          {
+            "description": "Include contact details",
+            "in": "query",
+            "name": "include_private",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Include contact details",
+              "title": "Include Private",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/yaml": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Download the profile as YAML (private contact details only on request)",
+        "tags": [
+          "candidate"
+        ]
+      }
+    },
+    "/api/v1/candidate/import": {
+      "post": {
+        "operationId": "import_candidate_api_v1_candidate_import_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reload the profile from candidate/profile.yaml (+ profile.local.yaml)",
+        "tags": [
+          "candidate"
+        ]
+      }
+    },
+    "/api/v1/candidate/master-cv": {
+      "get": {
+        "operationId": "list_master_cvs_api_v1_candidate_master_cv_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CvVersionSummary"
+                  },
+                  "title": "Response List Master Cvs Api V1 Candidate Master Cv Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Master CV versions, newest first",
+        "tags": [
+          "master-cv"
+        ]
+      },
+      "post": {
+        "operationId": "upload_master_cv_api_v1_candidate_master_cv_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_master_cv_api_v1_candidate_master_cv_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CvVersionDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "415": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported Media Type"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Upload a master CV (.docx or .pdf); it is parsed into a draft to review",
+        "tags": [
+          "master-cv"
+        ]
+      }
+    },
+    "/api/v1/candidate/master-cv/{version_id}": {
+      "get": {
+        "operationId": "get_master_cv_api_v1_candidate_master_cv__version_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Version Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CvVersionDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "A master CV version with its parsed structure",
+        "tags": [
+          "master-cv"
+        ]
+      }
+    },
+    "/api/v1/candidate/master-cv/{version_id}/confirm": {
+      "post": {
+        "operationId": "confirm_master_cv_api_v1_candidate_master_cv__version_id__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Version Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CvVersionDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Confirm a draft: it becomes the active master CV and rebuilds the fact base",
+        "tags": [
+          "master-cv"
+        ]
+      }
+    },
+    "/api/v1/candidate/master-cv/{version_id}/file": {
+      "get": {
+        "operationId": "download_master_cv_api_v1_candidate_master_cv__version_id__file_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Version Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {}
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Download the original uploaded file",
+        "tags": [
+          "master-cv"
+        ]
+      }
+    },
+    "/api/v1/candidate/master-cv/{version_id}/revise": {
+      "post": {
+        "operationId": "revise_master_cv_api_v1_candidate_master_cv__version_id__revise_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Version Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CvVersionDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Copy a confirmed version into a new editable draft",
+        "tags": [
+          "master-cv"
+        ]
+      }
+    },
+    "/api/v1/candidate/master-cv/{version_id}/structure": {
+      "put": {
+        "operationId": "update_master_cv_structure_api_v1_candidate_master_cv__version_id__structure_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Version Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParsedCV-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CvVersionDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save corrections to a draft (confirmed versions are read-only)",
+        "tags": [
+          "master-cv"
+        ]
+      }
+    },
+    "/api/v1/candidate/skills": {
+      "get": {
+        "operationId": "list_skills_api_v1_candidate_skills_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CandidateSkillRead"
+                  },
+                  "title": "Response List Skills Api V1 Candidate Skills Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Declared and CV skills with their evidence in the confirmed master CV",
+        "tags": [
+          "candidate"
         ]
       }
     },

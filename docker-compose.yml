@@ -119,6 +119,7 @@ services:
       BACKEND_INTERNAL_URL: http://backend:8000
       API_AUTH_TOKEN: ${API_AUTH_TOKEN:-}
       API_PREFIX: ${API_PREFIX:-/api/v1}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-5}
     depends_on:
       backend:
         condition: service_healthy

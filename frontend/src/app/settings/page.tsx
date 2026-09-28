@@ -37,6 +37,7 @@ export default async function SettingsPage() {
               ["Auto-submit", info.auto_submit ? "true" : "false"],
               ["Logging", `${config.log_level} · ${config.log_format}`],
               ["Storage", config.storage_backend],
+              ["MAX_UPLOAD_MB", String(config.max_upload_mb)],
             ]}
           />
         </Card>

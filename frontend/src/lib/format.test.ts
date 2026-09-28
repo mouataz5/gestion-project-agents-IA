@@ -55,6 +55,12 @@ describe("statusTone", () => {
     ["RUNNING", "info"],
     ["PENDING", "info"],
     ["CANCELLED", "neutral"],
+    ["PARSED", "warning"],
+    ["CONFIRMED", "success"],
+    ["SUPERSEDED", "neutral"],
+    ["DEMONSTRATED", "success"],
+    ["LISTED", "info"],
+    ["NONE", "warning"],
     ["something-else", "neutral"],
   ])("maps %s to %s", (status, tone) => {
     expect(statusTone(status)).toBe(tone);

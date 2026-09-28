@@ -25,6 +25,7 @@ class SystemConfig(BaseModel):
     llm_model: str
     notification_channels: list[str]
     storage_backend: str
+    max_upload_mb: int
     log_level: str
     log_format: str
 

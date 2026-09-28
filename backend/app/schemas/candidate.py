@@ -43,7 +43,10 @@ Email = Annotated[
 
 
 class _Strict(BaseModel):
-    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    # Serialization schemas list defaulted fields as required: responses always include them.
+    model_config = ConfigDict(
+        extra="forbid", str_strip_whitespace=True, json_schema_serialization_defaults_required=True
+    )
 
 
 class Location(_Strict):

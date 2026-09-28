@@ -21,6 +21,178 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/candidate": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** The candidate profile (imported from candidate/profile.yaml on first use) */
+    get: operations["get_candidate_api_v1_candidate_get"];
+    /** Replace the profile (optimistic concurrency on profile_version) */
+    put: operations["update_candidate_api_v1_candidate_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/export": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Download the profile as YAML (private contact details only on request) */
+    get: operations["export_candidate_api_v1_candidate_export_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/import": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Reload the profile from candidate/profile.yaml (+ profile.local.yaml) */
+    post: operations["import_candidate_api_v1_candidate_import_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/master-cv": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Master CV versions, newest first */
+    get: operations["list_master_cvs_api_v1_candidate_master_cv_get"];
+    put?: never;
+    /** Upload a master CV (.docx or .pdf); it is parsed into a draft to review */
+    post: operations["upload_master_cv_api_v1_candidate_master_cv_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/master-cv/{version_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** A master CV version with its parsed structure */
+    get: operations["get_master_cv_api_v1_candidate_master_cv__version_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/master-cv/{version_id}/confirm": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Confirm a draft: it becomes the active master CV and rebuilds the fact base */
+    post: operations["confirm_master_cv_api_v1_candidate_master_cv__version_id__confirm_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/master-cv/{version_id}/file": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Download the original uploaded file */
+    get: operations["download_master_cv_api_v1_candidate_master_cv__version_id__file_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/master-cv/{version_id}/revise": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Copy a confirmed version into a new editable draft */
+    post: operations["revise_master_cv_api_v1_candidate_master_cv__version_id__revise_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/master-cv/{version_id}/structure": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Save corrections to a draft (confirmed versions are read-only) */
+    put: operations["update_master_cv_structure_api_v1_candidate_master_cv__version_id__structure_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/skills": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Declared and CV skills with their evidence in the confirmed master CV */
+    get: operations["list_skills_api_v1_candidate_skills_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/health/live": {
     parameters: {
       query?: never;
@@ -152,6 +324,32 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /** ApplicationDefaults */
+    "ApplicationDefaults-Input": {
+      /** Earliest Start Date */
+      earliest_start_date?: string | null;
+      /** Languages */
+      languages?: components["schemas"]["SpokenLanguage"][] | null;
+      /** Notice Period */
+      notice_period?: string | null;
+      /** Preferred Work Modes */
+      preferred_work_modes?: components["schemas"]["WorkMode"][] | null;
+      /** Salary Expectations */
+      salary_expectations?: components["schemas"]["SalaryExpectation-Input"][] | null;
+    };
+    /** ApplicationDefaults */
+    "ApplicationDefaults-Output": {
+      /** Earliest Start Date */
+      earliest_start_date: string | null;
+      /** Languages */
+      languages: components["schemas"]["SpokenLanguage"][] | null;
+      /** Notice Period */
+      notice_period: string | null;
+      /** Preferred Work Modes */
+      preferred_work_modes: components["schemas"]["WorkMode"][] | null;
+      /** Salary Expectations */
+      salary_expectations: components["schemas"]["SalaryExpectation-Output"][] | null;
+    };
     /** AuditLogEntry */
     AuditLogEntry: {
       /** Action */
@@ -192,6 +390,107 @@ export interface components {
       /** Total */
       total: number;
     };
+    /**
+     * AuthorizationStatus
+     * @enum {string}
+     */
+    AuthorizationStatus: "citizen" | "permanent_resident" | "work_permit" | "other";
+    /** Body_upload_master_cv_api_v1_candidate_master_cv_post */
+    Body_upload_master_cv_api_v1_candidate_master_cv_post: {
+      /**
+       * File
+       * @description The CV file (.docx or .pdf)
+       */
+      file: string;
+    };
+    /** CandidateProfile */
+    "CandidateProfile-Input": {
+      application_defaults?: components["schemas"]["ApplicationDefaults-Input"];
+      contact?: components["schemas"]["Contact-Input"];
+      /** Core Skills */
+      core_skills?: string[];
+      cv_policy?: components["schemas"]["CvPolicy-Input"];
+      identity: components["schemas"]["Identity-Input"];
+      relocation?: components["schemas"]["Relocation-Input"];
+      /**
+       * Schema Version
+       * @default 1
+       * @constant
+       */
+      schema_version: 1;
+      targets?: components["schemas"]["Targets-Input"];
+      work_authorization?: components["schemas"]["WorkAuthorization-Input"];
+    };
+    /** CandidateProfile */
+    "CandidateProfile-Output": {
+      application_defaults: components["schemas"]["ApplicationDefaults-Output"];
+      contact: components["schemas"]["Contact-Output"];
+      /** Core Skills */
+      core_skills: string[];
+      cv_policy: components["schemas"]["CvPolicy-Output"];
+      identity: components["schemas"]["Identity-Output"];
+      relocation: components["schemas"]["Relocation-Output"];
+      /**
+       * Schema Version
+       * @default 1
+       * @constant
+       */
+      schema_version: 1;
+      targets: components["schemas"]["Targets-Output"];
+      work_authorization: components["schemas"]["WorkAuthorization-Output"];
+    };
+    /** CandidateRead */
+    CandidateRead: {
+      active_master_cv: components["schemas"]["CvVersionSummary"] | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /**
+       * Needs User Input
+       * @description Profile fields that are empty and must be provided by the user
+       */
+      needs_user_input: string[];
+      profile: components["schemas"]["CandidateProfile-Output"];
+      /** Profile Version */
+      profile_version: number;
+      /** Slug */
+      slug: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+    };
+    /** CandidateSkillRead */
+    CandidateSkillRead: {
+      /** Category */
+      category: string | null;
+      /** Evidence */
+      evidence: components["schemas"]["EvidenceItem"][];
+      /** Name */
+      name: string;
+      /** Normalized Name */
+      normalized_name: string;
+      /** Sources */
+      sources: components["schemas"]["SkillSource"][];
+      strength: components["schemas"]["SkillStrength"];
+    };
+    /** CandidateUpdate */
+    CandidateUpdate: {
+      profile: components["schemas"]["CandidateProfile-Input"];
+      /**
+       * Profile Version
+       * @description The version being edited; a stale version is rejected with 409
+       */
+      profile_version: number;
+    };
     /** ComponentHealth */
     ComponentHealth: {
       /** Critical */
@@ -209,6 +508,232 @@ export interface components {
      * @enum {string}
      */
     ComponentStatus: "ok" | "degraded" | "down";
+    /**
+     * Contact
+     * @description Private: stored in the database, never committed to Git, hidden from default exports.
+     */
+    "Contact-Input": {
+      /** Address */
+      address?: string | null;
+      /** Email */
+      email?: string | null;
+      /** Github Url */
+      github_url?: string | null;
+      /** Linkedin Url */
+      linkedin_url?: string | null;
+      /** Phone */
+      phone?: string | null;
+      /** Portfolio Url */
+      portfolio_url?: string | null;
+    };
+    /**
+     * Contact
+     * @description Private: stored in the database, never committed to Git, hidden from default exports.
+     */
+    "Contact-Output": {
+      /** Address */
+      address: string | null;
+      /** Email */
+      email: string | null;
+      /** Github Url */
+      github_url: string | null;
+      /** Linkedin Url */
+      linkedin_url: string | null;
+      /** Phone */
+      phone: string | null;
+      /** Portfolio Url */
+      portfolio_url: string | null;
+    };
+    /** ContactInfo */
+    "ContactInfo-Input": {
+      /** Emails */
+      emails?: string[];
+      /** Links */
+      links?: string[];
+      /** Phones */
+      phones?: string[];
+    };
+    /** ContactInfo */
+    "ContactInfo-Output": {
+      /** Emails */
+      emails: string[];
+      /** Links */
+      links: string[];
+      /** Phones */
+      phones: string[];
+    };
+    /**
+     * CvKind
+     * @enum {string}
+     */
+    CvKind: "MASTER" | "TAILORED";
+    /** CvPolicy */
+    "CvPolicy-Input": {
+      /**
+       * Allow Title Changes
+       * @default false
+       */
+      allow_title_changes: boolean;
+    };
+    /** CvPolicy */
+    "CvPolicy-Output": {
+      /**
+       * Allow Title Changes
+       * @default false
+       */
+      allow_title_changes: boolean;
+    };
+    /**
+     * CvStatus
+     * @enum {string}
+     */
+    CvStatus: "PARSED" | "CONFIRMED" | "SUPERSEDED";
+    /** CvVersionDetail */
+    CvVersionDetail: {
+      /** Confirmed At */
+      confirmed_at: string | null;
+      /** Content Type */
+      content_type: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Extracted Text
+       * @description Plain text extracted from the uploaded file
+       */
+      extracted_text: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      kind: components["schemas"]["CvKind"];
+      /** Original Filename */
+      original_filename: string;
+      /** Parser Version */
+      parser_version: string;
+      /** Revised From Id */
+      revised_from_id: string | null;
+      /** Sha256 */
+      sha256: string;
+      /** Size Bytes */
+      size_bytes: number;
+      status: components["schemas"]["CvStatus"];
+      structure: components["schemas"]["ParsedCV-Output"];
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+      /** Version */
+      version: number;
+      /**
+       * Warning Count
+       * @description Warnings to review in the parsed structure
+       */
+      warning_count: number;
+    };
+    /** CvVersionSummary */
+    CvVersionSummary: {
+      /** Confirmed At */
+      confirmed_at: string | null;
+      /** Content Type */
+      content_type: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      kind: components["schemas"]["CvKind"];
+      /** Original Filename */
+      original_filename: string;
+      /** Parser Version */
+      parser_version: string;
+      /** Revised From Id */
+      revised_from_id: string | null;
+      /** Sha256 */
+      sha256: string;
+      /** Size Bytes */
+      size_bytes: number;
+      status: components["schemas"]["CvStatus"];
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+      /** Version */
+      version: number;
+      /**
+       * Warning Count
+       * @description Warnings to review in the parsed structure
+       */
+      warning_count: number;
+    };
+    /** DateRange */
+    "DateRange-Input": {
+      end?: components["schemas"]["YearMonth-Input"] | null;
+      /**
+       * Is Current
+       * @default false
+       */
+      is_current: boolean;
+      start?: components["schemas"]["YearMonth-Input"] | null;
+      /**
+       * Text
+       * @description The dates as written in the CV
+       */
+      text: string;
+    };
+    /** DateRange */
+    "DateRange-Output": {
+      end: components["schemas"]["YearMonth-Output"] | null;
+      /**
+       * Is Current
+       * @default false
+       */
+      is_current: boolean;
+      start: components["schemas"]["YearMonth-Output"] | null;
+      /**
+       * Text
+       * @description The dates as written in the CV
+       */
+      text: string;
+    };
+    /** EducationEntry */
+    "EducationEntry-Input": {
+      /** Bullets */
+      bullets?: string[];
+      dates?: components["schemas"]["DateRange-Input"] | null;
+      /** Degree */
+      degree: string;
+      /** Details */
+      details?: string[];
+      /** Institution */
+      institution?: string | null;
+      /** Location */
+      location?: string | null;
+    };
+    /** EducationEntry */
+    "EducationEntry-Output": {
+      /** Bullets */
+      bullets: string[];
+      dates: components["schemas"]["DateRange-Output"] | null;
+      /** Degree */
+      degree: string;
+      /** Details */
+      details: string[];
+      /** Institution */
+      institution: string | null;
+      /** Location */
+      location: string | null;
+    };
     /** ErrorDetail */
     ErrorDetail: {
       /**
@@ -232,11 +757,71 @@ export interface components {
      * @enum {string}
      */
     EventLevel: "DEBUG" | "INFO" | "WARNING" | "ERROR";
+    /** EvidenceItem */
+    EvidenceItem: {
+      /** Excerpt */
+      excerpt: string;
+      /** Section */
+      section: string;
+    };
+    /** ExperienceEntry */
+    "ExperienceEntry-Input": {
+      /** Bullets */
+      bullets?: string[];
+      dates?: components["schemas"]["DateRange-Input"] | null;
+      /** Details */
+      details?: string[];
+      /** Employer */
+      employer?: string | null;
+      /** Location */
+      location?: string | null;
+      /** Title */
+      title: string;
+    };
+    /** ExperienceEntry */
+    "ExperienceEntry-Output": {
+      /** Bullets */
+      bullets: string[];
+      dates: components["schemas"]["DateRange-Output"] | null;
+      /** Details */
+      details: string[];
+      /** Employer */
+      employer: string | null;
+      /** Location */
+      location: string | null;
+      /** Title */
+      title: string;
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
     };
+    /** Identity */
+    "Identity-Input": {
+      /** Full Name */
+      full_name: string;
+      /** Headline */
+      headline?: string | null;
+      location?: components["schemas"]["Location-Input"];
+      /** Nationality */
+      nationality?: string | null;
+    };
+    /** Identity */
+    "Identity-Output": {
+      /** Full Name */
+      full_name: string;
+      /** Headline */
+      headline: string | null;
+      location: components["schemas"]["Location-Output"];
+      /** Nationality */
+      nationality: string | null;
+    };
+    /**
+     * LanguageLevel
+     * @enum {string}
+     */
+    LanguageLevel: "native" | "fluent" | "professional" | "intermediate" | "basic";
     /** LivenessResponse */
     LivenessResponse: {
       /** Service */
@@ -250,6 +835,100 @@ export interface components {
       /** Version */
       version: string;
     };
+    /** Location */
+    "Location-Input": {
+      /** City */
+      city?: string | null;
+      /** Country */
+      country?: string | null;
+      /** Country Code */
+      country_code?: string | null;
+    };
+    /** Location */
+    "Location-Output": {
+      /** City */
+      city: string | null;
+      /** Country */
+      country: string | null;
+      /** Country Code */
+      country_code: string | null;
+    };
+    /** OtherSection */
+    "OtherSection-Input": {
+      /** Heading */
+      heading: string;
+      /** Lines */
+      lines?: string[];
+    };
+    /** OtherSection */
+    "OtherSection-Output": {
+      /** Heading */
+      heading: string;
+      /** Lines */
+      lines: string[];
+    };
+    /** ParsedCV */
+    "ParsedCV-Input": {
+      /** Certifications */
+      certifications?: string[];
+      contact?: components["schemas"]["ContactInfo-Input"];
+      /** Education */
+      education?: components["schemas"]["EducationEntry-Input"][];
+      /** Experiences */
+      experiences?: components["schemas"]["ExperienceEntry-Input"][];
+      /** Header Lines */
+      header_lines?: string[];
+      /**
+       * Language
+       * @default unknown
+       */
+      language: string;
+      /** Languages */
+      languages?: string[];
+      /** Other Sections */
+      other_sections?: components["schemas"]["OtherSection-Input"][];
+      /** Parser Version */
+      parser_version: string;
+      /** Projects */
+      projects?: components["schemas"]["ProjectEntry-Input"][];
+      /** Skills */
+      skills?: components["schemas"]["SkillItem-Input"][];
+      /** Summary */
+      summary?: string | null;
+      /** Warnings */
+      warnings?: string[];
+    };
+    /** ParsedCV */
+    "ParsedCV-Output": {
+      /** Certifications */
+      certifications: string[];
+      contact: components["schemas"]["ContactInfo-Output"];
+      /** Education */
+      education: components["schemas"]["EducationEntry-Output"][];
+      /** Experiences */
+      experiences: components["schemas"]["ExperienceEntry-Output"][];
+      /** Header Lines */
+      header_lines: string[];
+      /**
+       * Language
+       * @default unknown
+       */
+      language: string;
+      /** Languages */
+      languages: string[];
+      /** Other Sections */
+      other_sections: components["schemas"]["OtherSection-Output"][];
+      /** Parser Version */
+      parser_version: string;
+      /** Projects */
+      projects: components["schemas"]["ProjectEntry-Output"][];
+      /** Skills */
+      skills: components["schemas"]["SkillItem-Output"][];
+      /** Summary */
+      summary: string | null;
+      /** Warnings */
+      warnings: string[];
+    };
     /** PhaseInfo */
     PhaseInfo: {
       /** Name */
@@ -261,6 +940,26 @@ export interface components {
       /** Summary */
       summary: string;
     };
+    /** ProjectEntry */
+    "ProjectEntry-Input": {
+      /** Bullets */
+      bullets?: string[];
+      dates?: components["schemas"]["DateRange-Input"] | null;
+      /** Details */
+      details?: string[];
+      /** Name */
+      name: string;
+    };
+    /** ProjectEntry */
+    "ProjectEntry-Output": {
+      /** Bullets */
+      bullets: string[];
+      dates: components["schemas"]["DateRange-Output"] | null;
+      /** Details */
+      details: string[];
+      /** Name */
+      name: string;
+    };
     /** ReadinessResponse */
     ReadinessResponse: {
       /**
@@ -271,6 +970,16 @@ export interface components {
       /** Components */
       components: components["schemas"]["ComponentHealth"][];
       status: components["schemas"]["ComponentStatus"];
+    };
+    /** Relocation */
+    "Relocation-Input": {
+      /** Willing To Relocate */
+      willing_to_relocate?: boolean | null;
+    };
+    /** Relocation */
+    "Relocation-Output": {
+      /** Willing To Relocate */
+      willing_to_relocate: boolean | null;
     };
     /** RunCreated */
     RunCreated: {
@@ -442,6 +1151,50 @@ export interface components {
       | "CV_GENERATION"
       | "APPLICATION_PREPARATION"
       | "SUBMISSION";
+    /** SalaryExpectation */
+    "SalaryExpectation-Input": {
+      /**
+       * Country Code
+       * @description Applies to this country only; null = default
+       */
+      country_code?: string | null;
+      /** Currency */
+      currency: string;
+      /** Maximum */
+      maximum?: number | null;
+      /** Minimum */
+      minimum: number;
+      /** Note */
+      note?: string | null;
+      /**
+       * Period
+       * @default year
+       * @enum {string}
+       */
+      period: "year" | "month";
+    };
+    /** SalaryExpectation */
+    "SalaryExpectation-Output": {
+      /**
+       * Country Code
+       * @description Applies to this country only; null = default
+       */
+      country_code: string | null;
+      /** Currency */
+      currency: string;
+      /** Maximum */
+      maximum: number | null;
+      /** Minimum */
+      minimum: number;
+      /** Note */
+      note: string | null;
+      /**
+       * Period
+       * @default year
+       * @enum {string}
+       */
+      period: "year" | "month";
+    };
     /**
      * SecretsStatus
      * @description Whether each secret is configured — values are never exposed.
@@ -459,6 +1212,36 @@ export interface components {
       smtp_password: boolean;
       /** Telegram Bot Token */
       telegram_bot_token: boolean;
+    };
+    /** SkillItem */
+    "SkillItem-Input": {
+      /** Category */
+      category?: string | null;
+      /** Name */
+      name: string;
+    };
+    /** SkillItem */
+    "SkillItem-Output": {
+      /** Category */
+      category: string | null;
+      /** Name */
+      name: string;
+    };
+    /**
+     * SkillSource
+     * @enum {string}
+     */
+    SkillSource: "MASTER_CV" | "PROFILE_DECLARED";
+    /**
+     * SkillStrength
+     * @enum {string}
+     */
+    SkillStrength: "NONE" | "LISTED" | "DEMONSTRATED";
+    /** SpokenLanguage */
+    SpokenLanguage: {
+      /** Language */
+      language: string;
+      level: components["schemas"]["LanguageLevel"];
     };
     /** SystemConfig */
     SystemConfig: {
@@ -478,6 +1261,8 @@ export interface components {
       log_format: string;
       /** Log Level */
       log_level: string;
+      /** Max Upload Mb */
+      max_upload_mb: number;
       /** Notification Channels */
       notification_channels: string[];
       /** Scheduler Enabled */
@@ -521,6 +1306,54 @@ export interface components {
       components: components["schemas"]["ComponentHealth"][];
       status: components["schemas"]["ComponentStatus"];
     };
+    /** TargetCountries */
+    "TargetCountries-Input": {
+      /** Primary */
+      primary?: components["schemas"]["TargetCountry-Input"][];
+      /** Secondary */
+      secondary?: components["schemas"]["TargetCountry-Input"][];
+    };
+    /** TargetCountries */
+    "TargetCountries-Output": {
+      /** Primary */
+      primary: components["schemas"]["TargetCountry-Output"][];
+      /** Secondary */
+      secondary: components["schemas"]["TargetCountry-Output"][];
+    };
+    /** TargetCountry */
+    "TargetCountry-Input": {
+      /**
+       * Code
+       * @description ISO 3166-1 alpha-2 country code
+       * @example FR
+       */
+      code: string;
+      /** Name */
+      name: string;
+    };
+    /** TargetCountry */
+    "TargetCountry-Output": {
+      /**
+       * Code
+       * @description ISO 3166-1 alpha-2 country code
+       * @example FR
+       */
+      code: string;
+      /** Name */
+      name: string;
+    };
+    /** Targets */
+    "Targets-Input": {
+      countries?: components["schemas"]["TargetCountries-Input"];
+      /** Roles */
+      roles?: string[];
+    };
+    /** Targets */
+    "Targets-Output": {
+      countries: components["schemas"]["TargetCountries-Output"];
+      /** Roles */
+      roles: string[];
+    };
     /** ValidationError */
     ValidationError: {
       /** Context */
@@ -533,6 +1366,63 @@ export interface components {
       msg: string;
       /** Error Type */
       type: string;
+    };
+    /** WorkAuthorization */
+    "WorkAuthorization-Input": {
+      /** Current Work Authorizations */
+      current_work_authorizations?: components["schemas"]["WorkAuthorizationEntry-Input"][];
+      /** Sponsorship Required When */
+      sponsorship_required_when?: ("always" | "work_permit_needed" | "never") | null;
+      /** Visa Sponsorship Required */
+      visa_sponsorship_required?: boolean | null;
+    };
+    /** WorkAuthorization */
+    "WorkAuthorization-Output": {
+      /** Current Work Authorizations */
+      current_work_authorizations: components["schemas"]["WorkAuthorizationEntry-Output"][];
+      /** Sponsorship Required When */
+      sponsorship_required_when: ("always" | "work_permit_needed" | "never") | null;
+      /** Visa Sponsorship Required */
+      visa_sponsorship_required: boolean | null;
+    };
+    /** WorkAuthorizationEntry */
+    "WorkAuthorizationEntry-Input": {
+      /**
+       * Country Code
+       * @description ISO 3166-1 alpha-2 country code
+       * @example FR
+       */
+      country_code: string;
+      status: components["schemas"]["AuthorizationStatus"];
+    };
+    /** WorkAuthorizationEntry */
+    "WorkAuthorizationEntry-Output": {
+      /**
+       * Country Code
+       * @description ISO 3166-1 alpha-2 country code
+       * @example FR
+       */
+      country_code: string;
+      status: components["schemas"]["AuthorizationStatus"];
+    };
+    /**
+     * WorkMode
+     * @enum {string}
+     */
+    WorkMode: "onsite" | "hybrid" | "remote";
+    /** YearMonth */
+    "YearMonth-Input": {
+      /** Month */
+      month?: number | null;
+      /** Year */
+      year: number;
+    };
+    /** YearMonth */
+    "YearMonth-Output": {
+      /** Month */
+      month: number | null;
+      /** Year */
+      year: number;
     };
   };
   responses: never;
@@ -574,6 +1464,487 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_candidate_api_v1_candidate_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CandidateRead"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  update_candidate_api_v1_candidate_put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CandidateUpdate"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CandidateRead"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  export_candidate_api_v1_candidate_export_get: {
+    parameters: {
+      query?: {
+        /** @description Include contact details */
+        include_private?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/yaml": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  import_candidate_api_v1_candidate_import_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CandidateRead"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  list_master_cvs_api_v1_candidate_master_cv_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CvVersionSummary"][];
+        };
+      };
+    };
+  };
+  upload_master_cv_api_v1_candidate_master_cv_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "multipart/form-data": components["schemas"]["Body_upload_master_cv_api_v1_candidate_master_cv_post"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CvVersionDetail"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Request Entity Too Large */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Unsupported Media Type */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  get_master_cv_api_v1_candidate_master_cv__version_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        version_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CvVersionDetail"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  confirm_master_cv_api_v1_candidate_master_cv__version_id__confirm_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        version_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CvVersionDetail"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  download_master_cv_api_v1_candidate_master_cv__version_id__file_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        version_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/octet-stream": unknown;
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  revise_master_cv_api_v1_candidate_master_cv__version_id__revise_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        version_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CvVersionDetail"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  update_master_cv_structure_api_v1_candidate_master_cv__version_id__structure_put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        version_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ParsedCV-Input"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CvVersionDetail"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_skills_api_v1_candidate_skills_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CandidateSkillRead"][];
         };
       };
     };

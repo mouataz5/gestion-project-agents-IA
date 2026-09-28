@@ -14,8 +14,7 @@ import {
 } from "@/lib/proxy";
 import { getServerConfig } from "@/lib/server/config";
 
-const MAX_BODY_BYTES = 1_000_000;
-const TIMEOUT_MS = 30_000;
+const TIMEOUT_MS = 60_000;
 
 function errorResponse(status: number, code: string, message: string): Response {
   return Response.json(
@@ -41,8 +40,12 @@ async function forward(
 
   let body: ArrayBuffer | undefined;
   if (request.method !== "GET" && request.method !== "HEAD") {
+    const declared = Number(request.headers.get("content-length") ?? "0");
+    if (declared > config.maxBodyBytes) {
+      return errorResponse(413, "payload_too_large", "Request body is too large");
+    }
     body = await request.arrayBuffer();
-    if (body.byteLength > MAX_BODY_BYTES) {
+    if (body.byteLength > config.maxBodyBytes) {
       return errorResponse(413, "payload_too_large", "Request body is too large");
     }
   }

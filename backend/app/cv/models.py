@@ -12,7 +12,10 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class _Model(BaseModel):
-    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    # Serialization schemas list defaulted fields as required: responses always include them.
+    model_config = ConfigDict(
+        extra="forbid", str_strip_whitespace=True, json_schema_serialization_defaults_required=True
+    )
 
 
 class SkillStrength(StrEnum):
@@ -101,6 +104,8 @@ class EvidenceItem(BaseModel):
 
 
 class SkillEvidence(BaseModel):
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)
+
     name: str
     normalized_name: str
     category: str | None = None

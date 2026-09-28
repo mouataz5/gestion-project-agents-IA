@@ -5,6 +5,7 @@ import {
   buildBackendUrl,
   forwardedRequestHeaders,
   forwardedResponseHeaders,
+  maxBodyBytes,
 } from "./proxy";
 
 const BASE = "http://backend:8000";
@@ -86,5 +87,23 @@ describe("forwarded headers", () => {
     expect(headers.get("set-cookie")).toBeNull();
     expect(headers.get("server")).toBeNull();
     expect(headers.get("cache-control")).toBe("no-store");
+  });
+
+  it("forwards content-disposition so file downloads keep their name", () => {
+    const headers = forwardedResponseHeaders(
+      new Headers({ "content-disposition": 'attachment; filename="cv.docx"' }),
+    );
+    expect(headers.get("content-disposition")).toBe('attachment; filename="cv.docx"');
+  });
+});
+
+describe("maxBodyBytes", () => {
+  it("allows the configured upload size plus multipart overhead", () => {
+    expect(maxBodyBytes(undefined)).toBe(6 * 1024 * 1024);
+    expect(maxBodyBytes("10")).toBe(11 * 1024 * 1024);
+  });
+
+  it.each(["", "abc", "0", "-3"])("falls back to the default for %j", (value) => {
+    expect(maxBodyBytes(value)).toBe(6 * 1024 * 1024);
   });
 });

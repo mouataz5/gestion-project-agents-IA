@@ -10,7 +10,16 @@ export class ProxyPathError extends Error {}
 // Path segments are API words or ids (UUIDs, slugs): nothing that could change the target path.
 const SAFE_SEGMENT = /^[A-Za-z0-9_~-][A-Za-z0-9._~-]*$/;
 const FORWARDED_REQUEST_HEADERS = ["accept", "content-type", "x-request-id"];
-const FORWARDED_RESPONSE_HEADERS = ["content-type", "x-request-id"];
+const FORWARDED_RESPONSE_HEADERS = ["content-type", "content-disposition", "x-request-id"];
+const MEGABYTE = 1024 * 1024;
+const DEFAULT_MAX_UPLOAD_MB = 5;
+
+/** Largest request body accepted: MAX_UPLOAD_MB (the backend's CV limit) + 1 MB of overhead. */
+export function maxBodyBytes(maxUploadMb: string | undefined): number {
+  const parsed = Number.parseInt(maxUploadMb ?? "", 10);
+  const megabytes = Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_MAX_UPLOAD_MB;
+  return (megabytes + 1) * MEGABYTE;
+}
 
 export function buildBackendUrl(
   baseUrl: string,

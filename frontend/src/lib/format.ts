@@ -13,6 +13,14 @@ const TONES: Record<string, Tone> = {
   pending: "info",
   info: "info",
   cancelled: "neutral",
+  // Master CV versions: a parsed draft needs review; confirmed is the active master CV.
+  parsed: "warning",
+  confirmed: "success",
+  superseded: "neutral",
+  // Skill evidence strength.
+  demonstrated: "success",
+  listed: "info",
+  none: "warning",
 };
 
 export function statusTone(status: string): Tone {
