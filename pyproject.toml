@@ -1,0 +1,97 @@
+# Virtual uv workspace root for the Python packages of the monorepo.
+#   backend/  -> job-agent-backend  (import package `app`)
+#   workers/  -> job-agent-workers  (import package `job_agent_workers`)
+# Install everything (runtime + dev tools) with:  uv sync --all-packages
+
+[tool.uv.workspace]
+members = ["backend", "workers"]
+
+[dependency-groups]
+dev = [
+    "black>=26.5",
+    "celery-types>=0.26",
+    "httpx2>=2.13",
+    "mypy>=2.3",
+    "pytest>=9.1",
+    "pytest-cov>=7.1",
+    "ruff>=0.16",
+]
+
+# ---------------------------------------------------------------------------
+# Formatting & linting
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["backend", "workers", "scripts"]
+extend-exclude = ["frontend", "playwright", "storage"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F",   # pycodestyle, pyflakes
+    "I",             # isort
+    "B",             # bugbear
+    "UP",            # pyupgrade
+    "N",             # naming
+    "S",             # bandit (security)
+    "SIM",           # simplify
+    "C4",            # comprehensions
+    "DTZ",           # timezone-aware datetimes only
+    "T20",           # no print()
+    "PT",            # pytest style
+    "RET",           # return statements
+    "RUF",           # ruff-specific
+]
+ignore = [
+    "E501",   # line length is handled by Black
+    "RUF012", # mutable class attributes are fine for SQLAlchemy/Pydantic declarations
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101", "S105", "S106", "S108", "S311"]
+"conftest.py" = ["S101", "S105", "S106", "S608"]
+"scripts/**" = ["T201", "S603", "S607"]
+"backend/app/db/migrations/**" = ["N999"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app", "job_agent_workers"]
+
+# ---------------------------------------------------------------------------
+# Type checking
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+strict = true
+mypy_path = ["backend", "workers"]
+packages = ["app", "job_agent_workers"]
+plugins = ["pydantic.mypy"]
+warn_unreachable = true
+show_error_codes = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["backend/tests", "workers/tests"]
+addopts = "-ra --strict-markers --import-mode=importlib"
+markers = [
+    "feature(name): the product feature a test covers (drives tests.json)",
+    "integration: needs PostgreSQL and/or Redis (skipped when unavailable unless CI/REQUIRE_INTEGRATION is set)",
+]
+filterwarnings = [
+    "error::DeprecationWarning:app.*",
+    "error::DeprecationWarning:job_agent_workers.*",
+]
+
+[tool.coverage.run]
+source = ["app", "job_agent_workers"]
+omit = ["*/migrations/versions/*"]
