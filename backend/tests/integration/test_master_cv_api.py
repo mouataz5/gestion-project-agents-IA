@@ -329,3 +329,21 @@ def test_master_cv_endpoints_require_the_api_token(candidate_settings: Settings)
             files={"file": ("cv.pdf", b"%PDF-1.7", "application/pdf")},
         )
         assert upload.status_code == 401
+
+
+def test_cv_content_never_reaches_the_logs(
+    candidate_client: TestClient,
+    cv_docx: Callable[[CvLines], bytes],
+    sample_cv_en: CvLines,
+    capsys: pytest.CaptureFixture[str],
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    caplog.set_level("DEBUG")
+    draft = _upload(candidate_client, cv_docx(sample_cv_en))
+    candidate_client.post(f"/api/v1/candidate/master-cv/{draft['id']}/confirm")
+    candidate_client.get(f"/api/v1/candidate/master-cv/{draft['id']}/file")
+
+    output = capsys.readouterr().out + caplog.text
+    assert "http.request" in output  # the request log is captured by this test
+    for private in ("alex.example@example.com", "+33 6 12 34 56 78", "Acme Analytics", "LangGraph"):
+        assert private not in output

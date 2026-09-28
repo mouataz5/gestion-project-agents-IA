@@ -108,6 +108,9 @@ jobs:
         working-directory: playwright
         run: npm ci && npx playwright install --with-deps chromium
       - name: Run E2E tests
+        env:
+          # The CI stack is disposable: also run the tests that upload a CV and edit the profile.
+          E2E_ALLOW_MUTATIONS: "1"
         run: |
           set -a && . ./.env && set +a
           npm --prefix playwright test

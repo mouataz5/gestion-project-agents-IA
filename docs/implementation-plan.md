@@ -56,32 +56,52 @@ event timeline.
 
 ---
 
-## Phase 2 — Candidate profile & master CV
+## Phase 2 — Candidate profile & master CV ✅
 
 **Goal**: the candidate's facts are structured, validated, editable and stored.
 
 Deliverables
-- Pydantic schema for `candidate/profile.yaml` (+ optional git-ignored `profile.local.yaml` merge),
-  loader, validation errors surfaced clearly.
-- Migration `0002`: `candidates`, `candidate_skills`, `experiences`, `educations`, `projects`,
-  `cv_versions` (kind `MASTER`); `candidate_id` added to `automation_runs`.
-- Master CV upload (`.docx`/`.pdf`; size limit, extension + magic-byte validation), stored through
-  `StorageProvider`, versioned.
-- Deterministic parser: DOCX (python-docx: headings, paragraphs, bullets) and PDF (text extraction) →
-  sections → structured draft (experience, education, projects, skills, dates). The user reviews and
-  corrects the draft in the UI; the confirmed structure becomes the **fact base** used by every later
-  phase.
-- Skill evidence: a declared skill is "evidenced" only when the master CV contains it (with location).
-- API: `GET/PUT /candidate/profile`, `POST /candidate/master-cv`, `GET /candidate/master-cv/versions`,
-  `GET/PUT /candidate/master-cv/{version}/structure`.
-- UI: `/candidate` (profile editor), `/cv` (upload, parsed view, edit).
+- Strict Pydantic schema for the profile (`app/schemas/candidate.py`): unknown keys rejected, errors
+  reported with dotted field paths and never echoing input; `null` = unknown. `candidate/profile.yaml`
+  deep-merged with the optional git-ignored `profile.local.yaml` (lists replace, mappings merge).
+- The database is the live profile (`candidates.profile` JSONB + denormalised identity columns); YAML
+  is the seed (auto-import of the `default` candidate on first use) and the explicit import/export
+  format. Private contact details are hidden from exports unless requested.
+- `NEEDS_USER_INPUT` reporting: required-but-empty fields (contact, notice period, salary, start date,
+  languages, work modes…) are listed for the user and never guessed.
+- Migration `0002`: `candidates`, `cv_versions` (one active master per candidate through a partial
+  unique index), `experiences`, `educations`, `projects`, `candidate_skills`;
+  `automation_runs.candidate_id`.
+- Master CV upload: `.docx`/`.pdf` allow-list, magic bytes, `MAX_UPLOAD_MB` (default 5), ZIP bomb /
+  encryption / macro checks, 10-page limit; stored through `StorageProvider` under a generated
+  content-addressed key (identical files share storage); original filename kept only as sanitised
+  metadata.
+- Deterministic parser (`app/cv/`, no LLM): DOCX (styles, bold, lists, tables, text boxes) and PDF
+  (pdfplumber lines, font weight/size, wrapped bullets) → EN/FR sections → entries (title, employer,
+  location, dates with month/year precision and "present") → skills, languages, certifications,
+  contact, unknown sections kept. Property-tested: every parsed value is a substring of the document.
+- Lifecycle: `PARSED` draft (editable) → `CONFIRMED` (read-only, rebuilds the fact tables and skill
+  evidence in one transaction; the previous master becomes `SUPERSEDED`) → `revise` creates a new
+  editable draft. Every action is audited without CV content.
+- Skill evidence (`app/cv/evidence.py`): `DEMONSTRATED` (experience/project text), `LISTED` (skills,
+  summary, education, certifications), `NONE` (declared only, never used for tailoring); word-boundary
+  and synonym-aware matching; excerpts stored as evidence.
+- API: `GET/PUT /candidate` (optimistic concurrency on `profile_version` → 409), `POST
+  /candidate/import`, `GET /candidate/export`, `GET /candidate/skills`, `POST|GET
+  /candidate/master-cv`, `GET /candidate/master-cv/{id}`, `GET …/{id}/file`, `PUT …/{id}/structure`,
+  `POST …/{id}/confirm`, `POST …/{id}/revise`.
+- UI: `/candidate` (profile editor with needs-input highlighting, YAML import/export, skill evidence)
+  and `/cv` (drag-and-drop upload, versions, draft review editor, confirm/revise, download).
 
-Tests first: profile schema (valid, invalid, unknown fields, `null` = unknown), YAML ↔ DB sync, upload
-validation (wrong type, oversize, spoofed extension), DOCX/PDF parsing fixtures (sections, bullets,
-date ranges, current role), skill evidence, candidate scoping.
+Tests first: profile schema (valid, unknown fields, wrong types, `null` = unknown, local override,
+export privacy), upload validation (wrong/spoofed type, empty, oversize, ZIP bomb, too many entries,
+filename sanitising), date ranges (EN/FR, precision, current, false positives), section headings,
+DOCX/PDF parsing (layouts, wrapped bullets, warnings, no-invention property), skill evidence and
+synonyms, candidate/master CV APIs (concurrency, audit, immutability, supersede, revise, dedup, auth),
+multi-candidate isolation, frontend helpers and proxy, E2E upload → review → confirm → evidence.
 
 Acceptance: profile editable in the UI and persisted; master CV uploaded, parsed, corrected and saved as
-a versioned fact base.
+a versioned fact base. ✔ Verified natively and on the Docker stack (E2E with `E2E_ALLOW_MUTATIONS=1`).
 
 ---
 

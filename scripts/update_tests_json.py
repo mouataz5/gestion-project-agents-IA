@@ -82,6 +82,11 @@ def read_playwright() -> list[Entry]:
     recorded_at = datetime.fromtimestamp(PLAYWRIGHT_REPORT.stat().st_mtime, UTC).isoformat()
     entries: list[Entry] = []
 
+    def feature_of(titles: list[str]) -> str:
+        # The top-level suite is the spec file: "candidate.spec.ts" -> "e2e-candidate".
+        spec_file = titles[0] if titles else ""
+        return f"e2e-{spec_file.split('.')[0]}" if spec_file else "e2e"
+
     def walk(suite: dict[str, Any], titles: list[str]) -> None:
         for spec in suite.get("specs", []):
             outcomes = {test.get("status") for test in spec.get("tests", [])}
@@ -94,7 +99,7 @@ def read_playwright() -> list[Entry]:
             entries.append(
                 {
                     "test": " > ".join([*titles, spec["title"]]),
-                    "feature": "e2e-dashboard",
+                    "feature": feature_of(titles),
                     "suite": "e2e",
                     "status": status,
                     "recorded_at": recorded_at,

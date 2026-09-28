@@ -1,14 +1,17 @@
 # Candidate profile — structured preferences and constraints.
 #
 # Rules:
-#   * The MASTER CV (candidate/master_cv/) is the single source of truth for
-#     experience, skills, proficiency, dates, employers, education and metrics.
-#     This file only records identity, preferences and constraints.
-#   * Never invent values. Unknown values stay `null`; the application answer
-#     engine (Phase 7) reports them as NEEDS_USER_INPUT instead of guessing.
-#   * Personal contact details (email, phone, address) belong in the master CV
-#     or in a git-ignored `candidate/profile.local.yaml` override, not here.
-#   * Schema validation, DB sync and UI editing arrive in Phase 2.
+#   * The confirmed MASTER CV (uploaded and reviewed at /cv) is the single source
+#     of truth for experience, skills, proficiency, dates, employers, education
+#     and metrics. This file only records identity, preferences and constraints.
+#   * Never invent values. Unknown values stay `null`; they are reported as
+#     NEEDS_USER_INPUT instead of being guessed.
+#   * Personal contact details (email, phone, address) are entered at /candidate
+#     (stored in the local database) or in a git-ignored
+#     `candidate/profile.local.yaml` override — never here.
+#   * This file seeds the profile stored in the database: it is imported on first
+#     use and whenever you click "Import from YAML" on the Candidate page.
+#     Unknown keys and wrong types are rejected with the field path.
 
 schema_version: 1
 

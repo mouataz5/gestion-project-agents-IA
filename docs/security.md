@@ -88,6 +88,27 @@ Tests assert that these values never appear in log output.
   for analysis/tailoring. Choose a provider/plan whose data-retention terms you accept; a local model
   provider (Ollama) can be added behind `LLMProvider`.
 
+### 7.1 Candidate profile and master CV (Phase 2)
+
+- **Where personal data lives**: the profile (including private contact details) and the parsed CV
+  live in PostgreSQL; the original CV file lives in `STORAGE_DIR` (the `appstorage` Docker volume).
+  None of it is in Git: `candidate/master_cv/*` and `candidate/*.local.yaml` are git-ignored, and the
+  committed `profile.yaml` holds no contact details.
+- **Exports** omit the private `contact` section unless `include_private=true` is explicitly requested;
+  every export is audited with that flag. Audit entries record *which* profile sections changed and
+  counts for CVs — never field values or CV text. Tests assert that contact values never reach the
+  audit log and that CV text never reaches the service logs.
+- **Upload validation** (before any parser touches the file): `.docx`/`.pdf` extension allow-list,
+  magic bytes must match the extension, `MAX_UPLOAD_MB` limit (also enforced by the dashboard proxy),
+  DOCX archives are inspected without extraction (entry count, total uncompressed size against ZIP
+  bombs, encryption, macros), PDFs are limited to 10 pages and parsing errors map to `unreadable_file`.
+  Rejected files are never stored.
+- **Storage keys** are generated from the candidate id and the SHA-256 of the content; the uploaded
+  filename is sanitised (no directories, control or reserved characters) and used only as metadata and
+  in an RFC 6266 `Content-Disposition` header; downloads are sent with `nosniff` and `no-store`.
+- **Integrity**: the parser never generates text, confirmed versions are immutable, and later phases
+  may only use the confirmed fact base; skills without evidence (`NONE`) are never used for tailoring.
+
 ## 8. n8n
 
 n8n Community Edition runs self-hosted (optional profile), bound to localhost, telemetry disabled, with

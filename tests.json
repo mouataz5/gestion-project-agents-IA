@@ -1,16 +1,16 @@
 {
   "description": "Test tracking. 'tests' is regenerated from real test runs by scripts/update_tests_json.py (make tests-json); 'planned' lists tests to write before implementing later phases and is maintained by hand.",
-  "generated_at": "2026-09-28T11:45:16+00:00",
+  "generated_at": "2026-09-28T23:52:33+00:00",
   "summary": {
-    "total": 231,
-    "passed": 231,
+    "total": 435,
+    "passed": 435,
     "failed": 0,
     "skipped": 0,
-    "planned": 80,
+    "planned": 69,
     "by_suite": {
-      "backend": 165,
-      "e2e": 5,
-      "frontend": 53,
+      "backend": 328,
+      "e2e": 10,
+      "frontend": 89,
       "workers": 8
     }
   },
@@ -190,6 +190,318 @@
       "status": "passed"
     },
     {
+      "test": "backend/tests/integration/test_candidate_api.py::test_a_missing_profile_file_is_reported",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_candidate_endpoints_require_the_api_token",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_export_hides_private_fields_unless_requested",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_export_is_a_download",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_first_access_imports_the_profile_from_yaml",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_first_use_import_is_audited",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_import_reloads_the_yaml_files",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_invalid_profiles_are_rejected_with_field_paths",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_invalid_yaml_import_is_reported",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_profile_updates_increment_the_version_and_are_audited",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_stale_profile_versions_are_rejected",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_deep_merge_does_not_mutate_inputs",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_local_override_is_deep_merged",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_missing_profile_file_is_a_clear_error",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_missing_values_are_reported_as_needing_user_input",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_repository_profile_is_valid",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_unknown_fields_are_rejected_with_their_path",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_wrong_types_are_rejected[path0-AI Engineer]",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_wrong_types_are_rejected[path1-Tunisia]",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_wrong_types_are_rejected[path2-maybe]",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_wrong_types_are_rejected[path3-2]",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_candidate_profile.py::test_yaml_export_round_trips_and_hides_private_fields_by_default",
+      "feature": "candidate-profile",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_changing_core_skills_refreshes_the_skill_list",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_candidate_api.py::test_declared_skills_are_listed_as_not_evidenced_before_any_cv",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_confirmation_builds_the_fact_base_and_skill_evidence",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_declared_skills_absent_from_the_cv_are_not_evidenced[Agentic AI]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_declared_skills_absent_from_the_cv_are_not_evidenced[Deep Learning]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_matching_respects_word_boundaries_and_synonyms[C++-Optimised C++ kernels-True]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_matching_respects_word_boundaries_and_synonyms[Go-Microservices in Go and Rust-True]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_matching_respects_word_boundaries_and_synonyms[Go-Worked at Google on good things-False]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_matching_respects_word_boundaries_and_synonyms[Kubernetes-deployed on k8s clusters-True]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_matching_respects_word_boundaries_and_synonyms[Node.js-APIs with Node.js-True]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_matching_respects_word_boundaries_and_synonyms[R-Built RAG pipelines-False]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_normalization_is_case_and_punctuation_insensitive",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_only_listed_are_listed[Azure]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_only_listed_are_listed[GCP]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_only_listed_are_listed[PyTorch]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_only_listed_are_listed[Python]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_only_listed_are_listed[SQL]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[Docker]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[FastAPI]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[Kubernetes]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[LLMs]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[LangGraph]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[MCP]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[Machine Learning]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[Multi-agent systems]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[RAG]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[Spark]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[Time-series analysis]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_skills_used_in_experience_or_projects_are_demonstrated[Vector databases]",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_skill_evidence.py::test_sources_and_excerpts_are_recorded",
+      "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
       "test": "backend/tests/unit/test_config.py::test_broker_defaults_to_redis_and_result_backend_is_opt_in",
       "feature": "configuration",
       "suite": "backend",
@@ -336,6 +648,666 @@
     {
       "test": "backend/tests/unit/test_config.py::test_valid_encryption_key_is_accepted",
       "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_drafts_can_be_edited_before_confirmation",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_upload_parses_the_cv_and_stores_it_privately",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[01/2020 \\u2013 12/2021-start4-end4-False]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[2016 \\u2013 Pr\\xe9sent-start14-None-True]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[2017 \\u2013 2019-start6-end6-False]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[2020 - now-start7-None-True]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[2020-03 - 2021-07-start5-end5-False]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[De 2015 \\xe0 2018-start13-end13-False]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[Depuis f\\xe9vrier 2022-start12-None-True]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[Jan 2022 \\u2013 Present-start0-None-True]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[January 2021 - March 2023-start1-end1-False]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[Sep 2019 to Dec 2021-start2-end2-False]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[Sept. 2019 \\u2014 Dec. 2021-start3-end3-False]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[Since June 2023-start8-None-True]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[janv. 2021 \\u2013 aujourd'hui-start9-None-True]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[mars 2019 \\u2013 d\\xe9c. 2020-start10-end10-False]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_date_ranges_are_recognised[septembre 2018 \\xe0 juin 2020-start11-end11-False]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_single_year_is_a_point_in_time",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_text_without_dates_is_ignored[13/2020 \\u2013 14/2021]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_text_without_dates_is_ignored[I may join in the spring]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_text_without_dates_is_ignored[Reduced inference latency by 35%.]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_text_without_dates_is_ignored[Room 1234]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_text_without_dates_is_ignored[Senior AI Engineer \\u2014 Acme Analytics]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_text_without_dates_is_ignored[Serving 2,000 users]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_dates.py::test_the_matched_span_can_be_removed_from_the_line",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_common_entry_layouts_are_segmented",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_confirmation_requires_complete_entries",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_corrupt_documents_are_rejected",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_documents_without_known_sections_are_flagged",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_english_docx_is_parsed_into_a_structured_draft",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_entries_without_dates_produce_warnings",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_french_docx_is_parsed",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_inline_dates_and_bullet_lists",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_pdf_is_parsed",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_pdfs_with_too_many_pages_are_rejected",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_pdfs_without_text_are_rejected",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_phone_numbers_are_extracted_conservatively[(+33) 6 12 34 56 78-phones1]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_phone_numbers_are_extracted_conservatively[Available 2019 - 2021-phones2]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_phone_numbers_are_extracted_conservatively[Order 12345-phones3]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_phone_numbers_are_extracted_conservatively[Tunis | +216 20 123 456-phones0]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_skill_sub_labels_and_contact_sections",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_parser.py::test_wrapped_pdf_bullets_are_joined",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_bullet_markers_are_stripped[(cid:127) Built RAG pipelines-True-Built RAG pipelines]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_bullet_markers_are_stripped[- Built RAG pipelines-True-Built RAG pipelines]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_bullet_markers_are_stripped[-2% churn-False--2% churn]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_bullet_markers_are_stripped[Built RAG pipelines-False-Built RAG pipelines]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_bullet_markers_are_stripped[\\u2013 Built RAG pipelines-True-Built RAG pipelines]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_bullet_markers_are_stripped[\\u2022 Built RAG pipelines-True-Built RAG pipelines]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_bullet_markers_are_stripped[\\u25aa Built RAG pipelines-True-Built RAG pipelines]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Centres d'int\\xe9r\\xeat-OTHER]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Certifications-CERTIFICATIONS]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Comp\\xe9tences techniques-SKILLS]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[EXPERIENCE-EXPERIENCE]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[EXP\\xc9RIENCES PROFESSIONNELLES-EXPERIENCE]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Education-EDUCATION]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Exp\\xe9rience professionnelle-EXPERIENCE]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Formation-EDUCATION]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Interests-OTHER]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Languages-LANGUAGES]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Langues-LANGUAGES]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Professional Experience:-EXPERIENCE]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Profil-SUMMARY]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Projects-PROJECTS]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Projets personnels-PROJECTS]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Publications-OTHER]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Summary-SUMMARY]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Technical Skills-SKILLS]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_known_headings_are_recognised[Work History-EXPERIENCE]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_ordinary_lines_are_not_headings[I gained a lot of experience building production systems.]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_ordinary_lines_are_not_headings[Python, SQL]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_ordinary_lines_are_not_headings[Senior AI Engineer \\u2014 Acme Analytics]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_sections.py::test_ordinary_lines_are_not_headings[]",
+      "feature": "cv-parsing",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_a_new_confirmation_supersedes_the_previous_master",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_confirmed_versions_are_immutable",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_cv_actions_are_audited",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_cv_content_never_reaches_the_logs",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_drafts_are_not_revised",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_identical_uploads_share_storage",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_incomplete_drafts_cannot_be_confirmed",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_invalid_structure_edits_are_rejected",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_invalid_uploads_are_rejected[cv.doc-legacy word-415-unsupported_file_type]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_invalid_uploads_are_rejected[cv.docx-%PDF-1.7 spoofed-415-file_type_mismatch]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_invalid_uploads_are_rejected[cv.pdf-%PDF-1.7 not really a pdf-422-unreadable_file]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_invalid_uploads_are_rejected[cv.pdf--400-empty_file]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_master_cv_endpoints_require_the_api_token",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_oversized_uploads_are_rejected",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_revise_creates_an_editable_copy",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_unknown_versions_return_404",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_uploaded_filenames_are_sanitized",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_master_cv_api.py::test_versions_are_listed_newest_first_and_files_can_be_downloaded",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_archives_with_too_many_entries_are_rejected",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_empty_and_oversized_files_are_rejected",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_filenames_are_sanitized[-cv]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_filenames_are_sanitized[../../etc/passwd.pdf-passwd.pdf]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_filenames_are_sanitized[C:\\\\Users\\\\me\\\\cv.pdf-cv.pdf]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_filenames_are_sanitized[My CV 2024.docx-My CV 2024.docx]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_filenames_are_sanitized[cv\\x00<script>.pdf-cvscript.pdf]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_pdf_bytes_named_docx_are_rejected",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_unsupported_extensions_are_rejected[cv.doc]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_unsupported_extensions_are_rejected[cv.docx.exe]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_unsupported_extensions_are_rejected[cv.odt]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_unsupported_extensions_are_rejected[cv.txt]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_unsupported_extensions_are_rejected[cv]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_valid_docx_and_pdf_are_accepted",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_zip_bombs_are_rejected",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_zip_bytes_named_pdf_are_rejected",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_cv_files.py::test_zip_without_a_word_document_is_rejected",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_downloads.py::test_content_disposition[Alex CV.docx-attachment; filename=\"Alex CV.docx\"]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_downloads.py::test_content_disposition[CV \\xc9milie.pdf-attachment; filename=\"CV Emilie.pdf\"; filename*=UTF-8''CV%20%C3%89milie.pdf]",
+      "feature": "cv-upload",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_downloads.py::test_content_disposition[\\u0633\\u064a\\u0631\\u0629.pdf-attachment; filename=\".pdf\"; filename*=UTF-8''%D8%B3%D9%8A%D8%B1%D8%A9.pdf]",
+      "feature": "cv-upload",
       "suite": "backend",
       "status": "passed"
     },
@@ -748,6 +1720,12 @@
       "status": "passed"
     },
     {
+      "test": "backend/tests/integration/test_multi_candidate.py::test_candidate_data_is_isolated",
+      "feature": "multi-candidate",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
       "test": "backend/tests/api/test_request_context.py::test_access_log_records_requests_without_credentials",
       "feature": "request-context",
       "suite": "backend",
@@ -1006,39 +1984,158 @@
       "status": "passed"
     },
     {
+      "test": "candidate.spec.ts > candidate profile and master CV (read-only) > candidate and CV pages are enabled in the navigation",
+      "feature": "e2e-candidate",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+    },
+    {
+      "test": "candidate.spec.ts > candidate profile and master CV (read-only) > the CV page offers an upload and rejects unsupported files",
+      "feature": "e2e-candidate",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+    },
+    {
+      "test": "candidate.spec.ts > candidate profile and master CV (read-only) > the profile is loaded and missing values are flagged, never guessed",
+      "feature": "e2e-candidate",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+    },
+    {
+      "test": "candidate.spec.ts > master CV workflow (changes data) > profile edits are saved",
+      "feature": "e2e-candidate",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+    },
+    {
+      "test": "candidate.spec.ts > master CV workflow (changes data) > upload, review, confirm, then see the skill evidence",
+      "feature": "e2e-candidate",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+    },
+    {
       "test": "dashboard.spec.ts > dashboard foundation > lists runs and filters them by status",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > runs a system diagnostic end to end",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > settings report secrets without revealing them",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > shows later-phase pages as disabled",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > shows the safety state and healthy components",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::checkCvFile { name: 'CV.PDF', size: 10 } -> null",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::checkCvFile { name: 'cv.doc', size: 10 } -> Only .docx and .pdf files are accepted.",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::checkCvFile { name: 'cv.docx', size: 10 } -> null",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::checkCvFile { name: 'cv.docx.exe', size: 10 } -> Only .docx and .pdf files are accepted.",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::checkCvFile { name: 'cv.pdf', size: 0 } -> The file is empty.",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::checkCvFile { name: 'cv.pdf', size: 6291456 } -> The file is larger than 5.0 MB.",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::dateRangeLabel falls back to the original text or nothing",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::dateRangeLabel renders normalised ranges",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::drops empty rows before saving",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::explains upload error codes",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::formats byte sizes",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::list helpers creates empty entries",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::list helpers moves, removes and replaces items immutably",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/cv.test.ts::year-month inputs formats month and year precision",
+      "feature": "frontend-cv",
+      "suite": "frontend",
+      "status": "passed"
     },
     {
       "test": "frontend/src/lib/format.test.ts::formatDateTime formats ISO timestamps in the requested time zone",
@@ -1143,6 +2240,18 @@
       "status": "passed"
     },
     {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps CONFIRMED to success",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps DEMONSTRATED to success",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
       "test": "frontend/src/lib/format.test.ts::statusTone maps ERROR to danger",
       "feature": "frontend-format",
       "suite": "frontend",
@@ -1150,6 +2259,24 @@
     },
     {
       "test": "frontend/src/lib/format.test.ts::statusTone maps FAILED to danger",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps LISTED to info",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps NONE to warning",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps PARSED to warning",
       "feature": "frontend-format",
       "suite": "frontend",
       "status": "passed"
@@ -1174,6 +2301,12 @@
     },
     {
       "test": "frontend/src/lib/format.test.ts::statusTone maps SUCCEEDED to success",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps SUPERSEDED to neutral",
       "feature": "frontend-format",
       "suite": "frontend",
       "status": "passed"
@@ -1253,6 +2386,66 @@
     {
       "test": "frontend/src/lib/nav.test.ts::navigation lists every dashboard page from the specification in order",
       "feature": "frontend-nav",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::fieldErrors accepts dotted string locations and ignores malformed details",
+      "feature": "frontend-profile",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::fieldErrors maps request validation locations to profile paths",
+      "feature": "frontend-profile",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::labels fields that need user input",
+      "feature": "frontend-profile",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::setIn / getIn creates missing branches and reads nested values",
+      "feature": "frontend-profile",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::setIn / getIn updates a nested value without mutating the original",
+      "feature": "frontend-profile",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::setIn / getIn updates array items by index",
+      "feature": "frontend-profile",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::tags appends only new tags",
+      "feature": "frontend-profile",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::tags parses comma and newline separated tags without duplicates",
+      "feature": "frontend-profile",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::value conversions converts tri-state booleans",
+      "feature": "frontend-profile",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/profile.test.ts::value conversions maps blank text and empty lists to null",
+      "feature": "frontend-profile",
       "suite": "frontend",
       "status": "passed"
     },
@@ -1341,6 +2534,12 @@
       "status": "passed"
     },
     {
+      "test": "frontend/src/lib/proxy.test.ts::forwarded headers forwards content-disposition so file downloads keep their name",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
       "test": "frontend/src/lib/proxy.test.ts::forwarded headers forwards only allow-listed request headers and injects the API token",
       "feature": "frontend-proxy",
       "suite": "frontend",
@@ -1354,6 +2553,36 @@
     },
     {
       "test": "frontend/src/lib/proxy.test.ts::forwarded headers returns only safe response headers",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::maxBodyBytes allows the configured upload size plus multipart overhead",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::maxBodyBytes falls back to the default for \"\"",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::maxBodyBytes falls back to the default for \"-3\"",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::maxBodyBytes falls back to the default for \"0\"",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::maxBodyBytes falls back to the default for \"abc\"",
       "feature": "frontend-proxy",
       "suite": "frontend",
       "status": "passed"
@@ -1408,72 +2637,6 @@
     }
   ],
   "planned": [
-    {
-      "phase": 2,
-      "feature": "candidate-profile",
-      "test": "profile.yaml validates against the schema (valid file accepted)",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "candidate-profile",
-      "test": "unknown fields and wrong types are rejected with clear errors",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "candidate-profile",
-      "test": "null values are treated as unknown and surface as NEEDS_USER_INPUT",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "candidate-profile",
-      "test": "git-ignored profile.local.yaml overrides are merged",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "candidate-profile",
-      "test": "profile YAML and database stay in sync (load, edit via API, export)",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "cv-upload",
-      "test": "master CV upload rejects wrong type, oversize and spoofed extension",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "cv-parsing",
-      "test": "DOCX master CV parsed into experience, education, projects and skills with dates",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "cv-parsing",
-      "test": "PDF master CV text extraction and section segmentation",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "cv-parsing",
-      "test": "current role (no end date) and date ranges parsed correctly",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "candidate-skills",
-      "test": "a declared skill is evidenced only when the master CV contains it",
-      "status": "planned"
-    },
-    {
-      "phase": 2,
-      "feature": "multi-candidate",
-      "test": "candidate-scoped queries never return another candidate's data",
-      "status": "planned"
-    },
     {
       "phase": 3,
       "feature": "job-normalization",

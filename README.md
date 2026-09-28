@@ -4,9 +4,8 @@ A self-hosted platform that discovers newly posted AI/ML/GenAI jobs, analyses th
 sponsorship, relevance), builds a **truthful**, ATS-optimised CV for each qualifying job, prepares
 the application in the company's own ATS — and **stops before submitting** until you approve.
 
-> **Status: Phase 1 of 11 — Foundation** (Docker, PostgreSQL, FastAPI, Next.js, configuration,
-> logging, health checks, migrations). See [`progress.md`](progress.md) and the
-> [implementation plan](docs/implementation-plan.md).
+> **Status: Phase 2 of 11 — Candidate profile & master CV** (Phase 1, the foundation, is complete).
+> See [`progress.md`](progress.md) and the [implementation plan](docs/implementation-plan.md).
 
 **Safe by default:** `MOCK_MODE=true` (fake jobs and mock ATS pages only) and `AUTO_SUBMIT=false`
 (every application needs your explicit approval). The system never bypasses CAPTCHA, MFA or
@@ -88,6 +87,9 @@ make test-e2e       # browser E2E tests (Playwright) against a running stack
 make tests-json     # run every suite and regenerate tests.json
 ```
 
+E2E tests that change data (upload and confirm a CV, edit the profile) run only with
+`E2E_ALLOW_MUTATIONS=1` — use it against a throwaway stack, never against your own data.
+
 Integration tests create and drop their own temporary PostgreSQL database; they use
 `TEST_DATABASE_URL` if set, otherwise the `DATABASE_URL` from `.env`. For the E2E tests, install the
 browser once with `make e2e-browsers`.
@@ -135,6 +137,36 @@ Google Sheets…). The core never depends on it. See [`n8n/README.md`](n8n/READM
 
 ---
 
+## Your profile and master CV (Phase 2)
+
+1. **Profile** — open http://localhost:3000/candidate. On first use the profile is imported from
+   [`candidate/profile.yaml`](candidate/profile.yaml) (plus `candidate/profile.local.yaml` if you
+   create one; it is git-ignored). Fields that need your input (email, phone, notice period, salary
+   expectations, languages…) are highlighted; they are never guessed. Contact details are stored in
+   the local database only and left out of YAML exports unless you ask for them.
+2. **Master CV** — open http://localhost:3000/cv and drop your CV (`.docx` or text-based `.pdf`,
+   up to `MAX_UPLOAD_MB`, 10 pages). It is parsed without AI into a draft: check the experience,
+   education, projects and skills, fix anything the parser missed, then **Confirm as master CV**.
+3. The confirmed version becomes the only source of facts for every later step. The Candidate page
+   then shows, for each skill, whether the CV **demonstrates** it (experience/projects), only
+   **lists** it, or has **no evidence** (such skills are never used for tailoring). To change a
+   confirmed CV, click **Revise** (it creates a new draft) or upload a new version.
+
+The original file is stored under `storage/candidates/…` (Docker: the `appstorage` volume), never in
+Git. API: `/api/v1/candidate`, `/api/v1/candidate/skills`, `/api/v1/candidate/master-cv` (see
+http://localhost:8000/docs).
+
+## What Phase 2 delivers
+
+- **Profile**: strict schema (unknown keys and wrong types rejected with field paths), YAML
+  import/export with a private local override, versioned edits (conflicts detected), audit trail.
+- **Master CV**: validated uploads (type, magic bytes, size, ZIP bombs, macros), deterministic
+  DOCX/PDF parser for English and French CVs (sections, entries, dates with month/year precision,
+  current roles, skills, languages, certifications), review editor, immutable confirmed versions and
+  revisions, content-addressed storage.
+- **Skill evidence**: declared and CV skills classified as demonstrated / listed / no evidence, with
+  the CV excerpts that support them.
+
 ## What Phase 1 delivers
 
 - **Backend** (FastAPI, SQLAlchemy 2, Alembic, PostgreSQL): validated configuration with safe
@@ -162,7 +194,7 @@ prompts/     versioned LLM prompts (Phase 4+)
 candidate/   profile.yaml and the (git-ignored) master CV
 storage/     runtime files for native runs (git-ignored; Docker uses the `appstorage` volume)
 n8n/         optional n8n integration layer
-scripts/     setup, .env generation, OpenAPI export, tests.json update
+scripts/     setup, .env generation, OpenAPI export, tests.json update, E2E sample CV
 docker/      Dockerfiles
 docs/        architecture, implementation plan, security
 ```

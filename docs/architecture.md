@@ -83,7 +83,10 @@ backend/                 FastAPI app + all domain code (Python package `app`)
   app/db/                SQLAlchemy base/session, Alembic migrations
   app/models/            ORM models
   app/schemas/           Pydantic API schemas
-  app/services/          use-case services (health, runs, audit, diagnostics, …)
+  app/services/          use-case services (health, runs, audit, diagnostics, candidate
+                         profile, master CV, skills, …)
+  app/cv/                master CV: file validation, DOCX/PDF readers, deterministic parser,
+                         dates, section headings, skill evidence — Phase 2
   app/agents/            LLM-driven analysers (job analysis, visa, relevance, tailoring) — Phase 4+
   app/crawlers/          JobSource implementations — Phase 3/10
   app/ats/               ATS engine (Phase 5) and ATS form adapters (Phase 8)
@@ -99,7 +102,7 @@ crawler/                 Source configuration, company watchlist seed, mock job 
 prompts/                 Versioned LLM prompt templates
 candidate/               profile.yaml; master_cv/ (git-ignored)
 storage/                 Runtime files (git-ignored)
-scripts/                 setup, env generation, OpenAPI export, tests.json update
+scripts/                 setup, env generation, OpenAPI export, tests.json update, E2E sample CV
 docker/                  Dockerfiles
 n8n/                     optional n8n integration: README + exported workflows (no credentials)
 docs/                    architecture, implementation plan, security
@@ -231,22 +234,54 @@ erDiagram
 | `automation_runs` | run_type, trigger, status, started_at, finished_at, the six counters, error_count, errors, parameters, summary, task_id | **1** |
 | `automation_run_events` | run_id, level, stage, message, data | **1** |
 | `audit_logs` (append-only) | actor, action, entity_type, entity_id, request_id, details | **1** |
-| `candidates` | identity, work authorization, relocation, targets, application defaults, profile version | 2 |
-| `candidate_skills` | name, normalized_name, category, source (`MASTER_CV`/`PROFILE_DECLARED`), evidence refs, proficiency only if evidenced | 2 |
-| `experiences`, `educations`, `projects` | parsed from the master CV, with original text and ordering | 2 |
+| `candidates` | slug, validated `profile` JSONB (identity, contact, work authorization, relocation, targets, core skills, application defaults, CV policy), denormalised identity columns, `profile_version` | **2** |
+| `candidate_skills` | name, normalized_name (unique per candidate), category, sources (`MASTER_CV`/`PROFILE_DECLARED`), strength (`DEMONSTRATED`/`LISTED`/`NONE`), evidence excerpts, cv_version_id | **2** |
+| `experiences`, `educations`, `projects` | rebuilt from the confirmed master CV: position, title/employer/location (degree/institution, name), `date_text`, start/end date + precision (`YEAR`/`MONTH`), is_current, bullets, details, technologies | **2** |
 | `companies` (watchlist) | name, career_url, country, ats_type, board token, target_roles, enabled, last_checked_at | 3 |
 | `job_sources` | key, kind (ATS_API/FEED/CAREER_PAGE/BOARD), enabled, config, rate limit, compliance notes, last status | 3 |
 | `jobs` | spec fields (source, source_job_id, company, title, description, location, country, remote_status, employment_type, seniority, salary_*, posted_at, discovered_at, application_url, company_url, ats_type, visa_information, relocation_information, required/preferred skills, languages, education/experience requirements, responsibilities, raw_content, content_hash) + `posting_date_status`, `canonical_url`, `duplicate_of_id`, visa fields | 3 |
 | `job_skills` | name, normalized_name, category, importance (REQUIRED/PREFERRED), evidence_quote | 3–5 |
 | `job_analyses` *(addition)* | relevance JSON, recommendation, model, prompt version | 4 |
 | `applications` | spec §18 fields + candidate_id, approval metadata, blocked/manual reason | 3+ |
-| `cv_versions` | kind (MASTER/TAILORED), version, parent, structured content, file keys (docx/pdf), content_hash, template | 2, 5, 6 |
+| `cv_versions` | kind (`MASTER`/`TAILORED`), version (unique per candidate + kind), status (`PARSED`/`CONFIRMED`/`SUPERSEDED`; one active master via partial unique index), original filename, content type, size, sha256, storage key, extracted text, `structure` JSONB, parse warnings, parser version, revised_from_id, confirmed_at — generated files and templates in Phases 5–6 | **2**, 5, 6 |
 | `ats_analyses` | overall + component scores, matched/missing/unsupported keywords, recommendations, iteration, scoring_version | 5 |
 | `application_answers` | question, normalized key, answer, status (`DRAFT`/`NEEDS_USER_INPUT`/`APPROVED`), sources | 7 |
 | `browser_sessions` | adapter, status, step, screenshots, error, manual_action_required, encrypted storage state | 8 |
 | `notifications` | channel, status, subject, body, error, sent_at, run_id | 11 |
 
-### 8.1 Application lifecycle
+### 8.1 Candidate facts (Phase 2 — implemented)
+
+```mermaid
+flowchart LR
+    Y[profile.yaml + profile.local.yaml] -- first use / Import --> P[(candidates.profile)]
+    P -- Export YAML --> Y2[profile YAML]
+    U[Upload .docx/.pdf] --> V{validate: type, magic bytes, size, ZIP safety}
+    V -- reject --> E[error, nothing stored]
+    V --> S[(storage: candidates/id/master_cv/sha256.ext)]
+    V --> R[deterministic parser] --> D[PARSED draft]
+    D -- user edits --> D
+    D -- confirm --> C[CONFIRMED master CV]
+    C --> F[(experiences, educations, projects)]
+    C --> K[(candidate_skills + evidence)]
+    P -- core_skills --> K
+    C -- revise --> D2[new PARSED draft]
+```
+
+- **Profile**: the database is the live copy; YAML is the seed and the import/export format. Every
+  change bumps `profile_version` (a stale version is rejected with `409`) and is audited with the names
+  of the changed sections only. Required-but-empty fields are reported as `needs_user_input`.
+- **Master CV**: uploads are parsed synchronously within strict limits (5 MB by default, 10 pages,
+  3,000 lines). The parser only trims, splits and classifies text — a property test checks that every
+  parsed value is a substring of the document. Drafts carry warnings (missing dates, unrecognised
+  sections); confirmation requires complete entries (titles, degrees, names, end ≥ start).
+- **Fact base**: confirming rebuilds the fact tables and the skill evidence in the same transaction.
+  Later phases (ATS, tailoring, answers) read only the confirmed version.
+- **Skill evidence**: `DEMONSTRATED` when used in an experience or project, `LISTED` when only listed
+  (skills, summary, education, certifications), `NONE` when only declared in the profile — such skills
+  are never used for tailoring. Matching respects word boundaries and knows synonyms
+  (`k8s` → Kubernetes, "large language models" → LLMs, "vision par ordinateur" → Computer Vision).
+
+### 8.2 Application lifecycle
 
 An `Application` row is created per (candidate, job) once a job passes deduplication and the posting
 window; it then tracks the job through the whole pipeline.
@@ -382,7 +417,9 @@ through `BACKEND_INTERNAL_URL` at request time; interactive actions call the rou
 `/api/backend/[...path]`, which validates the path, forwards the request and injects the API bearer
 token server-side. API types are generated from the backend OpenAPI schema (`openapi-typescript`).
 Navigation shows later-phase pages as disabled with their phase number — no placeholder pages. A
-header badge always shows `MOCK MODE` and the `AUTO-SUBMIT` state.
+header badge always shows `MOCK MODE` and the `AUTO-SUBMIT` state. `/candidate` edits the profile
+(fields needing input are highlighted, YAML import/export, skill evidence) and `/cv` uploads, reviews,
+confirms and revises master CV versions; the proxy's body limit follows `MAX_UPLOAD_MB`.
 
 ## 16. Configuration
 
@@ -477,3 +514,11 @@ implemented natively, so stopping n8n loses only the optional extras.
 | 19 | uv installed from PyPI (pinned) in the backend image, not copied from `ghcr.io` | Builds work wherever PyPI is reachable, including restricted networks; same pinned version. |
 | 20 | Timestamps default to `clock_timestamp()` (actual insertion time), and event/audit tables carry an identity `sequence` | `now()` is the transaction start time, which made "newest first" ordering unstable for rows written in one transaction (caught by a test). The sequence gives a strict order and makes deleted audit rows detectable. |
 | 21 | Empty values in `.env` mean "unset" (`env_ignore_empty`) | A copied `.env.example` (`ENCRYPTION_KEY=`) must not fail validation or report an empty API key as configured. |
+| 22 | The database holds the live candidate profile; `profile.yaml` (+ git-ignored `profile.local.yaml`) is the seed and the import/export format | Docker mounts `candidate/` read-only, the UI must edit the profile, every change is versioned and audited, and several candidates can coexist. Imports and exports are explicit user actions. |
+| 23 | Deterministic CV parsing (python-docx, pdfplumber), no LLM, producing a draft the user confirms | Parsing personal data must be reproducible, offline and incapable of inventing facts; a property test enforces that every value comes from the document. LLM assistance may come later, only as suggestions the user confirms. |
+| 24 | Confirmed CV versions are immutable; "revise" copies one into a new draft; invalid uploads are rejected rather than stored as `FAILED` | Later phases must be able to cite exactly which facts they used. Rejecting bad files keeps storage free of unusable or unsafe documents. |
+| 25 | "One active master CV per candidate" is a partial unique index on `cv_versions (candidate_id) WHERE kind = 'MASTER' AND status = 'CONFIRMED'` | Enforced by PostgreSQL without a `candidates → cv_versions` foreign-key cycle; the active version is simply the confirmed one. |
+| 26 | CV files are stored under generated content-addressed keys (`candidates/{id}/master_cv/{sha256}.{ext}`) | Identical uploads share storage; the user's filename (possibly personal, possibly hostile) never becomes a path — it is kept only as sanitised metadata. |
+| 27 | Skill evidence is derived data (`DEMONSTRATED`/`LISTED`/`NONE`), rebuilt whenever the core skills or the active master CV change | Declared skills are not claims: only skills backed by the confirmed CV may be used for tailoring, and the evidence excerpt shows why. |
+| 28 | E2E tests that change data run only with `E2E_ALLOW_MUTATIONS=1` (set in CI) | Running the suite against a personal stack must never replace the user's master CV or profile. |
+| 29 | Response schemas mark defaulted fields as required (`json_schema_serialization_defaults_required`) | The API always returns them; the generated TypeScript types then match reality without optional chaining everywhere. |
