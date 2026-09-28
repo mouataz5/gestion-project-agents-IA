@@ -14,7 +14,9 @@ dev = [
     "mypy>=2.3",
     "pytest>=9.1",
     "pytest-cov>=7.1",
+    "reportlab>=5.0",
     "ruff>=0.16",
+    "types-pyyaml>=6.0",
 ]
 
 # ---------------------------------------------------------------------------
@@ -50,6 +52,8 @@ ignore = [
     "E501",   # line length is handled by Black
     "RUF012", # mutable class attributes are fine for SQLAlchemy/Pydantic declarations
 ]
+# The CV parser must recognise typographic characters found in real documents.
+allowed-confusables = ["–", "—", "‒", "’", "⁃", "：", "\u00a0"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["S101", "S105", "S106", "S108", "S311"]

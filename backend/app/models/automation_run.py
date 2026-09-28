@@ -96,6 +96,9 @@ class AutomationRun(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         default=dict, server_default=text("'{}'::jsonb")
     )
     task_id: Mapped[str | None] = mapped_column(String(255))
+    candidate_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("candidates.id", ondelete="SET NULL"), index=True
+    )
 
     events: Mapped[list[RunEvent]] = relationship(
         back_populates="run",

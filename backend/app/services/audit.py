@@ -19,6 +19,13 @@ class AuditAction(StrEnum):
     RUN_ENQUEUE_FAILED = "run.enqueue_failed"
     RUN_STARTED = "run.started"
     RUN_FINISHED = "run.finished"
+    CANDIDATE_IMPORTED = "candidate.imported"
+    CANDIDATE_PROFILE_UPDATED = "candidate.profile_updated"
+    CANDIDATE_EXPORTED = "candidate.exported"
+    CV_UPLOADED = "cv.uploaded"
+    CV_STRUCTURE_UPDATED = "cv.structure_updated"
+    CV_CONFIRMED = "cv.confirmed"
+    CV_REVISED = "cv.revised"
 
 
 class Actor(StrEnum):

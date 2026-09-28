@@ -29,6 +29,7 @@ class Base(DeclarativeBase):
     type_annotation_map = {
         dict[str, Any]: JSONType,
         list[dict[str, Any]]: JSONType,
+        list[str]: JSONType,
         datetime: DateTime(timezone=True),
         uuid.UUID: Uuid(),
     }

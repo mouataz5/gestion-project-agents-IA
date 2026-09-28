@@ -88,6 +88,7 @@ class Settings(BaseSettings):
     storage_dir: Path = REPO_ROOT / "storage"
     candidate_dir: Path = REPO_ROOT / "candidate"
     prompts_dir: Path = REPO_ROOT / "prompts"
+    max_upload_mb: int = Field(default=5, ge=1, le=50)
 
     # --- Security ------------------------------------------------------------------
     encryption_key: SecretStr | None = None
@@ -211,6 +212,10 @@ class Settings(BaseSettings):
         return self.api_auth_token is not None
 
     @property
+    def max_upload_bytes(self) -> int:
+        return self.max_upload_mb * 1024 * 1024
+
+    @property
     def database_dsn(self) -> str:
         return self.database_url.get_secret_value()
 
@@ -276,6 +281,7 @@ class Settings(BaseSettings):
             "llm_model": self.llm_model,
             "notification_channels": list(self.notification_channels),
             "storage_backend": "local",
+            "max_upload_mb": self.max_upload_mb,
             "secrets_configured": {name: getattr(self, name) is not None for name in SECRET_FIELDS},
         }
 

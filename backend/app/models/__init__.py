@@ -10,12 +10,32 @@ from app.models.automation_run import (
     RunTrigger,
     RunType,
 )
+from app.models.candidate import DEFAULT_CANDIDATE_SLUG, Candidate, CandidateSkill
+from app.models.cv import (
+    CvKind,
+    CvStatus,
+    CvVersion,
+    DatePrecision,
+    Education,
+    Experience,
+    Project,
+)
 
 __all__ = [
+    "DEFAULT_CANDIDATE_SLUG",
     "RUN_COUNTERS",
     "AuditLog",
     "AutomationRun",
+    "Candidate",
+    "CandidateSkill",
+    "CvKind",
+    "CvStatus",
+    "CvVersion",
+    "DatePrecision",
+    "Education",
     "EventLevel",
+    "Experience",
+    "Project",
     "RunEvent",
     "RunStatus",
     "RunTrigger",
