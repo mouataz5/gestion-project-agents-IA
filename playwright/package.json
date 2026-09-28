@@ -1,0 +1,13 @@
+{
+  "name": "job-agent-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "description": "End-to-end browser tests for the job agent dashboard",
+  "scripts": {
+    "test": "playwright test",
+    "install-browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

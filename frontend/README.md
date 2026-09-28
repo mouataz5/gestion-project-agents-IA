@@ -12,11 +12,11 @@ Next.js 16 (App Router, TypeScript, Tailwind CSS 4) dashboard for the job agent.
 - **API types** are generated from the backend OpenAPI schema: `make openapi`
   (→ `src/lib/api/openapi.json` → `src/lib/api/schema.d.ts`).
 
-| Variable | Default | Purpose |
-|---|---|---|
+| Variable               | Default                 | Purpose                                          |
+| ---------------------- | ----------------------- | ------------------------------------------------ |
 | `BACKEND_INTERNAL_URL` | `http://localhost:8000` | Backend base URL as seen from the Next.js server |
-| `API_AUTH_TOKEN` | — | Bearer token for the backend (server-side only) |
-| `API_PREFIX` | `/api/v1` | Backend API prefix |
+| `API_AUTH_TOKEN`       | —                       | Bearer token for the backend (server-side only)  |
+| `API_PREFIX`           | `/api/v1`               | Backend API prefix                               |
 
 ## Commands
 

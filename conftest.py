@@ -45,6 +45,29 @@ DEFAULT_TEST_DATABASE_URL = "postgresql+psycopg://jobagent:jobagent@localhost:54
 DEFAULT_TEST_REDIS_URL = "redis://localhost:6379/15"
 
 
+def _dotenv_value(key: str) -> str | None:
+    """Read one value from the repository `.env` (used only to locate the test database)."""
+    env_file = Path(__file__).resolve().parent / ".env"
+    if not env_file.exists():
+        return None
+    for line in env_file.read_text(encoding="utf-8").splitlines():
+        if line.startswith(f"{key}="):
+            return line.split("=", 1)[1].strip().strip('"') or None
+    return None
+
+
+def _admin_database_url() -> str:
+    """TEST_DATABASE_URL, else DATABASE_URL from `.env` (as created by `make env`), else default.
+
+    Tests never touch that database's data: they create and drop their own temporary databases.
+    """
+    return (
+        os.environ.get("TEST_DATABASE_URL")
+        or _dotenv_value("DATABASE_URL")
+        or DEFAULT_TEST_DATABASE_URL
+    )
+
+
 def _integration_required() -> bool:
     truthy = {"1", "true", "yes"}
     return (
@@ -196,7 +219,7 @@ def anonymous_client(unit_app: FastAPI) -> Iterator[TestClient]:
 # ---------------------------------------------------------------------------
 @contextmanager
 def _temporary_database(migrate: bool) -> Iterator[str]:
-    admin_url = make_url(os.environ.get("TEST_DATABASE_URL", DEFAULT_TEST_DATABASE_URL))
+    admin_url = make_url(_admin_database_url())
     name = f"jobagent_test_{uuid.uuid4().hex[:12]}"
     admin_engine = create_engine(
         admin_url.set(database="postgres"),

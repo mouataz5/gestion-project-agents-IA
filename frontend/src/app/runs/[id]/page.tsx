@@ -110,11 +110,13 @@ export default async function RunDetailPage(props: PageProps<"/runs/[id]">) {
           ) : (
             <ol className="space-y-3" data-testid="run-events">
               {run.events.map((event) => (
-                <li key={event.id} className="flex gap-3 text-sm">
+                <li key={event.id} className="flex items-start gap-3 text-sm">
                   <span className="w-40 shrink-0 font-mono text-xs text-slate-500 dark:text-slate-400">
                     {formatDateTime(event.created_at, timeZone)}
                   </span>
-                  <StatusBadge status={event.level} />
+                  <span className="shrink-0">
+                    <StatusBadge status={event.level} />
+                  </span>
                   <div className="min-w-0">
                     <p className="font-medium">{event.message}</p>
                     <p className="font-mono text-xs text-slate-500 dark:text-slate-400">

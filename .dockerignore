@@ -21,3 +21,5 @@ docs
 .artifacts
 **/node_modules
 *.log
+backend/tests
+workers/tests

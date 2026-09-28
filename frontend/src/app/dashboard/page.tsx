@@ -74,7 +74,7 @@ export default async function DashboardPage() {
               [
                 "Mode",
                 info.mock_mode ? (
-                  <Badge tone="warning">Mock — fake jobs, mock ATS only</Badge>
+                  <Badge tone="warning">Mock · no real sites</Badge>
                 ) : (
                   <Badge tone="danger">Live — real job sites</Badge>
                 ),

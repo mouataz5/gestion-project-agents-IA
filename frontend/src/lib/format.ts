@@ -19,8 +19,18 @@ export function statusTone(status: string): Tone {
   return TONES[status.toLowerCase()] ?? "neutral";
 }
 
+const ACRONYMS: Record<string, string> = {
+  api: "API",
+  ats: "ATS",
+  cv: "CV",
+  id: "ID",
+  llm: "LLM",
+  url: "URL",
+};
+
 export function humanize(value: string): string {
-  const text = value.replace(/[._]+/g, " ").trim().toLowerCase();
+  const words = value.replace(/[._]+/g, " ").trim().toLowerCase().split(/\s+/);
+  const text = words.map((word) => ACRONYMS[word] ?? word).join(" ");
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 

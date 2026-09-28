@@ -54,6 +54,8 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
+        # `KEY=` (empty) means "not set": use the default instead of an empty string.
+        env_ignore_empty=True,
     )
 
     # --- Application ---------------------------------------------------------

@@ -23,7 +23,7 @@ DEFAULT_OUTPUT = REPO_ROOT / "frontend" / "src" / "lib" / "api" / "openapi.json"
 def main() -> None:
     output = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else DEFAULT_OUTPUT
     # No .env: the schema must not depend on local configuration.
-    settings = Settings(_env_file=None, log_level="WARNING")  # type: ignore[call-arg]
+    settings = Settings(_env_file=None, log_level="WARNING")
     schema = create_app(settings).openapi()
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(schema, indent=2, sort_keys=True) + "\n", encoding="utf-8")

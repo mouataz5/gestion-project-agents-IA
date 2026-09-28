@@ -171,6 +171,27 @@ def test_security_warnings_flag_risky_configuration() -> None:
     assert "DATABASE_URL" in warnings  # default password
 
 
+def test_empty_values_are_treated_as_unset(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ENCRYPTION_KEY", "")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "")
+    monkeypatch.setenv("SMTP_HOST", "")
+
+    settings = _settings()
+
+    assert settings.encryption_key is None
+    assert settings.anthropic_api_key is None
+    assert settings.smtp_host is None
+    assert settings.safe_summary()["secrets_configured"]["anthropic_api_key"] is False
+
+
+def test_env_example_itself_is_a_valid_configuration() -> None:
+    settings = Settings(_env_file=REPO_ROOT / ".env.example")  # type: ignore[call-arg]
+
+    assert settings.mock_mode is True
+    assert settings.auto_submit is False
+    assert settings.encryption_key is None  # left empty in the template
+
+
 def test_env_example_documents_every_setting() -> None:
     env_example = (REPO_ROOT / ".env.example").read_text(encoding="utf-8")
     documented = set(re.findall(r"^#?\s*([A-Z][A-Z0-9_]*)=", env_example, flags=re.MULTILINE))

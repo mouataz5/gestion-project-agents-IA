@@ -67,4 +67,10 @@ describe("humanize", () => {
     expect(humanize("diagnostic.database")).toBe("Diagnostic database");
     expect(humanize("ok")).toBe("Ok");
   });
+
+  it("keeps well-known acronyms upper case", () => {
+    expect(humanize("API")).toBe("API");
+    expect(humanize("CV_GENERATION")).toBe("CV generation");
+    expect(humanize("ats_score")).toBe("ATS score");
+  });
 });

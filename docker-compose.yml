@@ -1,0 +1,155 @@
+# AI Job Application Agent — full local stack.
+#
+#   make env      # once: create .env with generated secrets
+#   make up       # build and start everything
+#   make n8n      # optional: start n8n (free, self-hosted) as well
+#
+# All ports are bound to 127.0.0.1 only. Configuration comes from .env.
+
+name: job-agent
+
+x-backend-image: &backend-image
+  image: job-agent-backend:local
+  build:
+    context: .
+    dockerfile: docker/backend.Dockerfile
+
+x-backend-env: &backend-env
+  env_file: .env
+  environment:
+    # In-network addresses override the localhost values used for native development.
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-jobagent}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-jobagent}
+    REDIS_URL: redis://redis:6379/0
+    # Safety switches: a shell value (e.g. `make mock`) wins over .env; default is the safe value.
+    MOCK_MODE: ${MOCK_MODE:-true}
+    AUTO_SUBMIT: ${AUTO_SUBMIT:-false}
+    STORAGE_DIR: /app/storage
+    CANDIDATE_DIR: /app/candidate
+    PROMPTS_DIR: /app/prompts
+
+x-backend-deps: &backend-deps
+  postgres:
+    condition: service_healthy
+  redis:
+    condition: service_healthy
+  migrate:
+    condition: service_completed_successfully
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jobagent}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-jobagent}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  migrate:
+    <<: [*backend-image, *backend-env]
+    command: ["alembic", "-c", "backend/alembic.ini", "upgrade", "head"]
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      disable: true
+
+  backend:
+    <<: [*backend-image, *backend-env]
+    restart: unless-stopped
+    depends_on: *backend-deps
+    volumes:
+      - appstorage:/app/storage
+      - ./candidate:/app/candidate:ro
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
+
+  worker:
+    <<: [*backend-image, *backend-env]
+    restart: unless-stopped
+    command:
+      - celery
+      - -A
+      - job_agent_workers.celery_app:celery_app
+      - worker
+      - --loglevel=INFO
+      - --concurrency=2
+      - --queues=default
+    depends_on: *backend-deps
+    volumes:
+      - appstorage:/app/storage
+      - ./candidate:/app/candidate:ro
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A job_agent_workers.celery_app:celery_app inspect ping -d celery@$$HOSTNAME --timeout 5 || exit 1"]
+      interval: 30s
+      timeout: 15s
+      start_period: 20s
+      retries: 3
+
+  frontend:
+    image: job-agent-frontend:local
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend.Dockerfile
+    restart: unless-stopped
+    environment:
+      BACKEND_INTERNAL_URL: http://backend:8000
+      API_AUTH_TOKEN: ${API_AUTH_TOKEN:-}
+      API_PREFIX: ${API_PREFIX:-/api/v1}
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
+
+  # Optional integration layer: n8n Community Edition (free, self-hosted). Start with `make n8n`.
+  n8n:
+    image: n8nio/n8n:2.40.7
+    profiles: ["n8n"]
+    restart: unless-stopped
+    environment:
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:?set N8N_ENCRYPTION_KEY in .env}
+      GENERIC_TIMEZONE: ${TIMEZONE:-Africa/Tunis}
+      TZ: ${TIMEZONE:-Africa/Tunis}
+      N8N_HOST: localhost
+      N8N_PORT: "5678"
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:${N8N_PORT:-5678}/
+      N8N_SECURE_COOKIE: "false"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_PERSONALIZATION_ENABLED: "false"
+    volumes:
+      - n8ndata:/home/node/.n8n
+    ports:
+      - "127.0.0.1:${N8N_PORT:-5678}:5678"
+
+volumes:
+  pgdata:
+  redisdata:
+  # Generated files (CVs, reports, screenshots). A named volume keeps permissions correct for the
+  # non-root containers; copy files out with: docker compose cp backend:/app/storage ./export
+  appstorage:
+  n8ndata:

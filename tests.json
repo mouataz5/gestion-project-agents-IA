@@ -1,14 +1,1412 @@
 {
   "description": "Test tracking. 'tests' is regenerated from real test runs by scripts/update_tests_json.py (make tests-json); 'planned' lists tests to write before implementing later phases and is maintained by hand.",
-  "generated_at": null,
+  "generated_at": "2026-09-28T11:45:16+00:00",
   "summary": {
-    "total": 0,
-    "passed": 0,
+    "total": 231,
+    "passed": 231,
     "failed": 0,
     "skipped": 0,
-    "planned": 80
+    "planned": 80,
+    "by_suite": {
+      "backend": 165,
+      "e2e": 5,
+      "frontend": 53,
+      "workers": 8
+    }
   },
-  "tests": [],
+  "tests": [
+    {
+      "test": "backend/tests/api/test_auth.py::test_auth_is_disabled_when_no_token_is_configured",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_auth.py::test_bearer_scheme_is_case_insensitive",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_auth.py::test_health_endpoints_are_public",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_auth.py::test_invalid_credentials_are_rejected[Basic dXNlcjpwYXNz]",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_auth.py::test_invalid_credentials_are_rejected[Bearer ]",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_auth.py::test_invalid_credentials_are_rejected[Bearer wrong-token]",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_auth.py::test_invalid_credentials_are_rejected[Bearer]",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_auth.py::test_invalid_credentials_are_rejected[test-api-token]",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_auth.py::test_protected_endpoint_requires_a_token",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_auth.py::test_valid_token_is_accepted",
+      "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_audit.py::test_audit_log_api_lists_newest_first_and_filters",
+      "feature": "audit-log",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_audit.py::test_entries_are_redacted_and_carry_the_request_id",
+      "feature": "audit-log",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_errors_turn_a_finished_run_into_partial_success",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_event_data_and_error_messages_are_redacted",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_events_keep_insertion_order",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_finishing_twice_is_a_conflict",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_invalid_counter_updates_are_rejected",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_recorder_completes_a_run",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_recorder_marks_the_run_failed_when_the_body_raises",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_recorder_rejects_unknown_runs",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_recorder_respects_an_explicit_final_status",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_run_service.py::test_run_lifecycle_counters_and_timing",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_runs_api.py::test_listing_runs_paginates_and_filters",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_runs_api.py::test_malformed_run_id_returns_422",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_runs_api.py::test_queue_outage_marks_the_run_failed",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_runs_api.py::test_runs_require_authentication",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_runs_api.py::test_starting_a_diagnostic_run_enqueues_the_worker_task",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_runs_api.py::test_starting_a_run_is_audited",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_runs_api.py::test_unknown_run_returns_404",
+      "feature": "automation-runs",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_broker_defaults_to_redis_and_result_backend_is_opt_in",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_defaults_are_safe_and_match_the_specification",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_empty_values_are_treated_as_unset",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_env_example_documents_every_setting",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_env_example_itself_is_a_valid_configuration",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_env_file_is_loaded",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_environment_variables_override_defaults",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_encryption_key_is_rejected",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_values_are_rejected[api_prefix-/api/v1/]",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_values_are_rejected[api_prefix-api/v1]",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_values_are_rejected[ats_max_iterations-0]",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_values_are_rejected[ats_target_score-101]",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_values_are_rejected[daily_run_time-25:00]",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_values_are_rejected[daily_run_time-8am]",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_values_are_rejected[job_lookback_hours-0]",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_values_are_rejected[notification_channels-email,pigeon]",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_invalid_values_are_rejected[timezone-Mars/Olympus_Mons]",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_list_settings_also_accept_json",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_production_accepts_a_complete_configuration",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_production_rejects_short_api_token",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_production_requires_security_settings",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_relative_paths_are_resolved_against_the_repository_root",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_safe_summary_never_exposes_secret_values",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_security_warnings_flag_risky_configuration",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_config.py::test_valid_encryption_key_is_accepted",
+      "feature": "configuration",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_migrations.py::test_audit_log_is_append_only",
+      "feature": "database-migrations",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_migrations.py::test_check_constraints_reject_unknown_enum_values",
+      "feature": "database-migrations",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_migrations.py::test_downgrade_and_upgrade_roundtrip",
+      "feature": "database-migrations",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_migrations.py::test_models_and_migrations_are_in_sync",
+      "feature": "database-migrations",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_migrations.py::test_there_is_a_single_head_revision",
+      "feature": "database-migrations",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_migrations.py::test_upgrade_creates_the_foundation_tables",
+      "feature": "database-migrations",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_security.py::test_decrypting_with_another_key_fails",
+      "feature": "encryption",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_security.py::test_encrypt_decrypt_roundtrip",
+      "feature": "encryption",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_security.py::test_from_settings_requires_a_configured_key",
+      "feature": "encryption",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_security.py::test_generated_api_tokens_are_long_and_unique",
+      "feature": "encryption",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_security.py::test_invalid_key_is_rejected",
+      "feature": "encryption",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_security.py::test_tampered_ciphertext_is_rejected",
+      "feature": "encryption",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_security.py::test_tokens_match_uses_exact_comparison",
+      "feature": "encryption",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_error_handling.py::test_domain_errors_map_to_their_status_code",
+      "feature": "error-handling",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_error_handling.py::test_method_not_allowed_uses_the_error_envelope",
+      "feature": "error-handling",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_error_handling.py::test_unhandled_exceptions_return_a_generic_500",
+      "feature": "error-handling",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_error_handling.py::test_unknown_routes_use_the_error_envelope",
+      "feature": "error-handling",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_error_handling.py::test_validation_errors_use_the_error_envelope",
+      "feature": "error-handling",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_error_tracking.py::test_capture_exception_logs_a_redacted_event",
+      "feature": "error-tracking",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_error_tracking.py::test_capture_message",
+      "feature": "error-tracking",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_error_tracking.py::test_factory_returns_the_configured_tracker",
+      "feature": "error-tracking",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_health_public.py::test_liveness",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_health_public.py::test_public_readiness_never_exposes_failure_details",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_health_public.py::test_readiness_is_503_when_the_database_is_unreachable",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_health_public.py::test_root_describes_the_service",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_health_api.py::test_readiness_detects_a_database_without_migrations",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_health_api.py::test_readiness_is_503_when_redis_is_down",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_health_api.py::test_readiness_is_ok_when_all_dependencies_are_up",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_health_service.py::test_aggregate_is_degraded_when_only_optional_components_fail",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_health_service.py::test_aggregate_is_down_when_a_critical_component_is_down",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_health_service.py::test_aggregate_is_ok_when_everything_is_ok",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_health_service.py::test_run_check_honours_explicit_degraded_status",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_health_service.py::test_run_check_reports_success_with_latency",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_health_service.py::test_run_check_turns_exceptions_into_redacted_down_status",
+      "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_deeply_nested_structures_are_truncated_safely",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_non_sensitive_keys_are_kept[author]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_non_sensitive_keys_are_kept[input_tokens]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_non_sensitive_keys_are_kept[job_id]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_non_sensitive_keys_are_kept[keyword]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_non_sensitive_keys_are_kept[status]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_non_sensitive_keys_are_kept[storage_key]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_non_sensitive_keys_are_kept[tokenizer]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_non_sensitive_text_is_unchanged",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_non_string_keys_and_scalars_are_preserved",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_secret_values_are_redacted_in_free_text[Authorization: Bearer abcdef1234567890-abcdef1234567890]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_secret_values_are_redacted_in_free_text[GET /callback?token=abc123&page=2-abc123]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_secret_values_are_redacted_in_free_text[bot 123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsawQ-AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsawQ]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_secret_values_are_redacted_in_free_text[github ghp_abcdefghijklmnopqrstuvwxyz0123456789-ghp_abcdefghijklmnopqrstuvwxyz0123456789]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_secret_values_are_redacted_in_free_text[jwt eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U-eyJzdWIiOiIxMjM0NTY3ODkwIn0]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_secret_values_are_redacted_in_free_text[key sk-ant-api03-AbCdEf0123456789xyz used-sk-ant-api03-AbCdEf0123456789xyz]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_secret_values_are_redacted_in_free_text[password=hunter2 user=bob-hunter2]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_secret_values_are_redacted_in_free_text[postgresql+psycopg://jobagent:s3cr3tpass@db:5432/app-s3cr3tpass]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[Authorization]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[DB_PASSWORD]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[api_key]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[apikey]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[client_secret]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[cookie]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[credentials]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[database_dsn]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[passwd]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[password]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[private_key]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[refresh_token]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_key_detection[x-api-key]",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_sensitive_keys_are_redacted_recursively_without_mutating_input",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_strings_inside_structures_are_scanned",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_redaction.py::test_url_redaction_keeps_user_and_host",
+      "feature": "log-redaction",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_request_context.py::test_access_log_records_requests_without_credentials",
+      "feature": "request-context",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_request_context.py::test_error_bodies_carry_the_request_id",
+      "feature": "request-context",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_request_context.py::test_invalid_incoming_request_id_is_replaced[<script>]",
+      "feature": "request-context",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_request_context.py::test_invalid_incoming_request_id_is_replaced[has spaces]",
+      "feature": "request-context",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_request_context.py::test_invalid_incoming_request_id_is_replaced[semi;colon]",
+      "feature": "request-context",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_request_context.py::test_invalid_incoming_request_id_is_replaced[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]",
+      "feature": "request-context",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_request_context.py::test_request_id_is_generated",
+      "feature": "request-context",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_request_context.py::test_valid_incoming_request_id_is_propagated",
+      "feature": "request-context",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_generate_env.py::test_existing_env_is_never_overwritten_without_force",
+      "feature": "setup-scripts",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_generate_env.py::test_generated_env_contains_strong_unique_secrets",
+      "feature": "setup-scripts",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_generate_env.py::test_generated_env_is_accepted_by_the_application_settings",
+      "feature": "setup-scripts",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_health_check_leaves_no_files",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_list_and_delete",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_missing_object_raises",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_overwrite_replaces_content_and_leaves_no_temp_files",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_put_and_get_roundtrip",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_symlink_escape_is_rejected",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_unsafe_keys_are_rejected[../escape.txt]",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_unsafe_keys_are_rejected[.]",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_unsafe_keys_are_rejected[/etc/passwd]",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_unsafe_keys_are_rejected[C:\\\\windows\\\\x]",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_unsafe_keys_are_rejected[]",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_unsafe_keys_are_rejected[a/../../b]",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_unsafe_keys_are_rejected[a/./../../c]",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_storage.py::test_unsafe_keys_are_rejected[a\\x00b]",
+      "feature": "storage",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_logging.py::test_configure_logging_is_idempotent",
+      "feature": "structured-logging",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_logging.py::test_console_format_is_human_readable",
+      "feature": "structured-logging",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_logging.py::test_exception_messages_are_redacted",
+      "feature": "structured-logging",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_logging.py::test_json_logs_contain_standard_fields",
+      "feature": "structured-logging",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_logging.py::test_log_level_filters_lower_levels",
+      "feature": "structured-logging",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_logging.py::test_secrets_never_reach_log_output",
+      "feature": "structured-logging",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_logging.py::test_stdlib_loggers_are_rendered_and_redacted",
+      "feature": "structured-logging",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_system_info.py::test_system_info_lists_the_roadmap",
+      "feature": "system-info",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_system_info.py::test_system_info_reports_secrets_only_as_booleans",
+      "feature": "system-info",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_system_info.py::test_system_info_reports_the_safe_configuration",
+      "feature": "system-info",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/api/test_system_info.py::test_system_info_surfaces_security_warnings",
+      "feature": "system-info",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_system_status.py::test_status_is_degraded_without_workers",
+      "feature": "system-info",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_system_status.py::test_status_is_ok_with_a_responding_worker",
+      "feature": "system-info",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_system_status.py::test_status_reports_an_unreachable_queue",
+      "feature": "system-info",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_queue.py::test_celery_is_configured_for_safe_serialization",
+      "feature": "task-queue",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_queue.py::test_celery_reliability_settings",
+      "feature": "task-queue",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_queue.py::test_enqueue_fails_fast_when_broker_is_down",
+      "feature": "task-queue",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_queue.py::test_worker_ping_raises_queue_unavailable_when_broker_is_down",
+      "feature": "task-queue",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "dashboard.spec.ts > dashboard foundation > lists runs and filters them by status",
+      "feature": "e2e-dashboard",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+    },
+    {
+      "test": "dashboard.spec.ts > dashboard foundation > runs a system diagnostic end to end",
+      "feature": "e2e-dashboard",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+    },
+    {
+      "test": "dashboard.spec.ts > dashboard foundation > settings report secrets without revealing them",
+      "feature": "e2e-dashboard",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+    },
+    {
+      "test": "dashboard.spec.ts > dashboard foundation > shows later-phase pages as disabled",
+      "feature": "e2e-dashboard",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+    },
+    {
+      "test": "dashboard.spec.ts > dashboard foundation > shows the safety state and healthy components",
+      "feature": "e2e-dashboard",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-09-28T11:43:30.533338+00:00"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatDateTime formats ISO timestamps in the requested time zone",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatDateTime handles missing and invalid values",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatDuration formats 0.0421 seconds as 42 ms",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatDuration formats 125 seconds as 2 min 5 s",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatDuration formats 3725 seconds as 1 h 2 min",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatDuration formats 5.26 seconds as 5.3 s",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatDuration formats null seconds as \u2014",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatDuration formats undefined seconds as \u2014",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatRelative describes 2026-09-25T12:00:00Z as 3 d ago",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatRelative describes 2026-09-28T09:00:00Z as 3 h ago",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatRelative describes 2026-09-28T11:45:00Z as 15 min ago",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatRelative describes 2026-09-28T11:59:30Z as 30 s ago",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatRelative describes 2026-09-28T11:59:58Z as just now",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::formatRelative describes 2026-09-28T12:10:00Z as in 10 min",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::humanize keeps well-known acronyms upper case",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::humanize turns enum-like values into readable labels",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps CANCELLED to neutral",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps ERROR to danger",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps FAILED to danger",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps PARTIAL_SUCCESS to warning",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps PENDING to info",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps RUNNING to info",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps SUCCEEDED to success",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps WARNING to warning",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps degraded to warning",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps down to danger",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps ok to success",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/format.test.ts::statusTone maps something-else to neutral",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/nav.test.ts::navigation derives implemented phases from the roadmap",
+      "feature": "frontend-nav",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/nav.test.ts::navigation enables only pages whose phase is implemented",
+      "feature": "frontend-nav",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/nav.test.ts::navigation falls back to the foundation phase when the roadmap is unavailable",
+      "feature": "frontend-nav",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/nav.test.ts::navigation isActivePath(/dashboard, /runs) is false",
+      "feature": "frontend-nav",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/nav.test.ts::navigation isActivePath(/runs, /runs) is true",
+      "feature": "frontend-nav",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/nav.test.ts::navigation isActivePath(/runs-archive, /runs) is false",
+      "feature": "frontend-nav",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/nav.test.ts::navigation isActivePath(/runs/3f2a, /runs) is true",
+      "feature": "frontend-nav",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/nav.test.ts::navigation lists every dashboard page from the specification in order",
+      "feature": "frontend-nav",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl maps path segments under the API prefix",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl preserves the query string",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects a non-http backend URL",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments [\"\"]",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments [\".\"]",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments [\"..\"]",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments [\"<script>\"]",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments [\"a\\\\b\"]",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments [\"http:\",\"\",\"evil.test\"]",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments [\"runs\",\"%2e%2e\"]",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments [\"runs\",\"..\"]",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments [\"runs/../../admin\"]",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl rejects unsafe segments []",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::buildBackendUrl tolerates a trailing slash on the base URL",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::forwarded headers forwards only allow-listed request headers and injects the API token",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::forwarded headers never forwards browser credentials when no server token is configured",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/proxy.test.ts::forwarded headers returns only safe response headers",
+      "feature": "frontend-proxy",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_system_tasks.py::test_api_to_worker_end_to_end",
+      "feature": "system-diagnostics",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_system_tasks.py::test_diagnostic_run_succeeds_and_is_fully_recorded",
+      "feature": "system-diagnostics",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_system_tasks.py::test_failed_checks_are_recorded_without_crashing",
+      "feature": "system-diagnostics",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_system_tasks.py::test_ping_returns_pong",
+      "feature": "system-diagnostics",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_system_tasks.py::test_task_failures_are_reported_to_the_error_tracker",
+      "feature": "system-diagnostics",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_celery_app.py::test_application_owns_logging_configuration",
+      "feature": "task-queue",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_celery_app.py::test_system_tasks_are_registered",
+      "feature": "task-queue",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_celery_app.py::test_worker_uses_the_shared_safe_configuration",
+      "feature": "task-queue",
+      "suite": "workers",
+      "status": "passed"
+    }
+  ],
   "planned": [
     {
       "phase": 2,

@@ -8,7 +8,7 @@ candidate's behalf. Security and compliance are therefore design constraints, no
 
 | Asset | Where it lives | Protection |
 |---|---|---|
-| Master CV, tailored CVs, cover letters | `candidate/master_cv/`, `storage/` | Git-ignored; served only through the authenticated API; host disk encryption recommended |
+| Master CV, tailored CVs, cover letters | `candidate/master_cv/`, `storage/` (native) or the `appstorage` Docker volume | Git-ignored; served only through the authenticated API; `candidate/` is mounted read-only into containers; host disk encryption recommended |
 | Candidate profile | `candidate/profile.yaml`, database | Contains no contact details; private overrides in git-ignored `profile.local.yaml` |
 | API keys & passwords | `.env` (git-ignored) | `SecretStr` in config, redacted everywhere, never sent to the browser |
 | API bearer token | `.env` → backend + Next.js server | Constant-time comparison; injected server-side by the Next.js proxy |
