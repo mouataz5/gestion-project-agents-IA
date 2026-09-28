@@ -1,0 +1,103 @@
+# Candidate profile — structured preferences and constraints.
+#
+# Rules:
+#   * The MASTER CV (candidate/master_cv/) is the single source of truth for
+#     experience, skills, proficiency, dates, employers, education and metrics.
+#     This file only records identity, preferences and constraints.
+#   * Never invent values. Unknown values stay `null`; the application answer
+#     engine (Phase 7) reports them as NEEDS_USER_INPUT instead of guessing.
+#   * Personal contact details (email, phone, address) belong in the master CV
+#     or in a git-ignored `candidate/profile.local.yaml` override, not here.
+#   * Schema validation, DB sync and UI editing arrive in Phase 2.
+
+schema_version: 1
+
+identity:
+  full_name: Mouataz Bouazizi
+  headline: AI Engineer / GenAI Engineer
+  nationality: Tunisian
+  location:
+    city: Tunis
+    country: Tunisia
+    country_code: TN
+
+work_authorization:
+  # Visa sponsorship is required wherever a work permit is needed for a
+  # Tunisian national. The visa engine (Phase 4) never assumes sponsorship
+  # from relocation support alone.
+  visa_sponsorship_required: true
+  sponsorship_required_when: work_permit_needed
+  current_work_authorizations:
+    - country_code: TN
+      status: citizen
+
+relocation:
+  willing_to_relocate: true
+
+targets:
+  roles:
+    - AI Engineer
+    - GenAI Engineer
+    - LLM Engineer
+    - Agentic AI Engineer
+    - RAG Engineer
+    - Machine Learning Engineer
+    - Data Scientist
+    - Computer Vision Engineer
+    - MLOps Engineer
+    - AI Research Engineer
+  countries:
+    primary:
+      - { name: France, code: FR }
+      - { name: Germany, code: DE }
+      - { name: Netherlands, code: NL }
+      - { name: Belgium, code: BE }
+      - { name: Luxembourg, code: LU }
+      - { name: Australia, code: AU }
+      - { name: Saudi Arabia, code: SA }
+      - { name: United Arab Emirates, code: AE }
+      - { name: Qatar, code: QA }
+    secondary:
+      - { name: Sweden, code: SE }
+      - { name: Denmark, code: DK }
+      - { name: Ireland, code: IE }
+      - { name: Austria, code: AT }
+      - { name: Finland, code: FI }
+      - { name: Norway, code: "NO" }
+      - { name: Switzerland, code: CH }
+
+# Declared core skills. These are NOT proficiency claims: every skill used in
+# a tailored CV must be backed by evidence in the master CV.
+core_skills:
+  - Python
+  - Machine Learning
+  - Deep Learning
+  - LLMs
+  - RAG
+  - Agentic AI
+  - Multi-agent systems
+  - LangGraph
+  - MCP
+  - FastAPI
+  - Docker
+  - Kubernetes
+  - Vector databases
+  - MLOps
+  - NLP
+  - Computer Vision
+  - Azure
+  - GCP
+  - Spark
+  - Time-series analysis
+
+# Values the answer engine needs but that were not provided yet. `null` means
+# "unknown": the system must ask the user rather than guess.
+application_defaults:
+  notice_period: null
+  salary_expectations: null
+  earliest_start_date: null
+  languages: null            # e.g. [{language: Arabic, level: native}] — to be confirmed by the user
+  preferred_work_modes: null # e.g. [onsite, hybrid, remote]
+
+cv_policy:
+  allow_title_changes: false # job titles are never changed unless explicitly enabled by the user

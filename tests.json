@@ -1,0 +1,494 @@
+{
+  "description": "Test tracking. 'tests' is regenerated from real test runs by scripts/update_tests_json.py (make tests-json); 'planned' lists tests to write before implementing later phases and is maintained by hand.",
+  "generated_at": null,
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "planned": 80
+  },
+  "tests": [],
+  "planned": [
+    {
+      "phase": 2,
+      "feature": "candidate-profile",
+      "test": "profile.yaml validates against the schema (valid file accepted)",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "candidate-profile",
+      "test": "unknown fields and wrong types are rejected with clear errors",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "candidate-profile",
+      "test": "null values are treated as unknown and surface as NEEDS_USER_INPUT",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "candidate-profile",
+      "test": "git-ignored profile.local.yaml overrides are merged",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "candidate-profile",
+      "test": "profile YAML and database stay in sync (load, edit via API, export)",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "cv-upload",
+      "test": "master CV upload rejects wrong type, oversize and spoofed extension",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "cv-parsing",
+      "test": "DOCX master CV parsed into experience, education, projects and skills with dates",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "cv-parsing",
+      "test": "PDF master CV text extraction and section segmentation",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "cv-parsing",
+      "test": "current role (no end date) and date ranges parsed correctly",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "candidate-skills",
+      "test": "a declared skill is evidenced only when the master CV contains it",
+      "status": "planned"
+    },
+    {
+      "phase": 2,
+      "feature": "multi-candidate",
+      "test": "candidate-scoped queries never return another candidate's data",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "job-normalization",
+      "test": "raw postings normalize to a Job with every spec field",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "job-normalization",
+      "test": "canonical URL strips tracking parameters and fragments",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "job-deduplication",
+      "test": "same source + source_job_id is detected as a duplicate",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "job-deduplication",
+      "test": "same canonical application URL with different tracking params is a duplicate",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "job-deduplication",
+      "test": "same content_hash across sources is linked via duplicate_of_id",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "job-deduplication",
+      "test": "content_hash is stable across whitespace and case changes",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "posting-window",
+      "test": "jobs posted within JOB_LOOKBACK_HOURS pass; older jobs are excluded",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "posting-window",
+      "test": "unknown posting date gives posting_date_status=UNKNOWN and is never counted as last 24h",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "posting-window",
+      "test": "relative dates such as '2 days ago' give ESTIMATED with the basis recorded",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "job-discovery",
+      "test": "mock source discovery run records counters and events",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "job-discovery",
+      "test": "company watchlist CRUD and last_checked updates",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "compliance",
+      "test": "robots.txt disallow prevents fetching",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "compliance",
+      "test": "per-domain rate limiter enforces the configured rate",
+      "status": "planned"
+    },
+    {
+      "phase": 3,
+      "feature": "job-import",
+      "test": "job import rejects private and loopback URLs (SSRF protection)",
+      "status": "planned"
+    },
+    {
+      "phase": 4,
+      "feature": "llm-provider",
+      "test": "structured output is validated against the Pydantic schema",
+      "status": "planned"
+    },
+    {
+      "phase": 4,
+      "feature": "llm-provider",
+      "test": "Claude provider handles refusal, rate limit and timeout (mocked HTTP)",
+      "status": "planned"
+    },
+    {
+      "phase": 4,
+      "feature": "llm-provider",
+      "test": "model, prompt version and token usage are recorded; prompts and secrets are not logged",
+      "status": "planned"
+    },
+    {
+      "phase": 4,
+      "feature": "visa-classification",
+      "test": "explicit sponsorship statement gives SPONSORSHIP_CONFIRMED with a verbatim quote",
+      "status": "planned"
+    },
+    {
+      "phase": 4,
+      "feature": "visa-classification",
+      "test": "relocation support alone never implies sponsorship",
+      "status": "planned"
+    },
+    {
+      "phase": 4,
+      "feature": "visa-classification",
+      "test": "'must already have work authorization' gives SPONSORSHIP_NOT_AVAILABLE",
+      "status": "planned"
+    },
+    {
+      "phase": 4,
+      "feature": "visa-classification",
+      "test": "no evidence gives SPONSORSHIP_UNKNOWN",
+      "status": "planned"
+    },
+    {
+      "phase": 4,
+      "feature": "job-relevance",
+      "test": "relevance JSON matches the required schema",
+      "status": "planned"
+    },
+    {
+      "phase": 4,
+      "feature": "job-relevance",
+      "test": "qualification rules map analysis fields to APPLY/REVIEW/SKIP",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "ats-engine",
+      "test": "keyword extraction normalizes synonyms through the skills taxonomy",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "ats-engine",
+      "test": "scoring is deterministic and uses the configured weights",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "ats-engine",
+      "test": "keywords are classified as matched, missing or unsupported",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "ats-engine",
+      "test": "keyword stuffing is detected and penalized",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "cv-tailoring",
+      "test": "truthfulness guard rejects a new employer, a title change or changed dates",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "cv-tailoring",
+      "test": "truthfulness guard rejects technologies or metrics absent from the master CV",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "cv-tailoring",
+      "test": "tailored CV contains zero unsupported keywords",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "ats-loop",
+      "test": "optimization loop stops when ATS_TARGET_SCORE is reached",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "ats-loop",
+      "test": "optimization loop stops at ATS_MAX_ITERATIONS and reports genuine gaps",
+      "status": "planned"
+    },
+    {
+      "phase": 5,
+      "feature": "ats-loop",
+      "test": "optimization loop stops when further gains would require unsupported claims",
+      "status": "planned"
+    },
+    {
+      "phase": 6,
+      "feature": "cv-generation",
+      "test": "DOCX has no tables, images or text boxes and uses standard headings",
+      "status": "planned"
+    },
+    {
+      "phase": 6,
+      "feature": "cv-generation",
+      "test": "the same structured CV renders identical DOCX text content",
+      "status": "planned"
+    },
+    {
+      "phase": 6,
+      "feature": "cv-generation",
+      "test": "generated CV respects the page-length limit",
+      "status": "planned"
+    },
+    {
+      "phase": 6,
+      "feature": "cv-generation",
+      "test": "DOCX converts to PDF with headless LibreOffice",
+      "status": "planned"
+    },
+    {
+      "phase": 6,
+      "feature": "cv-generation",
+      "test": "files are stored under applications/{id}/cv with ats_report.json",
+      "status": "planned"
+    },
+    {
+      "phase": 7,
+      "feature": "application-answers",
+      "test": "visa, work-authorization and relocation answers are consistent with the profile",
+      "status": "planned"
+    },
+    {
+      "phase": 7,
+      "feature": "application-answers",
+      "test": "unknown salary or notice period gives NEEDS_USER_INPUT",
+      "status": "planned"
+    },
+    {
+      "phase": 7,
+      "feature": "application-answers",
+      "test": "years of experience are computed from master CV dates",
+      "status": "planned"
+    },
+    {
+      "phase": 7,
+      "feature": "application-answers",
+      "test": "every generated answer cites its sources",
+      "status": "planned"
+    },
+    {
+      "phase": 7,
+      "feature": "cover-letter",
+      "test": "cover letter passes the truthfulness guard",
+      "status": "planned"
+    },
+    {
+      "phase": 8,
+      "feature": "browser-adapters",
+      "test": "ATS type detected for Greenhouse-like, Lever-like and generic mock pages",
+      "status": "planned"
+    },
+    {
+      "phase": 8,
+      "feature": "browser-adapters",
+      "test": "all mock form fields are filled from the fill plan",
+      "status": "planned"
+    },
+    {
+      "phase": 8,
+      "feature": "browser-adapters",
+      "test": "the job-specific CV file is uploaded",
+      "status": "planned"
+    },
+    {
+      "phase": 8,
+      "feature": "browser-adapters",
+      "test": "automation stops before the final submit button",
+      "status": "planned"
+    },
+    {
+      "phase": 8,
+      "feature": "browser-adapters",
+      "test": "CAPTCHA page gives MANUAL_ACTION_REQUIRED 'Manual action required.' with a screenshot",
+      "status": "planned"
+    },
+    {
+      "phase": 8,
+      "feature": "browser-adapters",
+      "test": "login wall or MFA prompt gives MANUAL_ACTION_REQUIRED",
+      "status": "planned"
+    },
+    {
+      "phase": 8,
+      "feature": "browser-adapters",
+      "test": "locators are resilient to changed ids and classes",
+      "status": "planned"
+    },
+    {
+      "phase": 8,
+      "feature": "browser-sessions",
+      "test": "browser storage state is encrypted at rest and never logged",
+      "status": "planned"
+    },
+    {
+      "phase": 9,
+      "feature": "human-approval",
+      "test": "illegal application status transitions are rejected",
+      "status": "planned"
+    },
+    {
+      "phase": 9,
+      "feature": "human-approval",
+      "test": "approval is blocked while any answer is NEEDS_USER_INPUT",
+      "status": "planned"
+    },
+    {
+      "phase": 9,
+      "feature": "submission-guard",
+      "test": "submits only when approved AND the site permits automation AND no challenge is present",
+      "status": "planned"
+    },
+    {
+      "phase": 9,
+      "feature": "submission-guard",
+      "test": "MOCK_MODE only allows mock ATS targets",
+      "status": "planned"
+    },
+    {
+      "phase": 9,
+      "feature": "submission-guard",
+      "test": "double approval does not double submit",
+      "status": "planned"
+    },
+    {
+      "phase": 9,
+      "feature": "audit-log",
+      "test": "every approve/skip/edit/submit action writes an audit entry",
+      "status": "planned"
+    },
+    {
+      "phase": 10,
+      "feature": "real-sources",
+      "test": "Greenhouse Job Board API fixtures normalize correctly",
+      "status": "planned"
+    },
+    {
+      "phase": 10,
+      "feature": "real-sources",
+      "test": "Lever Postings API fixtures normalize correctly",
+      "status": "planned"
+    },
+    {
+      "phase": 10,
+      "feature": "real-sources",
+      "test": "Ashby and SmartRecruiters fixtures normalize correctly",
+      "status": "planned"
+    },
+    {
+      "phase": 10,
+      "feature": "real-sources",
+      "test": "generic career page JSON-LD JobPosting extraction",
+      "status": "planned"
+    },
+    {
+      "phase": 10,
+      "feature": "real-sources",
+      "test": "source policy disabled/manual_only is respected",
+      "status": "planned"
+    },
+    {
+      "phase": 11,
+      "feature": "scheduler",
+      "test": "daily run is scheduled at DAILY_RUN_TIME in TIMEZONE (DST-safe)",
+      "status": "planned"
+    },
+    {
+      "phase": 11,
+      "feature": "scheduler",
+      "test": "a catch-up run happens after downtime",
+      "status": "planned"
+    },
+    {
+      "phase": 11,
+      "feature": "notifications",
+      "test": "daily summary message formatting",
+      "status": "planned"
+    },
+    {
+      "phase": 11,
+      "feature": "notifications",
+      "test": "email and Telegram delivery through mocked transports",
+      "status": "planned"
+    },
+    {
+      "phase": 11,
+      "feature": "notifications",
+      "test": "webhook events are signed with HMAC-SHA256",
+      "status": "planned"
+    },
+    {
+      "phase": 11,
+      "feature": "dashboard",
+      "test": "KPI queries: jobs today, last 24h, qualified, visa-friendly, awaiting approval, submitted",
+      "status": "planned"
+    },
+    {
+      "phase": 11,
+      "feature": "e2e",
+      "test": "full mock-mode pipeline from discovery to submitted",
+      "status": "planned"
+    }
+  ]
+}

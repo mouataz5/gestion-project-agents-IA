@@ -1,0 +1,78 @@
+# ---------------------------------------------------------------------------
+# Secrets & local configuration — NEVER commit these
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Browser authentication state (cookies / session storage) — never commit
+playwright/.auth/
+**/.auth/
+*.storage-state.json
+storage_state*.json
+
+# ---------------------------------------------------------------------------
+# Runtime data (CVs, generated documents, screenshots, uploads, logs)
+# ---------------------------------------------------------------------------
+storage/*
+!storage/.gitkeep
+!storage/README.md
+
+# The master CV contains personal contact data — kept out of Git by default
+candidate/master_cv/*
+!candidate/master_cv/README.md
+!candidate/master_cv/.gitkeep
+candidate/*.local.yaml
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# ---------------------------------------------------------------------------
+# Node / Next.js / Playwright
+# ---------------------------------------------------------------------------
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+coverage/
+playwright/test-results/
+playwright/playwright-report/
+playwright/blob-report/
+
+# ---------------------------------------------------------------------------
+# Test / tooling artifacts
+# ---------------------------------------------------------------------------
+.artifacts/
+*.log
+logs/
+
+# ---------------------------------------------------------------------------
+# OS / editors
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp

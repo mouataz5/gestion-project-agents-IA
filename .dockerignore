@@ -1,0 +1,23 @@
+# Build context for the Python image (context = repository root).
+# Keep secrets, runtime data and heavy/irrelevant folders out of the image.
+.git
+.github
+.env
+.env.*
+!.env.example
+**/.auth
+storage
+candidate/master_cv
+frontend
+playwright
+docs
+**/__pycache__
+**/*.pyc
+.venv
+**/.venv
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.artifacts
+**/node_modules
+*.log
