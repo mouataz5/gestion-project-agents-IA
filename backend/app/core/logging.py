@@ -19,7 +19,15 @@ from structlog.types import EventDict, Processor, WrappedLogger
 from app.core.config import Settings
 from app.core.redaction import redact, redact_text
 
-_QUIET_LOGGERS = ("sqlalchemy.engine", "sqlalchemy.pool", "httpx", "httpcore", "kombu", "amqp")
+_QUIET_LOGGERS = (
+    "sqlalchemy.engine",
+    "sqlalchemy.pool",
+    "httpx",
+    "httpx2",
+    "httpcore",
+    "kombu",
+    "amqp",
+)
 
 
 class _CurrentStdoutHandler(logging.StreamHandler):  # type: ignore[type-arg]
@@ -119,6 +127,10 @@ def configure_logging(settings: Settings, *, component: str = "api") -> None:
     access_logger.propagate = False
     for name in _QUIET_LOGGERS:
         logging.getLogger(name).setLevel(logging.WARNING)
+    # Alembic's "Context impl ..." lines are useful when migrating, noise in health checks.
+    logging.getLogger("alembic").setLevel(
+        logging.INFO if component == "migrations" else logging.WARNING
+    )
     if settings.database_echo:
         logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
