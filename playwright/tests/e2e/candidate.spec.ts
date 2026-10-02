@@ -82,12 +82,15 @@ test.describe("master CV workflow (changes data)", () => {
 
   test("profile edits are saved", async ({ page }) => {
     await page.goto("/candidate");
+    // Alternate between two values so the test also changes something when re-run locally.
+    const current = await page.getByLabel("Notice period").inputValue();
+    const notice = current === "1 month" ? "2 months" : "1 month";
 
-    await page.getByLabel("Notice period").fill("1 month");
+    await page.getByLabel("Notice period").fill(notice);
     await page.getByRole("button", { name: "Save profile" }).click();
 
     await expect(page.getByText("Profile saved.")).toBeVisible();
     await page.reload();
-    await expect(page.getByLabel("Notice period")).toHaveValue("1 month");
+    await expect(page.getByLabel("Notice period")).toHaveValue(notice);
   });
 });

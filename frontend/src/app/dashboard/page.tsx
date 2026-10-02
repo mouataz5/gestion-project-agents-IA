@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { HealthGrid } from "@/components/health-grid";
-import { RunDiagnosticButton } from "@/components/run-diagnostic-button";
+import { RunDiagnosticButton, RunDiscoveryButton } from "@/components/start-run-button";
 import { RunsTable } from "@/components/runs-table";
 import {
   BackendError,
@@ -12,8 +12,8 @@ import {
   PageHeader,
   StatusBadge,
 } from "@/components/ui";
-import type { RunPage, SystemInfo, SystemStatus } from "@/lib/api/types";
-import type { Tone } from "@/lib/format";
+import type { JobStats, RunPage, SystemInfo, SystemStatus } from "@/lib/api/types";
+import { formatDateTime, type Tone } from "@/lib/format";
 import { backendGet } from "@/lib/server/backend";
 
 export const metadata: Metadata = { title: "Dashboard" };
@@ -29,11 +29,53 @@ const PHASE_LABELS: Record<string, string> = {
   planned: "Planned",
 };
 
+function DiscoverySummary({ stats, timeZone }: { stats: JobStats; timeZone: string }) {
+  const hours = stats.window.lookback_hours;
+  const tiles: Array<[string, number, string]> = [
+    ["Found today", stats.found_today, "/jobs?tab=all"],
+    [`Posted in the last ${hours} h`, stats.in_window, "/jobs"],
+    ["Date unknown", stats.unknown_date, "/jobs?tab=unknown"],
+    ["Unique jobs", stats.total, "/jobs?tab=all"],
+  ];
+  const last = stats.last_discovery;
+  return (
+    <div className="flex flex-col gap-4" data-testid="discovery-summary">
+      <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {tiles.map(([label, value, href]) => (
+          <div key={label} className="rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800/50">
+            <dt className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</dt>
+            <dd className="mt-1 text-2xl font-semibold tabular-nums">
+              <Link href={href} className="hover:text-indigo-600 dark:hover:text-indigo-400">
+                {value}
+              </Link>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        {last ? (
+          <>
+            Last discovery:{" "}
+            <Link href={`/runs/${last.id}`} className="inline-flex items-center gap-2">
+              <StatusBadge status={last.status} />
+            </Link>{" "}
+            {formatDateTime(last.finished_at ?? last.created_at, timeZone)} · {last.jobs_discovered}{" "}
+            new job(s) · {stats.duplicates} duplicate listing(s) merged
+          </>
+        ) : (
+          "No discovery has run yet. Import the example companies on the Companies page, then run a discovery."
+        )}
+      </p>
+    </div>
+  );
+}
+
 export default async function DashboardPage() {
-  const [infoResult, statusResult, runsResult] = await Promise.all([
+  const [infoResult, statusResult, runsResult, jobStatsResult] = await Promise.all([
     backendGet<SystemInfo>("/system/info"),
     backendGet<SystemStatus>("/system/status"),
     backendGet<RunPage>("/runs", { limit: 5 }),
+    backendGet<JobStats>("/jobs/stats"),
   ]);
 
   if (!infoResult.ok) {
@@ -51,7 +93,7 @@ export default async function DashboardPage() {
     <>
       <PageHeader
         title="Dashboard"
-        description="Foundation status: services, safety switches, pipeline configuration and automation runs."
+        description="Services, safety switches, job discovery, pipeline configuration and automation runs."
         action={<RunDiagnosticButton />}
       />
 
@@ -98,6 +140,18 @@ export default async function DashboardPage() {
               ["Configuration warnings", String(info.warnings.length)],
             ]}
           />
+        </Card>
+
+        <Card
+          title="Job discovery"
+          className="lg:col-span-3"
+          action={<RunDiscoveryButton variant="secondary" />}
+        >
+          {jobStatsResult.ok ? (
+            <DiscoverySummary stats={jobStatsResult.data} timeZone={timeZone} />
+          ) : (
+            <BackendError message={jobStatsResult.message} />
+          )}
         </Card>
 
         <Card title="Pipeline configuration" className="lg:col-span-3">
@@ -150,7 +204,7 @@ export default async function DashboardPage() {
             ))}
           </ol>
           <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-            Job, application and interview metrics appear on this dashboard as the discovery and
+            Application, interview and offer metrics appear on this dashboard as the analysis and
             application phases are delivered.
           </p>
         </Card>

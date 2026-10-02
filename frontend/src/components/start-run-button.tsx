@@ -3,10 +3,22 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { buttonClass } from "@/components/form";
 import type { ApiErrorResponse, RunCreated } from "@/lib/api/types";
 
-/** Starts a system self-test run on a worker, then opens the run's live timeline. */
-export function RunDiagnosticButton() {
+const RUNS = {
+  diagnostic: { path: "/api/backend/runs/diagnostic", label: "Run system diagnostic" },
+  discovery: { path: "/api/backend/runs/discovery", label: "Run job discovery" },
+} as const;
+
+/** Starts a recorded automation run on a worker, then opens the run's live timeline. */
+export function StartRunButton({
+  run,
+  variant = "primary",
+}: {
+  run: keyof typeof RUNS;
+  variant?: "primary" | "secondary";
+}) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,15 +27,15 @@ export function RunDiagnosticButton() {
     setPending(true);
     setError(null);
     try {
-      const response = await fetch("/api/backend/runs/diagnostic", { method: "POST" });
+      const response = await fetch(RUNS[run].path, { method: "POST" });
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as ApiErrorResponse | null;
         setError(body?.error?.message ?? `Request failed (HTTP ${response.status})`);
         router.refresh(); // a failed enqueue is recorded as a FAILED run
         return;
       }
-      const run = (await response.json()) as RunCreated;
-      router.push(`/runs/${run.run_id}`);
+      const created = (await response.json()) as RunCreated;
+      router.push(`/runs/${created.run_id}`);
     } catch {
       setError("Could not reach the dashboard server.");
     } finally {
@@ -37,9 +49,9 @@ export function RunDiagnosticButton() {
         type="button"
         onClick={start}
         disabled={pending}
-        className="rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-wait disabled:opacity-60"
+        className={`${buttonClass(variant)} disabled:cursor-wait`}
       >
-        {pending ? "Starting…" : "Run system diagnostic"}
+        {pending ? "Starting…" : RUNS[run].label}
       </button>
       {error && (
         <p role="alert" className="text-xs text-rose-600 dark:text-rose-400">
@@ -48,4 +60,12 @@ export function RunDiagnosticButton() {
       )}
     </div>
   );
+}
+
+export function RunDiagnosticButton() {
+  return <StartRunButton run="diagnostic" />;
+}
+
+export function RunDiscoveryButton({ variant }: { variant?: "primary" | "secondary" }) {
+  return <StartRunButton run="discovery" variant={variant} />;
 }

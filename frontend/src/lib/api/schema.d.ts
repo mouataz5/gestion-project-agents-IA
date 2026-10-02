@@ -1204,11 +1204,11 @@ export interface components {
     /** JobDetail */
     JobDetail: {
       /** @description Pipeline status for the candidate, when the job is queued */
-      application_status?: components["schemas"]["ApplicationStatus"] | null;
+      application_status: components["schemas"]["ApplicationStatus"] | null;
       /** Application Url */
       application_url: string | null;
       /** Applications */
-      applications?: components["schemas"]["JobApplicationRead"][];
+      applications: components["schemas"]["JobApplicationRead"][];
       ats_type: components["schemas"]["AtsType"];
       /** Canonical Url */
       canonical_url: string | null;
@@ -1239,7 +1239,7 @@ export interface components {
       /** Duplicate Of Id */
       duplicate_of_id: string | null;
       /** Duplicates */
-      duplicates?: components["schemas"]["JobListing"][];
+      duplicates: components["schemas"]["JobListing"][];
       /** Education Requirements */
       education_requirements: string | null;
       employment_type: components["schemas"]["EmploymentType"];
@@ -1267,7 +1267,7 @@ export interface components {
       /** Preferred Skills */
       preferred_skills: string[];
       /** @description The primary record, when this listing is a duplicate */
-      primary?: components["schemas"]["JobListing"] | null;
+      primary: components["schemas"]["JobListing"] | null;
       /** Raw Content */
       raw_content: {
         [key: string]: unknown;
@@ -1373,7 +1373,7 @@ export interface components {
     /** JobRead */
     JobRead: {
       /** @description Pipeline status for the candidate, when the job is queued */
-      application_status?: components["schemas"]["ApplicationStatus"] | null;
+      application_status: components["schemas"]["ApplicationStatus"] | null;
       /** Application Url */
       application_url: string | null;
       ats_type: components["schemas"]["AtsType"];

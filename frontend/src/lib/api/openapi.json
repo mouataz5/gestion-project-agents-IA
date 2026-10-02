@@ -2471,6 +2471,8 @@
           "canonical_url",
           "ats_type",
           "duplicate_of_id",
+          "duplicate_count",
+          "application_status",
           "description",
           "company_url",
           "visa_information",
@@ -2482,7 +2484,10 @@
           "experience_requirements",
           "responsibilities",
           "raw_content",
-          "discovery_run_id"
+          "discovery_run_id",
+          "primary",
+          "duplicates",
+          "applications"
         ],
         "title": "JobDetail",
         "type": "object"
@@ -2951,7 +2956,9 @@
           "application_url",
           "canonical_url",
           "ats_type",
-          "duplicate_of_id"
+          "duplicate_of_id",
+          "duplicate_count",
+          "application_status"
         ],
         "title": "JobRead",
         "type": "object"

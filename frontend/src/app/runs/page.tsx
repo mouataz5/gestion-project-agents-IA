@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { AutoRefresh } from "@/components/auto-refresh";
-import { RunDiagnosticButton } from "@/components/run-diagnostic-button";
+import { RunDiagnosticButton } from "@/components/start-run-button";
 import { RunsTable } from "@/components/runs-table";
 import { BackendError, Card, PageHeader } from "@/components/ui";
 import {

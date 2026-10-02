@@ -32,7 +32,9 @@ const ACRONYMS: Record<string, string> = {
   ats: "ATS",
   cv: "CV",
   id: "ID",
+  linkedin: "LinkedIn",
   llm: "LLM",
+  smartrecruiters: "SmartRecruiters",
   url: "URL",
 };
 

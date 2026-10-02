@@ -95,6 +95,10 @@ def parse_relative_age(text: str) -> tuple[timedelta, timedelta | None] | None:
     return minimum, (count + 1) * unit
 
 
+def _stamp(value: datetime) -> str:
+    return value.isoformat(timespec="seconds")
+
+
 def _as_utc(value: datetime) -> datetime:
     return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
 
@@ -132,11 +136,11 @@ def resolve_posting_date(
             oldest = now - (maximum if maximum is not None else minimum)
             newest = now - minimum
             span = (
-                f"between {oldest.isoformat()} and {newest.isoformat()}"
+                f"between {_stamp(oldest)} and {_stamp(newest)}"
                 if maximum is not None
-                else f"before {newest.isoformat()}"
+                else f"before {_stamp(newest)}"
             )
-            basis = f'relative text "{posted_text.strip()}" read at {now.isoformat()}: {span}'
+            basis = f'relative text "{posted_text.strip()}" read at {_stamp(now)}: {span}'
             return PostingDate(oldest, PostingDateStatus.ESTIMATED, basis)
         return PostingDate(None, PostingDateStatus.UNKNOWN, f'unreadable date "{posted_text}"')
     return PostingDate(None, PostingDateStatus.UNKNOWN)

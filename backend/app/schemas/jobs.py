@@ -30,7 +30,10 @@ class WindowRead(BaseModel):
 
 
 class JobRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    # Defaults are always serialized: generated TypeScript types mark these fields required.
+    model_config = ConfigDict(
+        from_attributes=True, json_schema_serialization_defaults_required=True
+    )
 
     id: uuid.UUID
     source: str

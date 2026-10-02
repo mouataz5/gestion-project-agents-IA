@@ -42,8 +42,10 @@ test.describe("dashboard foundation", () => {
     const navigation = page.getByRole("navigation", { name: "Main" });
 
     await expect(navigation.getByRole("link", { name: "Runs" })).toBeVisible();
-    const jobs = navigation.locator('[aria-disabled="true"]', { hasText: "Jobs" });
-    await expect(jobs).toContainText("Phase 3");
+    const applications = navigation.locator('[aria-disabled="true"]', {
+      hasText: "Applications",
+    });
+    await expect(applications).toContainText("Phase 9");
   });
 
   test("settings report secrets without revealing them", async ({ page }) => {

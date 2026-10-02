@@ -43,6 +43,43 @@ export type SkillItem = Schemas["SkillItem-Output"];
 export type DateRange = Schemas["DateRange-Output"];
 export type YearMonth = Schemas["YearMonth-Output"];
 
+// Jobs and discovery (Phase 3).
+export type JobRead = Schemas["JobRead"];
+export type JobPage = Schemas["JobPage"];
+export type JobDetail = Schemas["JobDetail"];
+export type JobListing = Schemas["JobListing"];
+export type JobStats = Schemas["JobStats"];
+export type JobImportRequest = Schemas["JobImportRequest"];
+export type JobImportResult = Schemas["JobImportResult"];
+export type JobApplication = Schemas["JobApplicationRead"];
+export type JobSource = Schemas["JobSourceRead"];
+export type PostingDateStatus = Schemas["PostingDateStatus"];
+export type WindowStatus = Schemas["WindowStatus"];
+export type PostingWindow = Schemas["WindowRead"];
+export type ApplicationStatus = Schemas["ApplicationStatus"];
+
+// Company watchlist (Phase 3).
+export type CompanyRead = Schemas["CompanyRead"];
+export type CompanyCreate = Schemas["CompanyCreate"];
+export type CompanyUpdate = Schemas["CompanyUpdate"];
+export type CompanyImportResult = Schemas["CompanyImportResult"];
+export type CompanyAtsType = CompanyCreate["ats_type"];
+
+export const POSTING_DATE_STATUSES: readonly PostingDateStatus[] = [
+  "KNOWN",
+  "ESTIMATED",
+  "UNKNOWN",
+];
+export const COMPANY_ATS_TYPES: readonly CompanyAtsType[] = [
+  "GREENHOUSE",
+  "LEVER",
+  "ASHBY",
+  "SMARTRECRUITERS",
+  "WORKDAY",
+  "GENERIC",
+  "OTHER",
+];
+
 export const LANGUAGE_LEVELS: readonly LanguageLevel[] = [
   "native",
   "fluent",

@@ -79,4 +79,9 @@ describe("humanize", () => {
     expect(humanize("CV_GENERATION")).toBe("CV generation");
     expect(humanize("ats_score")).toBe("ATS score");
   });
+
+  it("spells product names as their owners do", () => {
+    expect(humanize("LINKEDIN")).toBe("LinkedIn");
+    expect(humanize("SMARTRECRUITERS")).toBe("SmartRecruiters");
+  });
 });
