@@ -105,30 +105,51 @@ a versioned fact base. ✔ Verified natively and on the Docker stack (E2E with `
 
 ---
 
-## Phase 3 — Jobs, discovery abstraction, mock source, deduplication, 24-hour window
+## Phase 3 — Jobs, discovery abstraction, mock source, deduplication, 24-hour window ✅
+
+**Goal**: find recent AI/ML jobs from declared sources, once each, with honest posting dates.
 
 Deliverables
-- Migration `0003`: `companies` (watchlist), `job_sources`, `jobs` (all spec §7 fields +
-  `posting_date_status`, `canonical_url`, `duplicate_of_id`), `job_skills`, `applications`.
-- `JobSource` protocol and registry; `MockJobSource` reading `crawler/fixtures/mock_jobs/`.
-- Normalization, canonical URLs (tracking parameters removed), `content_hash`, deduplication
-  (source id / URL / hash, cross-source linking), posting window (`posted_after`, `posted_before`,
-  `JOB_LOOKBACK_HOURS`) with `KNOWN`/`ESTIMATED`/`UNKNOWN` dates — unknown dates never counted as
-  "last 24 h".
-- Compliance building blocks: `RobotsPolicy`, Redis per-domain rate limiter, source policy registry
-  (`crawler/sources.yaml`).
-- Discovery run (`AutomationRun` type `DISCOVERY`) creating `DISCOVERED` applications.
-- Job import endpoint (`POST /jobs/import` — a URL pasted by the user or posted by n8n from job-alert
-  emails: the permitted LinkedIn path).
-- API + UI: `/jobs` (filters: last 24 h, date status, source, country), `/jobs/[id]`, `/companies` (CRUD).
-- n8n: exported "job-alert email ingestion" workflow.
+- Migration `0003`: `companies` (watchlist), `job_sources` (runtime mirror of the policy file + last
+  run status), `jobs` (all spec §7 fields + `posting_date_status`/`posting_date_basis`,
+  `canonical_url`, `duplicate_of_id`, `last_seen_at`, `discovery_run_id`; unique
+  `(source, source_job_id)`), `job_skills` (required/preferred), `applications` (spec §18, unique per
+  candidate and job, 14 statuses).
+- `app/crawlers/`: `JobSource` / `CompanyBoardSource` protocols, `RawJob`, `JobQuery`,
+  `NormalizedJob` and the shared `build_job()`; validated `crawler/sources.yaml` (policies
+  `api_only`/`allowed`/`manual_only`/`disabled`, priority, rate limit, notes) and registry with skip
+  reasons; `MockAtsSource` (per watchlist board) and `MockFeedSource` reading
+  `crawler/fixtures/mock_jobs/` (run only with `MOCK_MODE=true`).
+- `app/jobs/` (pure): canonical URLs (tracking parameters, LinkedIn/Indeed ids, ATS apply pages),
+  `validate_public_url` (SSRF), `content_hash`, EN/FR relative dates with conservative bounds, posting
+  window, remote/employment/seniority/country detection, HTML → text, AI/ML title pre-filter, job
+  links in alert emails.
+- Deduplication with source priority (ATS > career page > feed > manual import); a later ATS record
+  takes over as primary and re-points duplicates and applications.
+- Compliance building blocks: `RobotsPolicy` (RFC 9309), Redis per-domain token-bucket `RateLimiter`.
+- Discovery run (`DISCOVERY`, task `jobs.run_discovery`, `POST /runs/discovery`): per-source events,
+  counters, summary totals, per-source and per-company status, failures isolated
+  (`PARTIAL_SUCCESS`), `DISCOVERED` applications for primary in-window jobs in target countries.
+- Imports: `POST /jobs/import` (pasted URL + optional details, never fetched) and
+  `POST /jobs/import/email` (job-alert emails); `POST /jobs/{id}/track` for unknown-date jobs.
+- API: `GET /jobs` (window, date status, source, country, search, duplicates, pagination),
+  `GET /jobs/stats`, `GET /jobs/{id}`, `GET /job-sources`, `GET|POST /companies`,
+  `GET|PATCH|DELETE /companies/{id}`, `POST /companies/import`; every change audited.
+- UI: `/jobs` (tabs, filters, date badges, sources table, import dialog, run button), `/jobs/[id]`,
+  `/companies` (CRUD, enable switch, YAML import), dashboard discovery card.
+- n8n: `n8n/workflows/job-alert-email-import.json` (IMAP → `POST /jobs/import/email`).
 
-Tests first: normalization, canonical URL rules, hash stability, dedup matrix, window boundaries and
-unknown-date handling, relative-date parsing, robots disallow respected, rate limiter, discovery
-counters, watchlist CRUD, import endpoint validation.
+Tests first: canonical URL rules and URL safety, hash stability, relative dates EN/FR and bounds,
+window boundaries and unknown dates, normalization helpers, title filter, email link extraction,
+sources/companies YAML validation and fixture validity, robots (allow/disallow/4xx/5xx/cache),
+transition table, rate limiter, dedup matrix (priority swap, re-pointed applications, URL-only
+imports), discovery (exact counters, events, queueing rules, watchlist checks, failing source,
+idempotent second run, empty watchlist, live mode), jobs/import/email/companies/sources/runs APIs
+(validation, auth, audit), worker task end to end, n8n workflow export, frontend helpers, E2E.
 
 Acceptance: in mock mode a discovery run loads fake jobs, removes duplicates, applies the window and
-shows the jobs with date-status badges.
+shows the jobs with date-status badges. ✔ Verified natively and on the Docker stack (E2E with
+`E2E_ALLOW_MUTATIONS=1`).
 
 ---
 

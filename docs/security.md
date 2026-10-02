@@ -26,9 +26,9 @@ candidate's behalf. Security and compliance are therefore design constraints, no
 | Unintended job applications | `AUTO_SUBMIT=false`, explicit approval, `SubmissionGuard`, `MOCK_MODE=true` default, idempotent submission, audit log (Phases 8–9) |
 | Prompt injection inside job postings | Job text is treated as data inside structured prompts; outputs are schema-validated; the truthfulness guard checks every claim against the master CV; LLM output never triggers actions without the guards (Phases 4–7) |
 | Fabricated CV content | Truthfulness guard + evidence ledger; unsupported keywords must be zero; unknown answers become `NEEDS_USER_INPUT` |
-| SSRF through job-import URLs | Scheme allow-list (`https`, `http`), DNS resolution checked against private/loopback/link-local ranges, redirects re-validated, size and time limits (Phase 3) |
+| SSRF through job-import URLs | Phase 3 never fetches imported URLs. `validate_public_url` accepts only http/https on ports 80/443 without credentials and rejects local/internal/single-label host names and non-global IP addresses in every notation (tested). Phase 10 fetchers add resolved-address checks at connection time, redirect re-validation, size and time limits |
 | Malicious uploads (CV files) | Size limit, extension + magic-byte check, parsing in the worker with limits (zip-bomb safe DOCX reading), files stored with generated names (Phase 2) |
-| XSS from scraped job content | Job descriptions rendered as sanitized text/Markdown, never as raw HTML; React escaping by default |
+| XSS from scraped job content | Job descriptions are converted to plain text at ingestion and rendered as text (React escaping), never as HTML; external links open with `rel="noopener noreferrer"` |
 | Path traversal in storage keys | `LocalStorageProvider` rejects absolute paths, `..` segments and keys resolving outside the storage root |
 | Insecure deserialization in the task queue | Celery accepts JSON only (no pickle) |
 | Supply-chain risk | Lockfiles (`uv.lock`, `package-lock.json`), pinned container images, CI lint/type/test gates; dependency audit added in Phase 11 |
@@ -71,7 +71,13 @@ Tests assert that these values never appear in log output.
   RSS) over HTML crawling.
 - Respect `robots.txt`, site terms and API terms; enforce per-domain rate limits; identify the crawler
   with a descriptive user agent.
-- LinkedIn is never scraped; only user-provided job URLs and job-alert emails are imported.
+- LinkedIn is never scraped; only user-provided job URLs and job-alert emails are imported
+  (`linkedin` and `manual_import` are `manual_only` sources).
+- **Implemented in Phase 3** (`backend/app/crawlers/compliance.py`, `crawler/sources.yaml`): the source
+  policy registry decides which sources may run and records why others are skipped; `RobotsPolicy`
+  (RFC 9309: 4xx = no rules, 429/5xx/network error = disallow all, per-origin cache) and the Redis
+  per-domain `RateLimiter` are tested now and wired into the real fetchers of Phase 10; mock sources
+  run only with `MOCK_MODE=true` and never touch the network.
 - **Never** bypass CAPTCHA, MFA, anti-bot systems, rate limits, paywalls or access controls. When one is
   met, the automation stops, takes a screenshot and reports **"Manual action required."**
   (`MANUAL_ACTION_REQUIRED`).

@@ -4,7 +4,8 @@ A self-hosted platform that discovers newly posted AI/ML/GenAI jobs, analyses th
 sponsorship, relevance), builds a **truthful**, ATS-optimised CV for each qualifying job, prepares
 the application in the company's own ATS — and **stops before submitting** until you approve.
 
-> **Status: Phase 2 of 11 — Candidate profile & master CV** (Phase 1, the foundation, is complete).
+> **Status: Phase 3 of 11 — Job discovery** (Phases 1–2, the foundation and the candidate
+> profile & master CV, are complete).
 > See [`progress.md`](progress.md) and the [implementation plan](docs/implementation-plan.md).
 
 **Safe by default:** `MOCK_MODE=true` (fake jobs and mock ATS pages only) and `AUTO_SUBMIT=false`
@@ -102,8 +103,10 @@ Mock mode is the default. To force it regardless of `.env`:
 make mock           # = MOCK_MODE=true AUTO_SUBMIT=false docker compose up -d --build
 ```
 
-In Phase 1, mock mode is the enforced safety posture (visible as a **MOCK MODE** badge on every
-page). The mock job source (Phase 3) and mock ATS sites (Phase 8) plug into this switch.
+Mock mode is the enforced safety posture (visible as a **MOCK MODE** badge on every page). In mock
+mode, discovery reads fictional ATS boards and a fictional aggregator feed from
+`crawler/fixtures/mock_jobs/` and never contacts a real site; the mock ATS sites (Phase 8) plug into
+the same switch. With `MOCK_MODE=false`, mock sources never run and their jobs are hidden.
 
 ## 7. Start the frontend (native)
 
@@ -124,7 +127,8 @@ make worker         # Celery worker (second terminal)
 
 The daily 08:00 (Africa/Tunis) pipeline scheduler — Celery beat — is delivered in **Phase 11**.
 `make scheduler` is reserved for it and currently explains that. Until then, runs are started on
-demand from the dashboard ("Run system diagnostic") or the API (`POST /api/v1/runs/diagnostic`).
+demand from the dashboard ("Run job discovery", "Run system diagnostic") or the API
+(`POST /api/v1/runs/discovery`, `POST /api/v1/runs/diagnostic`).
 
 ## Optional: n8n (free, self-hosted)
 
@@ -155,6 +159,37 @@ Google Sheets…). The core never depends on it. See [`n8n/README.md`](n8n/READM
 The original file is stored under `storage/candidates/…` (Docker: the `appstorage` volume), never in
 Git. API: `/api/v1/candidate`, `/api/v1/candidate/skills`, `/api/v1/candidate/master-cv` (see
 http://localhost:8000/docs).
+
+## Find jobs (Phase 3)
+
+1. **Watchlist** — open http://localhost:3000/companies and click **Import companies.yaml** (the
+   seed holds fictional companies served by the mock boards), or add the companies you follow.
+2. **Discovery** — click **Run job discovery** (Jobs page or dashboard). The run timeline shows each
+   source, the counts and anything that failed.
+3. **Jobs** — http://localhost:3000/jobs lists jobs posted in the last `JOB_LOOKBACK_HOURS` by default.
+   Each job shows how its date is known: *Posted 3 h ago* (source timestamp), *≈ 2 d ago (estimated)*
+   (relative text, counted conservatively) or *Date unknown* (never counted as recent — see the
+   **Date unknown** tab and use **Track this job** to queue one by hand). Duplicates found on several
+   sources are merged under the most authoritative listing.
+4. **LinkedIn and other sites** — use **Import a job URL** and paste the posting with the details you
+   see. Nothing is fetched or scraped. Job-alert emails can be imported automatically with the n8n
+   workflow in [`n8n/workflows/`](n8n/workflows/job-alert-email-import.json).
+
+Matching jobs (AI/ML title, target country, posted in the window) are queued as `DISCOVERED`;
+analysis and visa classification come in Phase 4. Source policy and compliance rules:
+[`crawler/README.md`](crawler/README.md).
+
+## What Phase 3 delivers
+
+- **Jobs** with every field of the specification, job skills, company watchlist and applications
+  with the full status lifecycle (transition table, audited).
+- **Sources**: versioned policy file (`crawler/sources.yaml`), mock ATS boards and aggregator feed,
+  registry that explains why a source does not run; robots.txt policy and per-domain rate limiter
+  ready for real sources (Phase 10).
+- **Deduplication** by source id, canonical URL (tracking removed) and content hash, with the ATS
+  record as primary; **posting window** with known / estimated / unknown dates.
+- **Imports** of pasted URLs and job-alert emails (validated against SSRF, never fetched).
+- **UI**: Jobs list and detail, Companies, discovery card on the dashboard.
 
 ## What Phase 2 delivers
 
@@ -189,7 +224,7 @@ backend/     FastAPI app + domain code (package `app`), Alembic migrations, test
 workers/     Celery worker package (`job_agent_workers`)
 frontend/    Next.js dashboard
 playwright/  browser E2E tests (mock ATS sites from Phase 8)
-crawler/     job source configuration and fixtures (Phase 3+)
+crawler/     source policy, watchlist seed and mock job fixtures
 prompts/     versioned LLM prompts (Phase 4+)
 candidate/   profile.yaml and the (git-ignored) master CV
 storage/     runtime files for native runs (git-ignored; Docker uses the `appstorage` volume)

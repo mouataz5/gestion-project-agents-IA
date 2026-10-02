@@ -311,27 +311,59 @@ stateDiagram-v2
 ```
 
 Jobs that are analysed but not qualified stay `ANALYZED` with `recommendation=SKIP` and are hidden from
-the review queue. Every transition is validated by a transition table and written to `audit_logs`.
+the review queue. Every transition is validated by a transition table
+(`app/applications/lifecycle.py`, implemented in Phase 3) and written to `audit_logs`
+(`ApplicationService.transition`). `REJECTED` and `WITHDRAWN` are terminal.
 
-## 9. Discovery, normalization, deduplication, posting window
+## 9. Discovery, normalization, deduplication, posting window (Phase 3 — implemented)
 
 - **Sources** (Phase 3 mock, Phase 10 real): Greenhouse Job Board API, Lever Postings API, Ashby Job
   Board API, SmartRecruiters Posting API, Workday public career-site endpoints where permitted, generic
   career pages (JSON-LD `JobPosting` first, HTML fallback), RSS/Atom feeds. **LinkedIn** is supported only
   through permitted mechanisms (user-pasted job URLs, job-alert emails the user forwards); it is never
   scraped and never an architectural dependency.
-- **Watchlist**: `companies` rows (name, career URL, country, ATS type, target roles, enabled,
-  last_checked) are checked every run.
-- **Normalization** produces a `NormalizedJob` with every field of spec §7.
-- **Deduplication**: a posting is the same job if any of these match:
-  `(source, source_job_id)`; the canonical application URL (lower-cased host, tracking parameters such as
-  `utm_*`, `gh_src`, `lever-source` removed, fragment dropped); or `content_hash` =
-  SHA-256 of normalized company + title + location + description. Cross-source duplicates link through
-  `duplicate_of_id`, preferring direct ATS records over aggregators.
-- **Posting window**: queries carry `posted_after`/`posted_before` (default `now - JOB_LOOKBACK_HOURS`).
-  `posting_date_status` is `KNOWN` (source timestamp), `ESTIMATED` (relative text such as "2 days ago",
-  with the basis recorded) or `UNKNOWN`. Unknown dates are **never** reported as "posted within 24 h";
-  they are shown separately.
+- **Source policy**: `crawler/sources.yaml` (validated, versioned) declares every source with its kind,
+  policy (`api_only`, `allowed`, `manual_only`, `disabled`), priority, rate limit and notes. It is
+  mirrored into `job_sources`, which also records each source's last run status and counts. The
+  registry runs a source only when it is enabled, its policy allows automated access, it is implemented
+  and it matches the mode: mock sources only with `MOCK_MODE=true`, real sources only without it. Every
+  skipped source has a human-readable reason (run events, `GET /job-sources`, Jobs page).
+- **Code layout**: `app/crawlers/` holds the `JobSource` / `CompanyBoardSource` protocols, `RawJob`,
+  `NormalizedJob` and `build_job()` (shared normalization), the registry, the mock sources and the
+  compliance building blocks; `app/jobs/` holds pure, unit-tested helpers (canonical URLs and URL
+  safety, content hash, relative dates, posting window, remote/employment/seniority/country
+  detection, HTML → text, title pre-filter, job links in alert emails).
+- **Watchlist**: `companies` rows (name, career URL, country, ATS type, board token, target roles,
+  enabled, last check) — the board sources search every enabled company and record
+  `last_checked_at` / `last_check_status`. `crawler/companies.yaml` is an importable seed.
+- **Normalization** produces a `NormalizedJob` with every field of spec §7; descriptions are stored as
+  plain text (HTML converted, never rendered).
+- **Deduplication** (`JobService.upsert`, ADR-31): the same `(source, source_job_id)` — or, without a
+  source id, the same source and canonical URL — is the same posting (updated, `last_seen_at`); another
+  posting with the same canonical URL (lower-cased host, `www.`/default port/fragment dropped, tracking
+  parameters such as `utm_*`, `gh_src`, `lever-source`, `trk`, `refId` removed, LinkedIn/Indeed job
+  ids collapsed) or the same `content_hash` (SHA-256 of normalized company + title + location +
+  description, only when there is a description) is a cross-source duplicate linked through
+  `duplicate_of_id` to the group's **primary** record. The primary comes from the highest-priority source
+  (ATS API 100 > career page > feed 10 > manual import 5); a later higher-priority record takes over and
+  the old primary, its duplicates and its applications are re-pointed.
+- **Posting window**: queries carry `posted_after`/`posted_before` (default `now - JOB_LOOKBACK_HOURS`,
+  both bounds inclusive). `posting_date_status` is `KNOWN` (source timestamp; up to 1 h of clock skew
+  tolerated, later timestamps are `UNKNOWN`), `ESTIMATED` (relative text such as "2 days ago" or
+  "il y a 3 jours", stored as the **oldest** plausible time with its basis) or `UNKNOWN`. Unknown dates
+  are **never** reported as "posted within 24 h"; they have their own tab.
+- **Discovery run** (`DiscoveryService`, worker task `jobs.run_discovery`, `POST /runs/discovery`): for
+  each runnable source (highest priority first) it fetches, normalizes, applies the deterministic title
+  pre-filter (candidate target roles, company target roles, AI/ML vocabulary), upserts and classifies
+  each posting, then queues `DISCOVERED` applications for **primary, in-window** jobs whose country is a
+  target country (or remote / not stated). Counters: `jobs_processed` = postings normalized,
+  `jobs_discovered` = new unique jobs; the summary holds totals and per-source counts. A failing source,
+  board or posting is recorded as an error and the run continues (`PARTIAL_SUCCESS`; `FAILED` only when
+  every source failed).
+- **Imports** (`POST /jobs/import`, `POST /jobs/import/email`): a URL pasted by the user or the job
+  links of a job-alert email (extracted server-side, n8n only transports the email) are validated and
+  stored as `manual_import` jobs — **never fetched** in Phase 3 — and always queued. Fields the user does
+  not provide stay empty.
 
 ## 10. Analysis engines (Phase 4)
 
@@ -386,12 +418,22 @@ the review queue. Every transition is validated by a transition table and writte
   `NEEDS_USER_INPUT`, no concerns); (b) the site's policy permits automated submission; (c) no challenge is
   present; (d) in `MOCK_MODE`, the target is a mock ATS. Every decision is audit-logged.
 
-## 13. Compliance layer (Phase 3/10)
+## 13. Compliance layer (Phase 3 building blocks — implemented; wired into fetchers in Phase 10)
 
-`RobotsPolicy` (cached `robots.txt` per host, identifying user agent), per-domain token-bucket
-`RateLimiter` in Redis, and a source policy registry (`crawler/sources.yaml`: `api_only`, `allowed`,
-`manual_only`, `disabled`, ToS review notes). A source that fails compliance is skipped and the reason
-is recorded in the run.
+- **Source policy registry**: `crawler/sources.yaml` (see §9). LinkedIn is `manual_only`; real
+  sources stay disabled until their Phase 10 implementation and review.
+- **`RobotsPolicy`** follows RFC 9309: a fetched `robots.txt` is obeyed for our user agent
+  (`JobAgent/0.1 (self-hosted personal job search; respects robots.txt)`), a 4xx answer means "no
+  rules" (allowed), while 429, 5xx and network errors mean "unreachable" and disallow everything.
+  Results are cached per origin (24 h) and `Crawl-delay` is exposed.
+- **`RateLimiter`**: per-domain token bucket in Redis (atomic Lua script on the Redis clock), shared by
+  every worker process; `acquire()` waits or raises `RateLimitTimeoutError`.
+- **`validate_public_url`** (SSRF): only http/https on ports 80/443, no embedded credentials, no
+  local/internal/single-label host names and no non-global IP address in any notation (including legacy
+  forms such as `127.1` or `0x7f000001`). Phase 10 fetchers must additionally check the resolved address
+  at connection time and re-validate redirects.
+
+A source that fails compliance is skipped and the reason is recorded in the run.
 
 ## 14. Observability (Phase 1 — implemented)
 
@@ -522,3 +564,11 @@ implemented natively, so stopping n8n loses only the optional extras.
 | 27 | Skill evidence is derived data (`DEMONSTRATED`/`LISTED`/`NONE`), rebuilt whenever the core skills or the active master CV change | Declared skills are not claims: only skills backed by the confirmed CV may be used for tailoring, and the evidence excerpt shows why. |
 | 28 | E2E tests that change data run only with `E2E_ALLOW_MUTATIONS=1` (set in CI) | Running the suite against a personal stack must never replace the user's master CV or profile. |
 | 29 | Response schemas mark defaulted fields as required (`json_schema_serialization_defaults_required`) | The API always returns them; the generated TypeScript types then match reality without optional chaining everywhere. |
+| 30 | Jobs are global; an `applications` row is the candidate's pipeline entry, unique per (candidate, job) | One posting is stored once whoever looks at it; the spec §18 tracking fields belong to the candidate's application, which keeps multi-candidate support open. |
+| 31 | Deduplication by (source, source_job_id), canonical URL and content hash (only with a description); the highest-priority source is the primary record and takes over duplicates and applications | Direct ATS records are the most complete and authoritative; aggregator and imported listings stay visible as "other listings" without double-counting or double-queueing. URL-only imports share placeholder fields, so hashing them would merge unrelated jobs. |
+| 32 | Relative dates are stored as the oldest plausible time with their basis; a source timestamp replaces an estimate, never the reverse; between two estimates the older is kept | A job is claimed as "posted in the last 24 h" only when every reading of the text agrees; unknown dates are never in the window. |
+| 33 | Automatic queueing only for primary, in-window jobs with an AI/ML or target-role title and a target (or remote / unstated) country; unknown-date jobs are tracked by hand; imports are always queued | Keeps paid LLM analysis (Phase 4) focused without hiding anything: every stored job stays browsable, and the user decides for the uncertain ones. |
+| 34 | `crawler/sources.yaml` is the versioned source policy, mirrored into `job_sources` for runtime status; mock sources run only with `MOCK_MODE=true` and their jobs are hidden in live mode | Compliance decisions are reviewed data, visible in the UI with the reason a source is skipped; fixtures can never leak into a real job search. |
+| 35 | Imports store a validated URL and the user's metadata, never fetch the page in Phase 3, and leave missing fields empty | The permitted LinkedIn path needs no scraping; SSRF protection is in place before any fetcher exists; nothing is invented about a job. |
+| 36 | Job-alert email parsing (link extraction, tracking removal) runs in the core; the n8n workflow only forwards the email | The parsing is tested Python shared by every mailbox; n8n stays an optional transport (ADR-16). |
+| 37 | Discovery records failures per source, company board and posting and continues; `PARTIAL_SUCCESS` unless every source failed | One broken board must not cost the whole daily run; the run timeline and `job_sources.last_status` show exactly what failed. |

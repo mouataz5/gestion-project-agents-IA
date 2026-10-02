@@ -33,11 +33,27 @@ Create an n8n credential of type **Header Auth**:
 Example (works today): an *HTTP Request* node `POST http://backend:8000/api/v1/runs/diagnostic` with that
 credential starts a system self-test run, visible on the dashboard under **Runs**.
 
+## Job-alert email import (available)
+
+`workflows/job-alert-email-import.json` reads the job-alert emails you subscribed to (LinkedIn,
+Indeed, ATS newsletters…) from a mailbox and posts each one to `POST /api/v1/jobs/import/email`. The
+core extracts the job links (only job-posting URLs, tracking parameters removed), stores them as
+`manual_import` jobs and queues them; the pages are never fetched. This is the compliant way to
+follow LinkedIn without scraping it.
+
+1. In n8n: **Workflows → Import from file** → `n8n/workflows/job-alert-email-import.json`.
+2. Create an **IMAP** credential for the mailbox that receives the alerts (ideally a dedicated
+   folder or label) and select it in the *Job-alert emails (IMAP)* node.
+3. Select the **Header Auth** credential described above in the *Import jobs into the agent* node.
+4. Activate the workflow. Imported jobs appear on the Jobs page (date unknown unless the email
+   states it) and in the audit log as `job.imported`.
+
+The exported file contains no credentials (only empty credential references).
+
 ## Planned workflows (exported to `workflows/`, never containing credentials)
 
 | Workflow | Trigger | Action | Phase |
 |---|---|---|---|
-| Job-alert email ingestion | IMAP / Gmail trigger on job-alert emails (LinkedIn, Indeed, …) | Extract job URLs → `POST /api/v1/jobs/import` | 3 / 10 |
 | Notification fan-out | Webhook from the core (`run.completed`, `application.ready_for_review`, …) verified with HMAC | Telegram / email / WhatsApp / Slack message with dashboard links | 11 |
 | Alternative scheduler | Schedule trigger (08:00 Africa/Tunis) | `POST` the daily-run endpoint (set `SCHEDULER_ENABLED=false` in the core) | 11 |
 | Application tracker export | Webhook / schedule | Append/refresh rows in Google Sheets | 11 |

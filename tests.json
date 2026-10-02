@@ -1,17 +1,17 @@
 {
   "description": "Test tracking. 'tests' is regenerated from real test runs by scripts/update_tests_json.py (make tests-json); 'planned' lists tests to write before implementing later phases and is maintained by hand.",
-  "generated_at": "2026-09-28T23:52:33+00:00",
+  "generated_at": "2026-10-02T15:10:07+00:00",
   "summary": {
-    "total": 435,
-    "passed": 435,
+    "total": 732,
+    "passed": 732,
     "failed": 0,
     "skipped": 0,
-    "planned": 69,
+    "planned": 55,
     "by_suite": {
-      "backend": 328,
-      "e2e": 10,
-      "frontend": 89,
-      "workers": 8
+      "backend": 590,
+      "e2e": 18,
+      "frontend": 113,
+      "workers": 11
     }
   },
   "tests": [
@@ -72,6 +72,132 @@
     {
       "test": "backend/tests/api/test_auth.py::test_valid_token_is_accepted",
       "feature": "api-auth",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_every_status_from_the_specification_exists",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_other_transitions_are_rejected[CV_GENERATED-APPROVED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_other_transitions_are_rejected[DISCOVERED-SUBMITTED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_other_transitions_are_rejected[READY_FOR_REVIEW-SUBMITTED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_other_transitions_are_rejected[REJECTED-INTERVIEW]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_other_transitions_are_rejected[WITHDRAWN-DISCOVERED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[ANALYZED-QUALIFIED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[APPROVED-BLOCKED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[APPROVED-MANUAL_ACTION_REQUIRED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[APPROVED-SUBMITTED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[BLOCKED-READY_FOR_REVIEW]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[CV_GENERATED-READY_FOR_REVIEW]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[DISCOVERED-ANALYZED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[HR_SCREEN-INTERVIEW]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[INTERVIEW-OFFER]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[INTERVIEW-REJECTED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[MANUAL_ACTION_REQUIRED-SUBMITTED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[QUALIFIED-CV_GENERATED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[READY_FOR_REVIEW-APPROVED]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_pipeline_transitions_are_allowed[SUBMITTED-HR_SCREEN]",
+      "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_application_lifecycle.py::test_withdrawing_is_possible_until_the_outcome_is_known",
+      "feature": "application-lifecycle",
       "suite": "backend",
       "status": "passed"
     },
@@ -498,6 +624,204 @@
     {
       "test": "backend/tests/unit/test_skill_evidence.py::test_sources_and_excerpts_are_recorded",
       "feature": "candidate-skills",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_companies_can_be_created_updated_and_deleted",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_company_names_are_unique_case_insensitively",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_discovery_links_jobs_and_records_checks",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_invalid_companies_are_rejected[ats_type-MYSPACE]",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_invalid_companies_are_rejected[career_url-http://localhost/careers]",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_invalid_companies_are_rejected[career_url-not-a-url]",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_invalid_companies_are_rejected[country_code-France]",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_invalid_companies_are_rejected[name-]",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_the_seed_is_imported_once",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_companies_api.py::test_unknown_companies_return_404",
+      "feature": "company-watchlist",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_sources_report_their_policy_and_status",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_rate_limiter.py::test_a_burst_is_allowed_then_callers_must_wait",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_rate_limiter.py::test_acquire_waits_for_a_token_or_times_out",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_rate_limiter.py::test_limits_are_kept_per_domain",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_rate_limiter.py::test_tokens_refill_at_the_configured_rate",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_disallowed_paths_are_respected_for_our_user_agent",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_generic_rules_apply_to_other_agents",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_missing_robots_files_allow_crawling[401]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_missing_robots_files_allow_crawling[403]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_missing_robots_files_allow_crawling[404]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_missing_robots_files_allow_crawling[410]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_network_errors_disallow_everything",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_robots_files_are_cached_per_origin_until_they_expire",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_unreachable_robots_files_disallow_everything[429]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_unreachable_robots_files_disallow_everything[500]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_robots.py::test_unreachable_robots_files_disallow_everything[503]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_duplicate_source_keys_are_rejected",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_invalid_source_registries_are_rejected[version: 1\\nuser_agent: x\\nsources:\\n  - {key: a, name: A, kind: FEED, policy: allowed, colour: red}\\n-sources.0.colour]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_invalid_source_registries_are_rejected[version: 1\\nuser_agent: x\\nsources:\\n  - {key: a, name: A, kind: FEED, policy: maybe}\\n-sources.0.policy]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_invalid_source_registries_are_rejected[version: 2\\nuser_agent: x\\nsources: []\\n-version]",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_live_mode_never_runs_mock_sources",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_mock_mode_runs_only_the_mock_sources_in_priority_order",
+      "feature": "compliance",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_the_repository_source_registry_is_valid",
+      "feature": "compliance",
       "suite": "backend",
       "status": "passed"
     },
@@ -1516,6 +1840,996 @@
       "status": "passed"
     },
     {
+      "test": "backend/tests/integration/test_job_dedup.py::test_a_direct_ats_record_takes_over_from_an_aggregator",
+      "feature": "job-deduplication",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_job_dedup.py::test_duplicates_always_point_to_the_primary_record",
+      "feature": "job-deduplication",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_job_dedup.py::test_identical_content_from_another_source_is_linked",
+      "feature": "job-deduplication",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_job_dedup.py::test_new_jobs_are_stored_as_primary_records",
+      "feature": "job-deduplication",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_job_dedup.py::test_repeated_imports_without_source_ids_update_the_same_record",
+      "feature": "job-deduplication",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_job_dedup.py::test_the_same_source_id_updates_the_existing_posting",
+      "feature": "job-deduplication",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_job_dedup.py::test_tracking_parameters_do_not_hide_a_duplicate",
+      "feature": "job-deduplication",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_content_hash_changes_with_the_content",
+      "feature": "job-deduplication",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_content_hash_is_stable_across_whitespace_case_and_unicode_forms",
+      "feature": "job-deduplication",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_discovery.py::test_a_failing_source_does_not_stop_the_run",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_discovery.py::test_a_mock_discovery_run_loads_dedupes_filters_and_queues",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_discovery.py::test_a_second_run_is_idempotent",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_discovery.py::test_an_empty_watchlist_is_reported",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_discovery.py::test_live_mode_never_runs_mock_sources",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_duplicate_listings_cannot_be_tracked",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_job_detail_shows_other_listings_and_pipeline_entries",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_jobs_require_the_api_token",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_starting_a_discovery_enqueues_the_worker_task",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_stats_summarise_the_discovery",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_unknown_date_jobs_can_be_tracked_manually",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_every_fixture_posting_normalizes",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_feed_items_carry_relative_and_unknown_dates",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_mock_board_postings_normalize_to_the_job_model",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_mock_boards_cover_the_watchlist_tokens",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_sources.py::test_the_repository_watchlist_seed_is_valid_and_fictional",
+      "feature": "job-discovery",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_a_pasted_linkedin_url_is_imported_once",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_importing_a_known_posting_links_to_the_existing_job",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_job_alert_emails_import_every_job_link",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_oversized_emails_are_rejected",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_unsafe_or_invalid_imports_are_rejected[payload0-unsafe_url]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_unsafe_or_invalid_imports_are_rejected[payload1-unsafe_url]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_unsafe_or_invalid_imports_are_rejected[payload2-unsafe_url]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_unsafe_or_invalid_imports_are_rejected[payload3-validation_error]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_job_links_are_extracted_from_alert_emails",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_link_extraction_is_bounded",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[file:///etc/passwd]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[ftp://example.com/job]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://0.0.0.0/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://0x7f000001/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://10.0.0.5/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://100.64.0.1/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://127.0.0.1/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://127.1/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://169.254.169.254/latest/meta-data/]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://172.16.0.1/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://192.168.1.1/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://2130706433/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://[::1]/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://[fd00::1]/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://api.localhost/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://db.internal/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://intranet/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://localhost:8000/admin]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[http://printer.local/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[https://example.com:22/x]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[https://user:secret@example.com/job]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[javascript:alert(1)]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_private_and_unsafe_urls_are_rejected[not a url]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_n8n_workflows.py::test_the_job_alert_workflow_is_exported",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_n8n_workflows.py::test_the_job_alert_workflow_posts_emails_to_the_import_api",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_n8n_workflows.py::test_workflows_are_wired_and_credential_free[job-alert-email-import.json]",
+      "feature": "job-import",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[Agentic AI Engineer]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[Applied Scientist, NLP]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[Computer Vision Engineer]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[Data Scientist, Time Series]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[Deep Learning Researcher]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[GenAI Engineer]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[Ing\\xe9nieur IA]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[LLM Engineer (RAG)]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[ML Platform Engineer]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[MLOps Engineer]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[Machine Learning Engineer]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_ai_ml_titles_are_relevant[Senior AI Engineer]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_candidate_target_roles_extend_the_vocabulary",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[Allemagne-DE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[Atlantis-None]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[FR-FR]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[France-FR]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[None-None]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[Pays-Bas-NL]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[The Netherlands-NL]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[Tunisie-TN]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[UAE-AE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[UK-GB]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[USA-US]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[United Arab Emirates-AE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_codes[fr-FR]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_from_location[-None]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_from_location[Amsterdam, Netherlands-NL]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_from_location[Berlin, DE-DE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_from_location[Dubai, UAE-AE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_from_location[Munich-DE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_from_location[Paris, France-FR]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_from_location[Remote - Europe-None]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_from_location[Remote-None]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_country_from_location[San Francisco, CA, USA-US]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Alternance-INTERNSHIP]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[CDD-TEMPORARY]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[CDI-FULL_TIME]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Contract-CONTRACT]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Fixed-term-TEMPORARY]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Freelance-CONTRACT]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Full-time-FULL_TIME]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Internship-INTERNSHIP]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[None-UNKNOWN]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Part time-PART_TIME]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Permanent-FULL_TIME]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Stage-INTERNSHIP]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_employment_type[Whatever-UNKNOWN]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_html_descriptions_become_plain_text",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_other_titles_are_not_relevant[Account Executive]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_other_titles_are_not_relevant[Email Marketing Manager]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_other_titles_are_not_relevant[Frontend Developer]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_other_titles_are_not_relevant[Office Manager]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts0-REMOTE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts1-REMOTE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts2-REMOTE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts3-HYBRID]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts4-HYBRID]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts5-HYBRID]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts6-ONSITE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts7-ONSITE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts8-UNKNOWN]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_remote_status[texts9-UNKNOWN]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[AI Engineer Intern-INTERN]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[AI Engineer-UNKNOWN]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Graduate ML Engineer-JUNIOR]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Head of AI-PRINCIPAL]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Junior Data Scientist-JUNIOR]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Lead MLOps Engineer-LEAD]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Mid-level NLP Engineer-MID]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Principal Applied Scientist-PRINCIPAL]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Senior AI Engineer-SENIOR]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Sr. Machine Learning Engineer-SENIOR]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Staff AI Engineer-LEAD]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_normalize.py::test_seniority_from_title[Stagiaire Data Science-INTERN]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://acme.example/careers/1-GENERIC]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://acme.example/careers?gh_jid=1-GREENHOUSE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://acme.wd3.myworkdayjobs.com/en-US/careers/job/x-WORKDAY]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://boards.greenhouse.io/acme/jobs/1-GREENHOUSE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://fr.indeed.com/viewjob?jk=1-INDEED]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://job-boards.greenhouse.io/acme/jobs/1-GREENHOUSE]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://jobs.ashbyhq.com/acme/1-ASHBY]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://jobs.lever.co/acme/1-LEVER]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://jobs.smartrecruiters.com/Acme/1-SMARTRECRUITERS]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_ats_type_is_detected_from_the_url[https://www.linkedin.com/jobs/view/1-LINKEDIN]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[HTTPS://Nova-AI.example/careers/jobs/1001?gh_src=abc&utm_source=linkedin#apply-https://nova-ai.example/careers/jobs/1001]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[http://www.example.com:80/careers/job/42/?b=2&a=1&utm_campaign=x&fbclid=y-https://example.com/careers/job/42?a=1&b=2]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://acme.example/careers?gh_jid=4567&gh_src=x-https://acme.example/careers?gh_jid=4567]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://boards.greenhouse.io/acme/jobs/123?gh_src=abc-https://boards.greenhouse.io/acme/jobs/123]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://example.com/-https://example.com/]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://example.com:443//jobs//7/-https://example.com/jobs/7]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://fr.indeed.com/rc/clk?jk=abc123&from=vj&tk=1-https://fr.indeed.com/viewjob?jk=abc123]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://fr.linkedin.com/jobs/view/senior-ai-engineer-at-nova-ai-3912345678?trk=public-https://linkedin.com/jobs/view/3912345678]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://jobs.ashbyhq.com/acme/9f8e/application-https://jobs.ashbyhq.com/acme/9f8e]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://jobs.lever.co/acme/1111-2222/apply?lever-source=LinkedIn&lever-origin=x-https://jobs.lever.co/acme/1111-2222]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://www.indeed.com/viewjob?jk=abc123&vjs=3-https://indeed.com/viewjob?jk=abc123]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url[https://www.linkedin.com/comm/jobs/view/3912345678/?refId=abc&trackingId=def-https://linkedin.com/jobs/view/3912345678]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_canonical_url_is_idempotent",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_public_urls_are_accepted[http://example.com/job?id=1]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_public_urls_are_accepted[https://8.8.8.8/careers]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_public_urls_are_accepted[https://boards.greenhouse.io/acme/jobs/123]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_job_urls.py::test_public_urls_are_accepted[https://www.linkedin.com/jobs/view/3912345678]",
+      "feature": "job-normalization",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
       "test": "backend/tests/unit/test_redaction.py::test_deeply_nested_structures_are_truncated_safely",
       "feature": "log-redaction",
       "suite": "backend",
@@ -1722,6 +3036,264 @@
     {
       "test": "backend/tests/integration/test_multi_candidate.py::test_candidate_data_is_isolated",
       "feature": "multi-candidate",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_filters",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_jobs_api.py::test_the_default_list_shows_jobs_posted_in_the_lookback_window",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_custom_windows_use_posted_after_and_posted_before",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_future_timestamps_are_clamped_or_rejected",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_iso_strings_and_naive_datetimes_are_read_as_utc",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_missing_or_unreadable_dates_are_unknown",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_one_day_ago_is_never_claimed_as_last_24_hours",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[1 day ago-minimum13-maximum13]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[1 month ago-minimum18-maximum18]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[3 hours ago-minimum7-maximum7]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[30+ days ago-minimum19-None]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[3h ago-minimum8-maximum8]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[5 minutes ago-minimum5-maximum5]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[Just now-minimum1-maximum1]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[Posted today-minimum3-maximum3]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[Publi\\xe9e il y a 2 semaines-minimum16-maximum16]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[Reposted 2 days ago-minimum14-maximum14]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[\\xe0 l'instant-minimum2-maximum2]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[a week ago-minimum17-maximum17]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[an hour ago-minimum6-maximum6]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[aujourd'hui-minimum4-maximum4]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[hier-minimum12-maximum12]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[il y a 3 jours-minimum15-maximum15]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[il y a 6 heures-minimum9-maximum9]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[il y a plus de 30 jours-minimum20-None]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[il y a une heure-minimum10-maximum10]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[just posted-minimum0-maximum0]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_ages_are_parsed[yesterday-minimum11-maximum11]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_relative_dates_are_estimated_conservatively_with_their_basis",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_source_timestamps_are_known",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_text_without_an_age_is_not_parsed[2 apples]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_text_without_an_age_is_not_parsed[Paris]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_text_without_an_age_is_not_parsed[Senior AI Engineer]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_text_without_an_age_is_not_parsed[]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_text_without_an_age_is_not_parsed[soon]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_window_classification[None-UNKNOWN-UNKNOWN_DATE]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_window_classification[posted_at0-KNOWN-IN_WINDOW]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_window_classification[posted_at1-KNOWN-IN_WINDOW]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_window_classification[posted_at2-KNOWN-OUT_OF_WINDOW]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_window_classification[posted_at3-ESTIMATED-IN_WINDOW]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_window_classification[posted_at4-ESTIMATED-OUT_OF_WINDOW]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_window_classification[posted_at6-UNKNOWN-UNKNOWN_DATE]",
+      "feature": "posting-window",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_posting_dates.py::test_window_defaults_to_the_lookback_period",
+      "feature": "posting-window",
       "suite": "backend",
       "status": "passed"
     },
@@ -1988,70 +3560,144 @@
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
     },
     {
       "test": "candidate.spec.ts > candidate profile and master CV (read-only) > the CV page offers an upload and rejects unsupported files",
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
     },
     {
       "test": "candidate.spec.ts > candidate profile and master CV (read-only) > the profile is loaded and missing values are flagged, never guessed",
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
     },
     {
       "test": "candidate.spec.ts > master CV workflow (changes data) > profile edits are saved",
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
     },
     {
       "test": "candidate.spec.ts > master CV workflow (changes data) > upload, review, confirm, then see the skill evidence",
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > lists runs and filters them by status",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > runs a system diagnostic end to end",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > settings report secrets without revealing them",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > shows later-phase pages as disabled",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > shows the safety state and healthy components",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-09-28T23:48:55.876254+00:00"
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
+    },
+    {
+      "test": "jobs.spec.ts > job discovery workflow (changes data) > a job shows its other listings, and an unknown-date job can be tracked",
+      "feature": "e2e-jobs",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
+    },
+    {
+      "test": "jobs.spec.ts > job discovery workflow (changes data) > a pasted LinkedIn URL is imported without being fetched",
+      "feature": "e2e-jobs",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
+    },
+    {
+      "test": "jobs.spec.ts > job discovery workflow (changes data) > a watchlist company can be edited",
+      "feature": "e2e-jobs",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
+    },
+    {
+      "test": "jobs.spec.ts > job discovery workflow (changes data) > filters narrow the list",
+      "feature": "e2e-jobs",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
+    },
+    {
+      "test": "jobs.spec.ts > job discovery workflow (changes data) > import the watchlist seed, run a discovery and browse the jobs",
+      "feature": "e2e-jobs",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
+    },
+    {
+      "test": "jobs.spec.ts > jobs and company watchlist (read-only) > jobs and companies pages are enabled in the navigation",
+      "feature": "e2e-jobs",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
+    },
+    {
+      "test": "jobs.spec.ts > jobs and company watchlist (read-only) > sources show their policy: LinkedIn is manual only",
+      "feature": "e2e-jobs",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
+    },
+    {
+      "test": "jobs.spec.ts > jobs and company watchlist (read-only) > unsafe job URLs are rejected before anything is stored",
+      "feature": "e2e-jobs",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-02T15:08:59.914545+00:00"
+    },
+    {
+      "test": "frontend/src/lib/companies.test.ts::company form builds a clean create body",
+      "feature": "frontend-companies",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/companies.test.ts::company form colours the last board check",
+      "feature": "frontend-companies",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/companies.test.ts::company form sends only the changed fields",
+      "feature": "frontend-companies",
+      "suite": "frontend",
+      "status": "passed"
     },
     {
       "test": "frontend/src/lib/cv.test.ts::checkCvFile { name: 'CV.PDF', size: 10 } -> null",
@@ -2228,6 +3874,12 @@
       "status": "passed"
     },
     {
+      "test": "frontend/src/lib/format.test.ts::humanize spells product names as their owners do",
+      "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
       "test": "frontend/src/lib/format.test.ts::humanize turns enum-like values into readable labels",
       "feature": "frontend-format",
       "suite": "frontend",
@@ -2338,6 +3990,126 @@
     {
       "test": "frontend/src/lib/format.test.ts::statusTone maps something-else to neutral",
       "feature": "frontend-format",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job fields explains import errors",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job fields formats salary { salary_min: 50000, \u2026(3) }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job fields formats salary { salary_min: 65000, \u2026(3) }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job fields formats salary { salary_min: 70000, \u2026(3) }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job fields formats salary { salary_min: null, \u2026(3) }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job fields formats salary { salary_min: null, \u2026(3) }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job fields never invents a title or a company for imported links",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job fields shows the host of a job URL",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters builds short links that round-trip",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters defaults to the posting window",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters ignores malformed values { country: 'France' }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters ignores malformed values { offset: '-10' }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters ignores malformed values { offset: 'abc' }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters ignores malformed values { q: '   ' }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters ignores malformed values { source: '../etc' }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters ignores malformed values { tab: 'everything' }",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters labels the tabs with the configured window",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::job filters reads and validates the URL parameters",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::posting dates says how the date is known",
+      "feature": "frontend-jobs",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/jobs.test.ts::posting dates uses distinct tones",
+      "feature": "frontend-jobs",
       "suite": "frontend",
       "status": "passed"
     },
@@ -2588,6 +4360,24 @@
       "status": "passed"
     },
     {
+      "test": "workers/tests/test_jobs_tasks.py::test_api_to_worker_discovery_end_to_end",
+      "feature": "job-discovery",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_jobs_tasks.py::test_the_discovery_task_is_registered",
+      "feature": "job-discovery",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_jobs_tasks.py::test_the_worker_runs_a_recorded_discovery",
+      "feature": "job-discovery",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
       "test": "workers/tests/test_system_tasks.py::test_api_to_worker_end_to_end",
       "feature": "system-diagnostics",
       "suite": "workers",
@@ -2637,90 +4427,6 @@
     }
   ],
   "planned": [
-    {
-      "phase": 3,
-      "feature": "job-normalization",
-      "test": "raw postings normalize to a Job with every spec field",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "job-normalization",
-      "test": "canonical URL strips tracking parameters and fragments",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "job-deduplication",
-      "test": "same source + source_job_id is detected as a duplicate",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "job-deduplication",
-      "test": "same canonical application URL with different tracking params is a duplicate",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "job-deduplication",
-      "test": "same content_hash across sources is linked via duplicate_of_id",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "job-deduplication",
-      "test": "content_hash is stable across whitespace and case changes",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "posting-window",
-      "test": "jobs posted within JOB_LOOKBACK_HOURS pass; older jobs are excluded",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "posting-window",
-      "test": "unknown posting date gives posting_date_status=UNKNOWN and is never counted as last 24h",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "posting-window",
-      "test": "relative dates such as '2 days ago' give ESTIMATED with the basis recorded",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "job-discovery",
-      "test": "mock source discovery run records counters and events",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "job-discovery",
-      "test": "company watchlist CRUD and last_checked updates",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "compliance",
-      "test": "robots.txt disallow prevents fetching",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "compliance",
-      "test": "per-domain rate limiter enforces the configured rate",
-      "status": "planned"
-    },
-    {
-      "phase": 3,
-      "feature": "job-import",
-      "test": "job import rejects private and loopback URLs (SSRF protection)",
-      "status": "planned"
-    },
     {
       "phase": 4,
       "feature": "llm-provider",
