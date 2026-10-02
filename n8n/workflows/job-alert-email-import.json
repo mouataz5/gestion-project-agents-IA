@@ -1,0 +1,71 @@
+{
+  "name": "Job-alert email import",
+  "nodes": [
+    {
+      "parameters": {
+        "mailbox": "INBOX",
+        "postProcessAction": "read",
+        "format": "simple",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "id": "0b5f7a52-6d1e-4c1e-9a55-1d2f6c6a0001",
+      "name": "Job-alert emails (IMAP)",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "credentials": {
+        "imap": {
+          "id": "",
+          "name": "Job-alert mailbox (IMAP)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/v1/jobs/import/email",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ subject: $json.subject || '', text: $json.textHtml || $json.textPlain || '', sender: $json.from || null, received_at: $json.date || null }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "0b5f7a52-6d1e-4c1e-9a55-1d2f6c6a0002",
+      "name": "Import jobs into the agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Job agent API token"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Job-alert emails (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "Import jobs into the agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

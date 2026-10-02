@@ -1,5 +1,6 @@
 """ORM models. Importing this package registers every table on ``Base.metadata``."""
 
+from app.models.application import Application
 from app.models.audit_log import AuditLog
 from app.models.automation_run import (
     RUN_COUNTERS,
@@ -11,6 +12,7 @@ from app.models.automation_run import (
     RunType,
 )
 from app.models.candidate import DEFAULT_CANDIDATE_SLUG, Candidate, CandidateSkill
+from app.models.company import Company
 from app.models.cv import (
     CvKind,
     CvStatus,
@@ -20,14 +22,17 @@ from app.models.cv import (
     Experience,
     Project,
 )
+from app.models.job import Job, JobSkill, JobSource
 
 __all__ = [
     "DEFAULT_CANDIDATE_SLUG",
     "RUN_COUNTERS",
+    "Application",
     "AuditLog",
     "AutomationRun",
     "Candidate",
     "CandidateSkill",
+    "Company",
     "CvKind",
     "CvStatus",
     "CvVersion",
@@ -35,6 +40,9 @@ __all__ = [
     "Education",
     "EventLevel",
     "Experience",
+    "Job",
+    "JobSkill",
+    "JobSource",
     "Project",
     "RunEvent",
     "RunStatus",

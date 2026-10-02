@@ -29,7 +29,13 @@ PHASES: tuple[Phase, ...] = (
         "done",
         "Validated profile, master CV upload, deterministic parsing, review, skill evidence",
     ),
-    Phase(3, "Job discovery", "planned", "Job model, mock source, deduplication, 24-hour filter"),
+    Phase(
+        3,
+        "Job discovery",
+        "done",
+        "Jobs, source policy, mock sources, company watchlist, deduplication, posting window, "
+        "URL and job-alert email imports",
+    ),
     Phase(4, "Job analysis", "planned", "Claude integration, visa classification, matching"),
     Phase(5, "ATS engine", "planned", "Keyword extraction, ATS scoring, truthful tailoring loop"),
     Phase(6, "CV documents", "planned", "ATS-friendly DOCX and PDF generation"),

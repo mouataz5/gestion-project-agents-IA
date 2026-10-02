@@ -1,4 +1,4 @@
-"""Backend test fixtures: synthetic CV documents and candidate profile files.
+"""Backend test fixtures: synthetic CV documents, candidate profile files, jobs and discovery.
 
 All CV content is fictional ("Alex Example"); the real master CV never enters the test suite.
 Documents are generated at test time (python-docx / reportlab), so no binary fixtures are
@@ -9,17 +9,27 @@ from __future__ import annotations
 
 import io
 import shutil
+import uuid
 from collections.abc import Callable, Iterator, Sequence
+from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import docx
 import pytest
 from fastapi.testclient import TestClient
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import REPO_ROOT, Settings
+from app.db.session import create_db_engine, create_session_factory
 from app.main import create_app
+from app.models import RunTrigger, RunType
+from app.services.companies import CompanyService
+from app.services.discovery import DiscoveryService
+from app.services.runs import RunService
 
 # (style, text) — styles: title, heading (Word heading style), caps (plain bold paragraph used
 # as a heading), bold, bullet, text.
@@ -161,5 +171,85 @@ def candidate_client(
     candidate_settings: Settings, recording_queue: object, api_token: str
 ) -> Iterator[TestClient]:
     app = create_app(candidate_settings, task_queue=recording_queue)  # type: ignore[arg-type]
+    with TestClient(app, headers={"Authorization": f"Bearer {api_token}"}) as client:
+        yield client
+
+
+# ---------------------------------------------------------------------------------------------
+# Jobs and discovery (Phase 3)
+# ---------------------------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class RunSnapshot:
+    id: uuid.UUID
+    status: str
+    jobs_discovered: int
+    jobs_processed: int
+    error_count: int
+    summary: dict[str, Any]
+    events: list[tuple[str, str, str]]  # (stage, level, message)
+
+
+@pytest.fixture
+def jobs_settings(
+    make_settings: Callable[..., Settings],
+    postgres_url: str,
+    clean_db: None,
+    candidate_dir: Path,
+) -> Settings:
+    return make_settings(database_url=postgres_url, candidate_dir=candidate_dir)
+
+
+@pytest.fixture
+def jobs_db(jobs_settings: Settings) -> Iterator[sessionmaker[Session]]:
+    engine = create_db_engine(jobs_settings)
+    yield create_session_factory(engine)
+    engine.dispose()
+
+
+@pytest.fixture
+def import_companies(jobs_db: sessionmaker[Session]) -> Callable[[], None]:
+    def _import() -> None:
+        with jobs_db() as session:
+            CompanyService(session).import_from_yaml(REPO_ROOT / "crawler")
+            session.commit()
+
+    return _import
+
+
+@pytest.fixture
+def discover(jobs_settings: Settings, jobs_db: sessionmaker[Session]) -> Callable[..., RunSnapshot]:
+    """Run a discovery synchronously (as the worker does) and return a snapshot of the run."""
+
+    def _run(*, clock: Callable[[], datetime] | None = None, **overrides: Any) -> RunSnapshot:
+        settings = jobs_settings.model_copy(update=overrides) if overrides else jobs_settings
+        with jobs_db() as session:
+            run = RunService(session).create_run(
+                run_type=RunType.DISCOVERY, trigger=RunTrigger.MANUAL
+            )
+            session.commit()
+            run_id = run.id
+        DiscoveryService(settings=settings, session_factory=jobs_db, clock=clock).execute(run_id)
+        with jobs_db() as session:
+            run = RunService(session).get_run(run_id)
+            return RunSnapshot(
+                id=run.id,
+                status=run.status.value,
+                jobs_discovered=run.jobs_discovered,
+                jobs_processed=run.jobs_processed,
+                error_count=run.error_count,
+                summary=dict(run.summary),
+                events=[(e.stage, e.level.value, e.message) for e in run.events],
+            )
+
+    return _run
+
+
+@pytest.fixture
+def jobs_client(
+    jobs_settings: Settings, recording_queue: object, api_token: str
+) -> Iterator[TestClient]:
+    app = create_app(jobs_settings, task_queue=recording_queue)  # type: ignore[arg-type]
     with TestClient(app, headers={"Authorization": f"Bearer {api_token}"}) as client:
         yield client

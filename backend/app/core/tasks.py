@@ -9,6 +9,7 @@ from enum import StrEnum
 class TaskName(StrEnum):
     PING = "system.ping"
     RUN_DIAGNOSTIC = "system.run_diagnostic"
+    RUN_DISCOVERY = "jobs.run_discovery"
 
 
 class QueueName(StrEnum):

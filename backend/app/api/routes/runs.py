@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, status
 
@@ -50,28 +50,21 @@ def get_run(run_id: uuid.UUID, db: DbSession) -> RunDetail:
     return RunDetail.model_validate(RunService(db).get_run(run_id))
 
 
-@router.post(
-    "/diagnostic",
-    response_model=RunCreated,
-    status_code=status.HTTP_202_ACCEPTED,
-    summary="Start a system self-test run on a worker",
-    responses={503: {"model": ErrorResponse, "description": "The task queue is unavailable"}},
-)
-def start_diagnostic(db: DbSession, queue: TaskQueueDep) -> RunCreated:
+def _start_run(db: DbSession, queue: TaskQueueDep, run_type: RunType, task: TaskName) -> RunCreated:
     runs = RunService(db)
     audit = AuditService(db)
-    run = runs.create_run(run_type=RunType.DIAGNOSTIC, trigger=RunTrigger.API)
+    run = runs.create_run(run_type=run_type, trigger=RunTrigger.API)
     audit.record(
         action=AuditAction.RUN_REQUESTED,
         actor=Actor.USER,
         entity_type="automation_run",
         entity_id=str(run.id),
-        details={"run_type": RunType.DIAGNOSTIC.value},
+        details={"run_type": run_type.value},
     )
     db.commit()  # the worker must be able to read the run before the task is published
 
     try:
-        task_id = queue.enqueue(TaskName.RUN_DIAGNOSTIC, args=[str(run.id)])
+        task_id = queue.enqueue(task, args=[str(run.id)])
     except QueueUnavailableError as exc:
         runs.mark_failed(run, stage="enqueue", error="Task queue unavailable")
         audit.record(
@@ -90,3 +83,30 @@ def start_diagnostic(db: DbSession, queue: TaskQueueDep) -> RunCreated:
     run.task_id = task_id
     db.commit()
     return RunCreated(run_id=run.id, status=RunStatus.PENDING, task_id=task_id)
+
+
+_QUEUE_UNAVAILABLE: dict[int | str, dict[str, Any]] = {
+    503: {"model": ErrorResponse, "description": "The task queue is unavailable"}
+}
+
+
+@router.post(
+    "/diagnostic",
+    response_model=RunCreated,
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Start a system self-test run on a worker",
+    responses=_QUEUE_UNAVAILABLE,
+)
+def start_diagnostic(db: DbSession, queue: TaskQueueDep) -> RunCreated:
+    return _start_run(db, queue, RunType.DIAGNOSTIC, TaskName.RUN_DIAGNOSTIC)
+
+
+@router.post(
+    "/discovery",
+    response_model=RunCreated,
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Start a job discovery run on a worker",
+    responses=_QUEUE_UNAVAILABLE,
+)
+def start_discovery(db: DbSession, queue: TaskQueueDep) -> RunCreated:
+    return _start_run(db, queue, RunType.DISCOVERY, TaskName.RUN_DISCOVERY)

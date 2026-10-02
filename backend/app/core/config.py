@@ -88,6 +88,7 @@ class Settings(BaseSettings):
     storage_dir: Path = REPO_ROOT / "storage"
     candidate_dir: Path = REPO_ROOT / "candidate"
     prompts_dir: Path = REPO_ROOT / "prompts"
+    crawler_dir: Path = REPO_ROOT / "crawler"
     max_upload_mb: int = Field(default=5, ge=1, le=50)
 
     # --- Security ------------------------------------------------------------------
@@ -95,6 +96,7 @@ class Settings(BaseSettings):
 
     # --- Pipeline ------------------------------------------------------------------
     job_lookback_hours: int = Field(default=24, ge=1, le=24 * 30)
+    discovery_max_jobs_per_source: int = Field(default=500, ge=1, le=10_000)
     ats_target_score: int = Field(default=95, ge=0, le=100)
     ats_max_iterations: int = Field(default=3, ge=1, le=10)
     scheduler_enabled: bool = True
@@ -176,7 +178,7 @@ class Settings(BaseSettings):
                 ) from exc
         return value
 
-    @field_validator("storage_dir", "candidate_dir", "prompts_dir")
+    @field_validator("storage_dir", "candidate_dir", "prompts_dir", "crawler_dir")
     @classmethod
     def _resolve_path(cls, value: Path) -> Path:
         return value if value.is_absolute() else (REPO_ROOT / value).resolve()

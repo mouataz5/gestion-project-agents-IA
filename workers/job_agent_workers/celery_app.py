@@ -15,4 +15,6 @@ from job_agent_workers import signals  # noqa: F401  (connects the signal handle
 settings = get_settings()
 configure_logging(settings, component="worker")
 
-celery_app = create_celery(settings, include=["job_agent_workers.tasks.system"])
+celery_app = create_celery(
+    settings, include=["job_agent_workers.tasks.system", "job_agent_workers.tasks.jobs"]
+)

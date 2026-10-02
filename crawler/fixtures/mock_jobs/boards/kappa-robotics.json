@@ -1,0 +1,31 @@
+{
+  "company": "Kappa Robotics",
+  "company_url": "https://kappa-robotics.example",
+  "ats_type": "ASHBY",
+  "jobs": [
+    {
+      "id": "kr-3001",
+      "title": "Computer Vision Engineer",
+      "location": "Amsterdam, Netherlands",
+      "workplace": "On-site",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 10,
+      "url": "https://kappa-robotics.example/careers/3001",
+      "description_html": "<p>Build perception models for warehouse robots.</p><p>Relocation support to Amsterdam is provided.</p>",
+      "required_skills": ["Python", "Computer Vision", "PyTorch"],
+      "languages": ["English"],
+      "relocation": "Relocation support to Amsterdam is provided."
+    },
+    {
+      "id": "kr-3002",
+      "title": "Agentic AI Engineer",
+      "location": "Remote - Europe",
+      "workplace": "Remote",
+      "employment_type": "Contract",
+      "posted_hours_ago": 8,
+      "url": "https://kappa-robotics.example/careers/3002",
+      "description_html": "<p>Design multi-agent systems that plan robot missions, using MCP tools.</p>",
+      "required_skills": ["Agentic AI", "Multi-agent systems", "MCP"]
+    }
+  ]
+}

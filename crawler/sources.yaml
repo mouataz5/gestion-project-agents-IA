@@ -1,0 +1,128 @@
+# Job source policy registry — reviewed, versioned configuration.
+#
+# policy:
+#   api_only     official public API / feed only (no HTML crawling)
+#   allowed      automated access permitted (robots.txt and rate limits always apply)
+#   manual_only  never fetched automatically; jobs arrive only through /jobs/import
+#                (URLs pasted by the user, job-alert emails forwarded by n8n)
+#   disabled     never used
+#
+# A source runs in a discovery only when it is enabled, its policy is api_only/allowed, it is
+# implemented, and `mock` matches MOCK_MODE. Priority decides which listing of a duplicated job
+# is kept as the primary record (direct ATS records win over aggregators).
+
+version: 1
+user_agent: "JobAgent/0.1 (self-hosted personal job search; respects robots.txt)"
+
+sources:
+  # --- Mock sources (MOCK_MODE=true): fictional data in crawler/fixtures/mock_jobs/ ----------
+  - key: mock_ats
+    name: Mock ATS boards
+    kind: ATS_API
+    policy: allowed
+    enabled: true
+    mock: true
+    priority: 100
+    rate_limit_per_minute: 600
+    description: Fictional company boards for the watchlist (Greenhouse/Lever/Ashby/SmartRecruiters-like).
+
+  - key: mock_feed
+    name: Mock aggregator feed
+    kind: FEED
+    policy: allowed
+    enabled: true
+    mock: true
+    priority: 10
+    rate_limit_per_minute: 600
+    description: Fictional job-board feed with relative dates, unknown dates and duplicate listings.
+
+  # --- Manual imports -------------------------------------------------------------------------
+  - key: manual_import
+    name: Manual import
+    kind: MANUAL
+    policy: manual_only
+    enabled: true
+    priority: 5
+    description: Job URLs pasted in the dashboard or extracted from job-alert emails (n8n).
+
+  # --- Real sources (implemented in Phase 10; disabled until then) ----------------------------
+  - key: greenhouse
+    name: Greenhouse Job Board API
+    kind: ATS_API
+    policy: api_only
+    enabled: false
+    priority: 100
+    rate_limit_per_minute: 30
+    available_from_phase: 10
+    notes: Public Job Board API (boards-api.greenhouse.io), no authentication, one board per company.
+
+  - key: lever
+    name: Lever Postings API
+    kind: ATS_API
+    policy: api_only
+    enabled: false
+    priority: 100
+    rate_limit_per_minute: 30
+    available_from_phase: 10
+    notes: Public Postings API (api.lever.co/v0/postings/<company>).
+
+  - key: ashby
+    name: Ashby Job Board API
+    kind: ATS_API
+    policy: api_only
+    enabled: false
+    priority: 100
+    rate_limit_per_minute: 30
+    available_from_phase: 10
+    notes: Public job board API (api.ashbyhq.com/posting-api/job-board/<organization>).
+
+  - key: smartrecruiters
+    name: SmartRecruiters Posting API
+    kind: ATS_API
+    policy: api_only
+    enabled: false
+    priority: 100
+    rate_limit_per_minute: 30
+    available_from_phase: 10
+    notes: Public Posting API (api.smartrecruiters.com/v1/companies/<company>/postings).
+
+  - key: workday
+    name: Workday career sites
+    kind: CAREER_PAGE
+    policy: allowed
+    enabled: false
+    priority: 60
+    rate_limit_per_minute: 10
+    available_from_phase: 10
+    notes: Public career-site endpoints only where technically feasible and permitted by the site.
+
+  - key: career_page
+    name: Generic career pages
+    kind: CAREER_PAGE
+    policy: allowed
+    enabled: false
+    priority: 50
+    rate_limit_per_minute: 10
+    available_from_phase: 10
+    notes: schema.org JobPosting (JSON-LD) first, HTML fallback; robots.txt always respected.
+
+  - key: rss
+    name: RSS / Atom job feeds
+    kind: FEED
+    policy: api_only
+    enabled: false
+    priority: 20
+    rate_limit_per_minute: 30
+    available_from_phase: 10
+    notes: Only feeds published for automated consumption.
+
+  - key: linkedin
+    name: LinkedIn
+    kind: MANUAL
+    policy: manual_only
+    enabled: false
+    priority: 5
+    notes: >-
+      Never scraped and never an architectural dependency. LinkedIn jobs reach the system only
+      as URLs pasted by the user or links from job-alert emails forwarded through n8n
+      (POST /api/v1/jobs/import and /jobs/import/email).

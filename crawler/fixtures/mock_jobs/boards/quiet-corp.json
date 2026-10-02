@@ -1,0 +1,17 @@
+{
+  "company": "Quiet Corp",
+  "company_url": "https://quiet-corp.example",
+  "ats_type": "GREENHOUSE",
+  "jobs": [
+    {
+      "id": "qc-5001",
+      "title": "AI Engineer",
+      "location": "Stockholm, Sweden",
+      "workplace": "Hybrid",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 1,
+      "url": "https://quiet-corp.example/careers/5001",
+      "description_html": "<p>This company is disabled in the watchlist, so this posting is never fetched.</p>"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "company": "Nova AI",
+  "company_url": "https://nova-ai.example",
+  "ats_type": "GREENHOUSE",
+  "jobs": [
+    {
+      "id": "nova-1001",
+      "title": "Senior AI Engineer",
+      "location": "Paris, France",
+      "workplace": "Hybrid",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 5,
+      "url": "https://nova-ai.example/careers/jobs/1001",
+      "description_html": "<p>Nova AI builds assistants for legal teams. You will design retrieval-augmented generation (RAG) pipelines and agents in production.</p><ul><li>Design RAG pipelines with LangGraph</li><li>Ship LLM features with FastAPI</li></ul><p>Visa sponsorship is available for non-EU candidates. Relocation package to Paris.</p>",
+      "required_skills": ["Python", "LLMs", "RAG", "LangGraph"],
+      "preferred_skills": ["Kubernetes", "MCP"],
+      "languages": ["English", "French"],
+      "salary": {"min": 65000, "max": 80000, "currency": "EUR", "period": "year"},
+      "education": "MSc in Computer Science or equivalent experience.",
+      "experience": "5+ years building ML systems, including 2 years with LLMs in production.",
+      "responsibilities": ["Design RAG pipelines", "Evaluate LLM quality", "Mentor engineers"],
+      "visa": "Visa sponsorship is available for non-EU candidates.",
+      "relocation": "Relocation package to Paris."
+    },
+    {
+      "id": "nova-1002",
+      "title": "LLM Engineer (RAG)",
+      "location": "Paris, France",
+      "workplace": "Remote",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 20,
+      "url": "https://nova-ai.example/careers/jobs/1002",
+      "description_html": "<p>Join the retrieval team to improve search quality for our legal assistant.</p><p>Fully remote within Europe.</p>",
+      "required_skills": ["Python", "RAG", "Vector databases"],
+      "preferred_skills": ["Spark"],
+      "languages": ["English"],
+      "experience": "3+ years in NLP or search."
+    },
+    {
+      "id": "nova-1003",
+      "title": "Account Executive",
+      "location": "Paris, France",
+      "workplace": "On-site",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 3,
+      "url": "https://nova-ai.example/careers/jobs/1003",
+      "description_html": "<p>Sell our assistant to law firms.</p>"
+    },
+    {
+      "id": "nova-1004",
+      "title": "Machine Learning Engineer",
+      "location": "Lyon, France",
+      "workplace": "Hybrid",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 50,
+      "url": "https://nova-ai.example/careers/jobs/1004",
+      "description_html": "<p>Train and deploy document classification models.</p>",
+      "required_skills": ["Python", "PyTorch"]
+    }
+  ]
+}

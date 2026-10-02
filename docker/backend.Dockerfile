@@ -28,6 +28,7 @@ COPY pyproject.toml uv.lock ./
 COPY backend backend
 COPY workers workers
 COPY prompts prompts
+COPY crawler crawler
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --all-packages \
  && mkdir -p /app/storage /app/candidate \
@@ -36,7 +37,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 ENV PATH="/app/.venv/bin:$PATH" \
     STORAGE_DIR=/app/storage \
     CANDIDATE_DIR=/app/candidate \
-    PROMPTS_DIR=/app/prompts
+    PROMPTS_DIR=/app/prompts \
+    CRAWLER_DIR=/app/crawler
 
 USER app
 EXPOSE 8000

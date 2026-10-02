@@ -76,3 +76,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 *.swp
+
+# Redis snapshots from a locally started redis-server
+dump.rdb

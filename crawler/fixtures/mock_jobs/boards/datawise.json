@@ -1,0 +1,43 @@
+{
+  "company": "Datawise Labs",
+  "company_url": "https://datawise.example",
+  "ats_type": "LEVER",
+  "jobs": [
+    {
+      "id": "dw-2001",
+      "title": "Data Scientist, Time Series",
+      "location": "Berlin, Germany",
+      "workplace": "On-site",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 2,
+      "url": "https://datawise.example/jobs/2001",
+      "description_html": "<p>Forecast energy demand with time-series models.</p><p>We are unable to offer visa sponsorship; candidates must already have the right to work in Germany.</p>",
+      "required_skills": ["Python", "Time-series analysis", "Spark"],
+      "preferred_skills": ["Azure"],
+      "languages": ["English", "German"],
+      "salary": {"min": 70000, "max": 85000, "currency": "EUR", "period": "year"},
+      "visa": "We are unable to offer visa sponsorship."
+    },
+    {
+      "id": "dw-2002",
+      "title": "MLOps Engineer",
+      "location": "Munich, Germany",
+      "workplace": "Hybrid",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 30,
+      "url": "https://datawise.example/jobs/2002",
+      "description_html": "<p>Own our training and serving platform on Kubernetes.</p>",
+      "required_skills": ["Kubernetes", "Docker", "MLOps"]
+    },
+    {
+      "id": "dw-2003",
+      "title": "Frontend Developer",
+      "location": "Berlin, Germany",
+      "workplace": "Hybrid",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 1,
+      "url": "https://datawise.example/jobs/2003",
+      "description_html": "<p>Build dashboards in React.</p>"
+    }
+  ]
+}

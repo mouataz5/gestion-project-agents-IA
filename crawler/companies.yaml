@@ -1,0 +1,52 @@
+# Company watchlist seed (import it on the Companies page or with POST /api/v1/companies/import).
+#
+# The companies below are FICTIONAL: their boards are served by the mock ATS source in
+# MOCK_MODE (crawler/fixtures/mock_jobs/boards/<board_token>.json). Add the real companies you
+# want to follow in the dashboard; real ATS boards are fetched from Phase 10.
+#
+# Fields: name, career_url, country_code (ISO alpha-2), ats_type (GREENHOUSE, LEVER, ASHBY,
+# SMARTRECRUITERS, WORKDAY, GENERIC, OTHER), board_token (the company's identifier in its ATS),
+# target_roles, enabled, notes.
+
+version: 1
+companies:
+  - name: Nova AI
+    career_url: https://nova-ai.example/careers
+    country_code: FR
+    ats_type: GREENHOUSE
+    board_token: nova-ai
+    target_roles: [AI Engineer, LLM Engineer]
+    enabled: true
+
+  - name: Datawise Labs
+    career_url: https://datawise.example/jobs
+    country_code: DE
+    ats_type: LEVER
+    board_token: datawise
+    target_roles: [Data Scientist, MLOps Engineer]
+    enabled: true
+
+  - name: Kappa Robotics
+    career_url: https://kappa-robotics.example/careers
+    country_code: NL
+    ats_type: ASHBY
+    board_token: kappa-robotics
+    target_roles: [Computer Vision Engineer, Agentic AI Engineer]
+    enabled: true
+
+  - name: Sandstone Analytics
+    career_url: https://sandstone.example/careers
+    country_code: AE
+    ats_type: SMARTRECRUITERS
+    board_token: sandstone
+    target_roles: [AI Research Engineer]
+    enabled: true
+
+  - name: Quiet Corp
+    career_url: https://quiet-corp.example/careers
+    country_code: SE
+    ats_type: GREENHOUSE
+    board_token: quiet-corp
+    target_roles: [AI Engineer]
+    enabled: false
+    notes: Disabled example - never checked while disabled.

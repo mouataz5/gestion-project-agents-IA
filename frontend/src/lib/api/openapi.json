@@ -156,6 +156,41 @@
         "title": "ApplicationDefaults",
         "type": "object"
       },
+      "ApplicationStatus": {
+        "enum": [
+          "DISCOVERED",
+          "ANALYZED",
+          "QUALIFIED",
+          "CV_GENERATED",
+          "READY_FOR_REVIEW",
+          "APPROVED",
+          "SUBMITTED",
+          "HR_SCREEN",
+          "INTERVIEW",
+          "OFFER",
+          "REJECTED",
+          "WITHDRAWN",
+          "BLOCKED",
+          "MANUAL_ACTION_REQUIRED"
+        ],
+        "title": "ApplicationStatus",
+        "type": "string"
+      },
+      "AtsType": {
+        "enum": [
+          "GREENHOUSE",
+          "LEVER",
+          "ASHBY",
+          "SMARTRECRUITERS",
+          "WORKDAY",
+          "LINKEDIN",
+          "INDEED",
+          "GENERIC",
+          "OTHER"
+        ],
+        "title": "AtsType",
+        "type": "string"
+      },
       "AuditLogEntry": {
         "properties": {
           "action": {
@@ -519,6 +554,366 @@
           "profile"
         ],
         "title": "CandidateUpdate",
+        "type": "object"
+      },
+      "CompanyCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "ats_type": {
+            "default": "GENERIC",
+            "enum": [
+              "GREENHOUSE",
+              "LEVER",
+              "ASHBY",
+              "SMARTRECRUITERS",
+              "WORKDAY",
+              "GENERIC",
+              "OTHER"
+            ],
+            "title": "Ats Type",
+            "type": "string"
+          },
+          "board_token": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Board Token"
+          },
+          "career_url": {
+            "maxLength": 500,
+            "title": "Career Url",
+            "type": "string"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "target_roles": {
+            "items": {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Target Roles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "career_url"
+        ],
+        "title": "CompanyCreate",
+        "type": "object"
+      },
+      "CompanyImportResult": {
+        "properties": {
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "unchanged": {
+            "title": "Unchanged",
+            "type": "integer"
+          },
+          "updated": {
+            "title": "Updated",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "created",
+          "updated",
+          "unchanged"
+        ],
+        "title": "CompanyImportResult",
+        "type": "object"
+      },
+      "CompanyRead": {
+        "properties": {
+          "ats_type": {
+            "title": "Ats Type",
+            "type": "string"
+          },
+          "board_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Board Token"
+          },
+          "career_url": {
+            "title": "Career Url",
+            "type": "string"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "job_count": {
+            "description": "Primary job records linked to this company",
+            "title": "Job Count",
+            "type": "integer"
+          },
+          "last_check_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Check Status"
+          },
+          "last_checked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Checked At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "target_roles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Target Roles",
+            "type": "array"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "career_url",
+          "country",
+          "country_code",
+          "ats_type",
+          "board_token",
+          "target_roles",
+          "enabled",
+          "notes",
+          "last_checked_at",
+          "last_check_status",
+          "job_count",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CompanyRead",
+        "type": "object"
+      },
+      "CompanyUpdate": {
+        "additionalProperties": false,
+        "description": "Partial update: only the fields sent are changed (``null`` clears optional fields).",
+        "properties": {
+          "ats_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "GREENHOUSE",
+                  "LEVER",
+                  "ASHBY",
+                  "SMARTRECRUITERS",
+                  "WORKDAY",
+                  "GENERIC",
+                  "OTHER"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ats Type"
+          },
+          "board_token": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Board Token"
+          },
+          "career_url": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Career Url"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code"
+          },
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "target_roles": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 50,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Roles"
+          }
+        },
+        "title": "CompanyUpdate",
         "type": "object"
       },
       "ComponentHealth": {
@@ -1267,6 +1662,86 @@
         "title": "EducationEntry",
         "type": "object"
       },
+      "EmailImportRequest": {
+        "additionalProperties": false,
+        "description": "A job-alert email (forwarded by n8n or pasted). Only job links are extracted.",
+        "properties": {
+          "received_at": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Received At"
+          },
+          "sender": {
+            "anyOf": [
+              {
+                "maxLength": 320,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sender"
+          },
+          "subject": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Subject",
+            "type": "string"
+          },
+          "text": {
+            "description": "HTML or plain-text body",
+            "maxLength": 1000000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "EmailImportRequest",
+        "type": "object"
+      },
+      "EmailImportResult": {
+        "properties": {
+          "links_found": {
+            "title": "Links Found",
+            "type": "integer"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/JobImportResult"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "links_found",
+          "results"
+        ],
+        "title": "EmailImportResult",
+        "type": "object"
+      },
+      "EmploymentType": {
+        "enum": [
+          "FULL_TIME",
+          "PART_TIME",
+          "CONTRACT",
+          "TEMPORARY",
+          "INTERNSHIP",
+          "UNKNOWN"
+        ],
+        "title": "EmploymentType",
+        "type": "string"
+      },
       "ErrorDetail": {
         "properties": {
           "code": {
@@ -1583,6 +2058,1094 @@
         "title": "Identity",
         "type": "object"
       },
+      "JobApplicationRead": {
+        "properties": {
+          "candidate_id": {
+            "format": "uuid",
+            "title": "Candidate Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "candidate_id",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "JobApplicationRead",
+        "type": "object"
+      },
+      "JobDetail": {
+        "properties": {
+          "application_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pipeline status for the candidate, when the job is queued"
+          },
+          "application_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Url"
+          },
+          "applications": {
+            "items": {
+              "$ref": "#/components/schemas/JobApplicationRead"
+            },
+            "title": "Applications",
+            "type": "array"
+          },
+          "ats_type": {
+            "$ref": "#/components/schemas/AtsType"
+          },
+          "canonical_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canonical Url"
+          },
+          "company": {
+            "title": "Company",
+            "type": "string"
+          },
+          "company_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Id"
+          },
+          "company_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Url"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "discovered_at": {
+            "format": "date-time",
+            "title": "Discovered At",
+            "type": "string"
+          },
+          "discovery_run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discovery Run Id"
+          },
+          "duplicate_count": {
+            "default": 0,
+            "title": "Duplicate Count",
+            "type": "integer"
+          },
+          "duplicate_of_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duplicate Of Id"
+          },
+          "duplicates": {
+            "items": {
+              "$ref": "#/components/schemas/JobListing"
+            },
+            "title": "Duplicates",
+            "type": "array"
+          },
+          "education_requirements": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Education Requirements"
+          },
+          "employment_type": {
+            "$ref": "#/components/schemas/EmploymentType"
+          },
+          "experience_requirements": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Experience Requirements"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "last_seen_at": {
+            "format": "date-time",
+            "title": "Last Seen At",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "posted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posted At"
+          },
+          "posting_date_basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posting Date Basis"
+          },
+          "posting_date_status": {
+            "$ref": "#/components/schemas/PostingDateStatus"
+          },
+          "preferred_skills": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Preferred Skills",
+            "type": "array"
+          },
+          "primary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobListing"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The primary record, when this listing is a duplicate"
+          },
+          "raw_content": {
+            "additionalProperties": true,
+            "title": "Raw Content",
+            "type": "object"
+          },
+          "relocation_information": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relocation Information"
+          },
+          "remote_status": {
+            "$ref": "#/components/schemas/RemoteStatus"
+          },
+          "required_skills": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Required Skills",
+            "type": "array"
+          },
+          "responsibilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Responsibilities",
+            "type": "array"
+          },
+          "salary_currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Currency"
+          },
+          "salary_max": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Max"
+          },
+          "salary_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Min"
+          },
+          "salary_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Period"
+          },
+          "seniority": {
+            "$ref": "#/components/schemas/Seniority"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "source_job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Job Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "visa_information": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visa Information"
+          },
+          "window_status": {
+            "$ref": "#/components/schemas/WindowStatus"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "source_job_id",
+          "company",
+          "company_id",
+          "title",
+          "location",
+          "country",
+          "country_code",
+          "remote_status",
+          "employment_type",
+          "seniority",
+          "salary_min",
+          "salary_max",
+          "salary_currency",
+          "salary_period",
+          "posted_at",
+          "posting_date_status",
+          "posting_date_basis",
+          "window_status",
+          "discovered_at",
+          "last_seen_at",
+          "application_url",
+          "canonical_url",
+          "ats_type",
+          "duplicate_of_id",
+          "description",
+          "company_url",
+          "visa_information",
+          "relocation_information",
+          "required_skills",
+          "preferred_skills",
+          "languages",
+          "education_requirements",
+          "experience_requirements",
+          "responsibilities",
+          "raw_content",
+          "discovery_run_id"
+        ],
+        "title": "JobDetail",
+        "type": "object"
+      },
+      "JobImportRequest": {
+        "additionalProperties": false,
+        "description": "A job the user found (e.g. a LinkedIn posting). The URL is stored, never fetched.",
+        "properties": {
+          "company": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 100000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "posted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posted At"
+          },
+          "posted_text": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Relative date as shown, e.g. \"2 hours ago\"",
+            "title": "Posted Text"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "url": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "JobImportRequest",
+        "type": "object"
+      },
+      "JobImportResult": {
+        "properties": {
+          "application_created": {
+            "title": "Application Created",
+            "type": "boolean"
+          },
+          "created": {
+            "title": "Created",
+            "type": "boolean"
+          },
+          "duplicate": {
+            "title": "Duplicate",
+            "type": "boolean"
+          },
+          "job": {
+            "$ref": "#/components/schemas/JobRead"
+          }
+        },
+        "required": [
+          "job",
+          "created",
+          "duplicate",
+          "application_created"
+        ],
+        "title": "JobImportResult",
+        "type": "object"
+      },
+      "JobListing": {
+        "description": "Another listing of the same job (a duplicate record from another source).",
+        "properties": {
+          "application_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Url"
+          },
+          "company": {
+            "title": "Company",
+            "type": "string"
+          },
+          "discovered_at": {
+            "format": "date-time",
+            "title": "Discovered At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "posted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posted At"
+          },
+          "posting_date_status": {
+            "$ref": "#/components/schemas/PostingDateStatus"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "title",
+          "company",
+          "application_url",
+          "posting_date_status",
+          "posted_at",
+          "discovered_at"
+        ],
+        "title": "JobListing",
+        "type": "object"
+      },
+      "JobPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/JobRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "window": {
+            "$ref": "#/components/schemas/WindowRead"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset",
+          "window"
+        ],
+        "title": "JobPage",
+        "type": "object"
+      },
+      "JobRead": {
+        "properties": {
+          "application_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pipeline status for the candidate, when the job is queued"
+          },
+          "application_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Url"
+          },
+          "ats_type": {
+            "$ref": "#/components/schemas/AtsType"
+          },
+          "canonical_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canonical Url"
+          },
+          "company": {
+            "title": "Company",
+            "type": "string"
+          },
+          "company_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Id"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code"
+          },
+          "discovered_at": {
+            "format": "date-time",
+            "title": "Discovered At",
+            "type": "string"
+          },
+          "duplicate_count": {
+            "default": 0,
+            "title": "Duplicate Count",
+            "type": "integer"
+          },
+          "duplicate_of_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duplicate Of Id"
+          },
+          "employment_type": {
+            "$ref": "#/components/schemas/EmploymentType"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_seen_at": {
+            "format": "date-time",
+            "title": "Last Seen At",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "posted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posted At"
+          },
+          "posting_date_basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Posting Date Basis"
+          },
+          "posting_date_status": {
+            "$ref": "#/components/schemas/PostingDateStatus"
+          },
+          "remote_status": {
+            "$ref": "#/components/schemas/RemoteStatus"
+          },
+          "salary_currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Currency"
+          },
+          "salary_max": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Max"
+          },
+          "salary_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Min"
+          },
+          "salary_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Period"
+          },
+          "seniority": {
+            "$ref": "#/components/schemas/Seniority"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "source_job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Job Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "window_status": {
+            "$ref": "#/components/schemas/WindowStatus"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "source_job_id",
+          "company",
+          "company_id",
+          "title",
+          "location",
+          "country",
+          "country_code",
+          "remote_status",
+          "employment_type",
+          "seniority",
+          "salary_min",
+          "salary_max",
+          "salary_currency",
+          "salary_period",
+          "posted_at",
+          "posting_date_status",
+          "posting_date_basis",
+          "window_status",
+          "discovered_at",
+          "last_seen_at",
+          "application_url",
+          "canonical_url",
+          "ats_type",
+          "duplicate_of_id"
+        ],
+        "title": "JobRead",
+        "type": "object"
+      },
+      "JobSourceRead": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "is_mock": {
+            "title": "Is Mock",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/SourceKind"
+          },
+          "last_counts": {
+            "additionalProperties": true,
+            "title": "Last Counts",
+            "type": "object"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "last_run_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Run At"
+          },
+          "last_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Status"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/SourcePolicy"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "integer"
+          },
+          "rate_limit_per_minute": {
+            "title": "Rate Limit Per Minute",
+            "type": "integer"
+          },
+          "runnable": {
+            "title": "Runnable",
+            "type": "boolean"
+          },
+          "skip_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skip Reason"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "kind",
+          "policy",
+          "enabled",
+          "is_mock",
+          "priority",
+          "rate_limit_per_minute",
+          "description",
+          "notes",
+          "runnable",
+          "skip_reason",
+          "last_run_at",
+          "last_status",
+          "last_error",
+          "last_counts"
+        ],
+        "title": "JobSourceRead",
+        "type": "object"
+      },
+      "JobStats": {
+        "properties": {
+          "by_source": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "By Source",
+            "type": "object"
+          },
+          "duplicates": {
+            "description": "Duplicate listings linked to a primary record",
+            "title": "Duplicates",
+            "type": "integer"
+          },
+          "found_today": {
+            "description": "Jobs discovered since midnight (TIMEZONE)",
+            "title": "Found Today",
+            "type": "integer"
+          },
+          "in_window": {
+            "description": "Jobs posted within JOB_LOOKBACK_HOURS",
+            "title": "In Window",
+            "type": "integer"
+          },
+          "last_discovery": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LastDiscovery"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "total": {
+            "description": "Primary job records (duplicates excluded)",
+            "title": "Total",
+            "type": "integer"
+          },
+          "unknown_date": {
+            "title": "Unknown Date",
+            "type": "integer"
+          },
+          "window": {
+            "$ref": "#/components/schemas/WindowRead"
+          }
+        },
+        "required": [
+          "total",
+          "found_today",
+          "in_window",
+          "unknown_date",
+          "duplicates",
+          "by_source",
+          "window",
+          "last_discovery"
+        ],
+        "title": "JobStats",
+        "type": "object"
+      },
       "LanguageLevel": {
         "enum": [
           "native",
@@ -1593,6 +3156,48 @@
         ],
         "title": "LanguageLevel",
         "type": "string"
+      },
+      "LastDiscovery": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "jobs_discovered": {
+            "title": "Jobs Discovered",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "created_at",
+          "finished_at",
+          "jobs_discovered"
+        ],
+        "title": "LastDiscovery",
+        "type": "object"
       },
       "LivenessResponse": {
         "properties": {
@@ -1999,6 +3604,15 @@
         "title": "PhaseInfo",
         "type": "object"
       },
+      "PostingDateStatus": {
+        "enum": [
+          "KNOWN",
+          "ESTIMATED",
+          "UNKNOWN"
+        ],
+        "title": "PostingDateStatus",
+        "type": "string"
+      },
       "ProjectEntry-Input": {
         "additionalProperties": false,
         "properties": {
@@ -2144,6 +3758,16 @@
         ],
         "title": "Relocation",
         "type": "object"
+      },
+      "RemoteStatus": {
+        "enum": [
+          "REMOTE",
+          "HYBRID",
+          "ONSITE",
+          "UNKNOWN"
+        ],
+        "title": "RemoteStatus",
+        "type": "string"
       },
       "RunCreated": {
         "properties": {
@@ -2760,6 +4384,19 @@
         "title": "SecretsStatus",
         "type": "object"
       },
+      "Seniority": {
+        "enum": [
+          "INTERN",
+          "JUNIOR",
+          "MID",
+          "SENIOR",
+          "LEAD",
+          "PRINCIPAL",
+          "UNKNOWN"
+        ],
+        "title": "Seniority",
+        "type": "string"
+      },
       "SkillItem-Input": {
         "additionalProperties": false,
         "properties": {
@@ -2830,6 +4467,26 @@
           "DEMONSTRATED"
         ],
         "title": "SkillStrength",
+        "type": "string"
+      },
+      "SourceKind": {
+        "enum": [
+          "ATS_API",
+          "CAREER_PAGE",
+          "FEED",
+          "MANUAL"
+        ],
+        "title": "SourceKind",
+        "type": "string"
+      },
+      "SourcePolicy": {
+        "enum": [
+          "api_only",
+          "allowed",
+          "manual_only",
+          "disabled"
+        ],
+        "title": "SourcePolicy",
         "type": "string"
       },
       "SpokenLanguage": {
@@ -3201,6 +4858,40 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "WindowRead": {
+        "properties": {
+          "lookback_hours": {
+            "title": "Lookback Hours",
+            "type": "integer"
+          },
+          "posted_after": {
+            "format": "date-time",
+            "title": "Posted After",
+            "type": "string"
+          },
+          "posted_before": {
+            "format": "date-time",
+            "title": "Posted Before",
+            "type": "string"
+          }
+        },
+        "required": [
+          "lookback_hours",
+          "posted_after",
+          "posted_before"
+        ],
+        "title": "WindowRead",
+        "type": "object"
+      },
+      "WindowStatus": {
+        "enum": [
+          "IN_WINDOW",
+          "OUT_OF_WINDOW",
+          "UNKNOWN_DATE"
+        ],
+        "title": "WindowStatus",
+        "type": "string"
       },
       "WorkAuthorization-Input": {
         "additionalProperties": false,
@@ -4179,6 +5870,299 @@
         ]
       }
     },
+    "/api/v1/companies": {
+      "get": {
+        "operationId": "list_companies_api_v1_companies_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyRead"
+                  },
+                  "title": "Response List Companies Api V1 Companies Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Watchlist companies (by name)",
+        "tags": [
+          "companies"
+        ]
+      },
+      "post": {
+        "operationId": "create_company_api_v1_companies_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add a company to the watchlist",
+        "tags": [
+          "companies"
+        ]
+      }
+    },
+    "/api/v1/companies/import": {
+      "post": {
+        "operationId": "import_companies_api_v1_companies_import_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyImportResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create or update the companies listed in crawler/companies.yaml",
+        "tags": [
+          "companies"
+        ]
+      }
+    },
+    "/api/v1/companies/{company_id}": {
+      "delete": {
+        "operationId": "delete_company_api_v1_companies__company_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Remove a company from the watchlist (its jobs are kept)",
+        "tags": [
+          "companies"
+        ]
+      },
+      "get": {
+        "operationId": "get_company_api_v1_companies__company_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "One watchlist company",
+        "tags": [
+          "companies"
+        ]
+      },
+      "patch": {
+        "operationId": "update_company_api_v1_companies__company_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update a watchlist company (only the fields sent)",
+        "tags": [
+          "companies"
+        ]
+      }
+    },
     "/api/v1/health/live": {
       "get": {
         "description": "The process is up and serving requests.",
@@ -4230,6 +6214,460 @@
         "summary": "Readiness probe",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/api/v1/job-sources": {
+      "get": {
+        "operationId": "list_job_sources_api_v1_job_sources_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/JobSourceRead"
+                  },
+                  "title": "Response List Job Sources Api V1 Job Sources Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Job sources and their policy",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/v1/jobs": {
+      "get": {
+        "operationId": "list_jobs_api_v1_jobs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "window",
+            "required": false,
+            "schema": {
+              "default": "in_window",
+              "enum": [
+                "in_window",
+                "out_of_window",
+                "all"
+              ],
+              "title": "Window",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "date_status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/PostingDateStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 50,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source"
+            }
+          },
+          {
+            "in": "query",
+            "name": "country",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Za-z]{2}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Country"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "company_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Company Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_duplicates",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Duplicates",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List jobs (default: posted in the lookback window)",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/v1/jobs/import": {
+      "post": {
+        "operationId": "import_job_api_v1_jobs_import_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobImportResult"
+                }
+              }
+            },
+            "description": "The posting was already known"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobImportResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid or unsafe URL"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Import a job URL (LinkedIn or any public posting); stored, never fetched",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/v1/jobs/import/email": {
+      "post": {
+        "operationId": "import_email_api_v1_jobs_import_email_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailImportResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Import the job links of a job-alert email (used by the n8n workflow)",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/v1/jobs/stats": {
+      "get": {
+        "operationId": "job_stats_api_v1_jobs_stats_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobStats"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Discovery statistics for the dashboard",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}": {
+      "get": {
+        "operationId": "get_job_api_v1_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Job detail with its other listings and pipeline entries",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}/track": {
+      "post": {
+        "operationId": "track_job_api_v1_jobs__job_id__track_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobApplicationRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Queue a job for the candidate (e.g. a job whose posting date is unknown)",
+        "tags": [
+          "jobs"
         ]
       }
     },
@@ -4357,6 +6795,42 @@
           }
         ],
         "summary": "Start a system self-test run on a worker",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/api/v1/runs/discovery": {
+      "post": {
+        "operationId": "start_discovery_api_v1_runs_discovery_post",
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The task queue is unavailable"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start a job discovery run on a worker",
         "tags": [
           "runs"
         ]

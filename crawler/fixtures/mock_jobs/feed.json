@@ -1,0 +1,85 @@
+{
+  "feed": "Mock AI Jobs Board",
+  "items": [
+    {
+      "guid": "feed-01",
+      "title": "Senior AI Engineer",
+      "company": "Nova AI",
+      "location": "Paris, France",
+      "link": "https://nova-ai.example/careers/jobs/1001?utm_source=mockfeed&utm_medium=rss",
+      "published": "5 hours ago",
+      "description": "Nova AI is hiring a Senior AI Engineer to build RAG pipelines."
+    },
+    {
+      "guid": "feed-02",
+      "title": "Computer Vision Engineer",
+      "company": "Kappa Robotics",
+      "location": "Amsterdam, Netherlands",
+      "link": "https://aijobs.example/jobs/889",
+      "published": "1 day ago",
+      "description": "Build perception models for warehouse robots.\nRelocation support to Amsterdam is provided."
+    },
+    {
+      "guid": "feed-03",
+      "title": "Generative AI Engineer",
+      "company": "Orbit Labs",
+      "location": "Paris, France",
+      "link": "https://orbit-labs.example/jobs/42",
+      "published": "3 hours ago",
+      "description": "Prototype generative AI products for retail. International candidates welcome."
+    },
+    {
+      "guid": "feed-04",
+      "title": "NLP Engineer",
+      "company": "Lumen Health",
+      "location": "Lyon, France",
+      "link": "https://lumen-health.example/careers/nlp-engineer",
+      "published": "1 day ago",
+      "description": "Extract clinical information from medical notes."
+    },
+    {
+      "guid": "feed-05",
+      "title": "AI Engineer",
+      "company": "Polaris Systems",
+      "location": "Brussels, Belgium",
+      "link": "https://polaris-systems.example/jobs/ai-engineer",
+      "description": "Integrate LLM features into public-sector software. The posting date is not shown."
+    },
+    {
+      "guid": "feed-06",
+      "title": "Machine Learning Engineer",
+      "company": "Redwood AI",
+      "location": "San Francisco, CA, USA",
+      "link": "https://redwood-ai.example/jobs/ml-engineer",
+      "published": "2 hours ago",
+      "description": "Work on ranking models. Candidates must be authorized to work in the United States."
+    },
+    {
+      "guid": "feed-07",
+      "title": "Ingénieur IA",
+      "company": "Société Exemple",
+      "location": "Toulouse, France",
+      "link": "https://societe-exemple.example/emplois/ingenieur-ia",
+      "published": "il y a 6 heures",
+      "description": "Concevoir des agents LLM pour le support client."
+    },
+    {
+      "guid": "feed-08",
+      "title": "Sales Manager",
+      "company": "Orbit Labs",
+      "location": "Paris, France",
+      "link": "https://orbit-labs.example/jobs/77",
+      "published": "1 hour ago",
+      "description": "Lead the sales team."
+    },
+    {
+      "guid": "feed-09",
+      "title": "Deep Learning Engineer",
+      "company": "Cobalt Vision",
+      "location": "Madrid, Spain",
+      "link": "https://cobalt-vision.example/jobs/dl-engineer",
+      "published": "30+ days ago",
+      "description": "Optimise video models for edge devices."
+    }
+  ]
+}

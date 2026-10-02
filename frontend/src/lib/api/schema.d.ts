@@ -193,6 +193,60 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/companies": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Watchlist companies (by name) */
+    get: operations["list_companies_api_v1_companies_get"];
+    put?: never;
+    /** Add a company to the watchlist */
+    post: operations["create_company_api_v1_companies_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/companies/import": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create or update the companies listed in crawler/companies.yaml */
+    post: operations["import_companies_api_v1_companies_import_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/companies/{company_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** One watchlist company */
+    get: operations["get_company_api_v1_companies__company_id__get"];
+    put?: never;
+    post?: never;
+    /** Remove a company from the watchlist (its jobs are kept) */
+    delete: operations["delete_company_api_v1_companies__company_id__delete"];
+    options?: never;
+    head?: never;
+    /** Update a watchlist company (only the fields sent) */
+    patch: operations["update_company_api_v1_companies__company_id__patch"];
+    trace?: never;
+  };
   "/api/v1/health/live": {
     parameters: {
       query?: never;
@@ -235,6 +289,125 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/job-sources": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Job sources and their policy */
+    get: operations["list_job_sources_api_v1_job_sources_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/jobs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List jobs (default: posted in the lookback window) */
+    get: operations["list_jobs_api_v1_jobs_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/jobs/import": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Import a job URL (LinkedIn or any public posting); stored, never fetched */
+    post: operations["import_job_api_v1_jobs_import_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/jobs/import/email": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Import the job links of a job-alert email (used by the n8n workflow) */
+    post: operations["import_email_api_v1_jobs_import_email_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/jobs/stats": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Discovery statistics for the dashboard */
+    get: operations["job_stats_api_v1_jobs_stats_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/jobs/{job_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Job detail with its other listings and pipeline entries */
+    get: operations["get_job_api_v1_jobs__job_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/jobs/{job_id}/track": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Queue a job for the candidate (e.g. a job whose posting date is unknown) */
+    post: operations["track_job_api_v1_jobs__job_id__track_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/runs": {
     parameters: {
       query?: never;
@@ -263,6 +436,23 @@ export interface paths {
     put?: never;
     /** Start a system self-test run on a worker */
     post: operations["start_diagnostic_api_v1_runs_diagnostic_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/runs/discovery": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Start a job discovery run on a worker */
+    post: operations["start_discovery_api_v1_runs_discovery_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -350,6 +540,39 @@ export interface components {
       /** Salary Expectations */
       salary_expectations: components["schemas"]["SalaryExpectation-Output"][] | null;
     };
+    /**
+     * ApplicationStatus
+     * @enum {string}
+     */
+    ApplicationStatus:
+      | "DISCOVERED"
+      | "ANALYZED"
+      | "QUALIFIED"
+      | "CV_GENERATED"
+      | "READY_FOR_REVIEW"
+      | "APPROVED"
+      | "SUBMITTED"
+      | "HR_SCREEN"
+      | "INTERVIEW"
+      | "OFFER"
+      | "REJECTED"
+      | "WITHDRAWN"
+      | "BLOCKED"
+      | "MANUAL_ACTION_REQUIRED";
+    /**
+     * AtsType
+     * @enum {string}
+     */
+    AtsType:
+      | "GREENHOUSE"
+      | "LEVER"
+      | "ASHBY"
+      | "SMARTRECRUITERS"
+      | "WORKDAY"
+      | "LINKEDIN"
+      | "INDEED"
+      | "GENERIC"
+      | "OTHER";
     /** AuditLogEntry */
     AuditLogEntry: {
       /** Action */
@@ -490,6 +713,111 @@ export interface components {
        * @description The version being edited; a stale version is rejected with 409
        */
       profile_version: number;
+    };
+    /** CompanyCreate */
+    CompanyCreate: {
+      /**
+       * Ats Type
+       * @default GENERIC
+       * @enum {string}
+       */
+      ats_type:
+        "GREENHOUSE" | "LEVER" | "ASHBY" | "SMARTRECRUITERS" | "WORKDAY" | "GENERIC" | "OTHER";
+      /** Board Token */
+      board_token?: string | null;
+      /** Career Url */
+      career_url: string;
+      /** Country Code */
+      country_code?: string | null;
+      /**
+       * Enabled
+       * @default true
+       */
+      enabled: boolean;
+      /** Name */
+      name: string;
+      /** Notes */
+      notes?: string | null;
+      /** Target Roles */
+      target_roles?: string[];
+    };
+    /** CompanyImportResult */
+    CompanyImportResult: {
+      /** Created */
+      created: number;
+      /** Unchanged */
+      unchanged: number;
+      /** Updated */
+      updated: number;
+    };
+    /** CompanyRead */
+    CompanyRead: {
+      /** Ats Type */
+      ats_type: string;
+      /** Board Token */
+      board_token: string | null;
+      /** Career Url */
+      career_url: string;
+      /** Country */
+      country: string | null;
+      /** Country Code */
+      country_code: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Enabled */
+      enabled: boolean;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /**
+       * Job Count
+       * @description Primary job records linked to this company
+       */
+      job_count: number;
+      /** Last Check Status */
+      last_check_status: string | null;
+      /** Last Checked At */
+      last_checked_at: string | null;
+      /** Name */
+      name: string;
+      /** Notes */
+      notes: string | null;
+      /** Target Roles */
+      target_roles: string[];
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+    };
+    /**
+     * CompanyUpdate
+     * @description Partial update: only the fields sent are changed (``null`` clears optional fields).
+     */
+    CompanyUpdate: {
+      /** Ats Type */
+      ats_type?:
+        | ("GREENHOUSE" | "LEVER" | "ASHBY" | "SMARTRECRUITERS" | "WORKDAY" | "GENERIC" | "OTHER")
+        | null;
+      /** Board Token */
+      board_token?: string | null;
+      /** Career Url */
+      career_url?: string | null;
+      /** Country Code */
+      country_code?: string | null;
+      /** Enabled */
+      enabled?: boolean | null;
+      /** Name */
+      name?: string | null;
+      /** Notes */
+      notes?: string | null;
+      /** Target Roles */
+      target_roles?: string[] | null;
     };
     /** ComponentHealth */
     ComponentHealth: {
@@ -734,6 +1062,38 @@ export interface components {
       /** Location */
       location: string | null;
     };
+    /**
+     * EmailImportRequest
+     * @description A job-alert email (forwarded by n8n or pasted). Only job links are extracted.
+     */
+    EmailImportRequest: {
+      /** Received At */
+      received_at?: string | null;
+      /** Sender */
+      sender?: string | null;
+      /**
+       * Subject
+       * @default
+       */
+      subject: string;
+      /**
+       * Text
+       * @description HTML or plain-text body
+       */
+      text: string;
+    };
+    /** EmailImportResult */
+    EmailImportResult: {
+      /** Links Found */
+      links_found: number;
+      /** Results */
+      results: components["schemas"]["JobImportResult"][];
+    };
+    /**
+     * EmploymentType
+     * @enum {string}
+     */
+    EmploymentType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "TEMPORARY" | "INTERNSHIP" | "UNKNOWN";
     /** ErrorDetail */
     ErrorDetail: {
       /**
@@ -817,11 +1177,353 @@ export interface components {
       /** Nationality */
       nationality: string | null;
     };
+    /** JobApplicationRead */
+    JobApplicationRead: {
+      /**
+       * Candidate Id
+       * Format: uuid
+       */
+      candidate_id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      status: components["schemas"]["ApplicationStatus"];
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+    };
+    /** JobDetail */
+    JobDetail: {
+      /** @description Pipeline status for the candidate, when the job is queued */
+      application_status?: components["schemas"]["ApplicationStatus"] | null;
+      /** Application Url */
+      application_url: string | null;
+      /** Applications */
+      applications?: components["schemas"]["JobApplicationRead"][];
+      ats_type: components["schemas"]["AtsType"];
+      /** Canonical Url */
+      canonical_url: string | null;
+      /** Company */
+      company: string;
+      /** Company Id */
+      company_id: string | null;
+      /** Company Url */
+      company_url: string | null;
+      /** Country */
+      country: string | null;
+      /** Country Code */
+      country_code: string | null;
+      /** Description */
+      description: string;
+      /**
+       * Discovered At
+       * Format: date-time
+       */
+      discovered_at: string;
+      /** Discovery Run Id */
+      discovery_run_id: string | null;
+      /**
+       * Duplicate Count
+       * @default 0
+       */
+      duplicate_count: number;
+      /** Duplicate Of Id */
+      duplicate_of_id: string | null;
+      /** Duplicates */
+      duplicates?: components["schemas"]["JobListing"][];
+      /** Education Requirements */
+      education_requirements: string | null;
+      employment_type: components["schemas"]["EmploymentType"];
+      /** Experience Requirements */
+      experience_requirements: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Languages */
+      languages: string[];
+      /**
+       * Last Seen At
+       * Format: date-time
+       */
+      last_seen_at: string;
+      /** Location */
+      location: string | null;
+      /** Posted At */
+      posted_at: string | null;
+      /** Posting Date Basis */
+      posting_date_basis: string | null;
+      posting_date_status: components["schemas"]["PostingDateStatus"];
+      /** Preferred Skills */
+      preferred_skills: string[];
+      /** @description The primary record, when this listing is a duplicate */
+      primary?: components["schemas"]["JobListing"] | null;
+      /** Raw Content */
+      raw_content: {
+        [key: string]: unknown;
+      };
+      /** Relocation Information */
+      relocation_information: string | null;
+      remote_status: components["schemas"]["RemoteStatus"];
+      /** Required Skills */
+      required_skills: string[];
+      /** Responsibilities */
+      responsibilities: string[];
+      /** Salary Currency */
+      salary_currency: string | null;
+      /** Salary Max */
+      salary_max: number | null;
+      /** Salary Min */
+      salary_min: number | null;
+      /** Salary Period */
+      salary_period: string | null;
+      seniority: components["schemas"]["Seniority"];
+      /** Source */
+      source: string;
+      /** Source Job Id */
+      source_job_id: string | null;
+      /** Title */
+      title: string;
+      /** Visa Information */
+      visa_information: string | null;
+      window_status: components["schemas"]["WindowStatus"];
+    };
+    /**
+     * JobImportRequest
+     * @description A job the user found (e.g. a LinkedIn posting). The URL is stored, never fetched.
+     */
+    JobImportRequest: {
+      /** Company */
+      company?: string | null;
+      /** Description */
+      description?: string | null;
+      /** Location */
+      location?: string | null;
+      /** Posted At */
+      posted_at?: string | null;
+      /**
+       * Posted Text
+       * @description Relative date as shown, e.g. "2 hours ago"
+       */
+      posted_text?: string | null;
+      /** Title */
+      title?: string | null;
+      /** Url */
+      url: string;
+    };
+    /** JobImportResult */
+    JobImportResult: {
+      /** Application Created */
+      application_created: boolean;
+      /** Created */
+      created: boolean;
+      /** Duplicate */
+      duplicate: boolean;
+      job: components["schemas"]["JobRead"];
+    };
+    /**
+     * JobListing
+     * @description Another listing of the same job (a duplicate record from another source).
+     */
+    JobListing: {
+      /** Application Url */
+      application_url: string | null;
+      /** Company */
+      company: string;
+      /**
+       * Discovered At
+       * Format: date-time
+       */
+      discovered_at: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Posted At */
+      posted_at: string | null;
+      posting_date_status: components["schemas"]["PostingDateStatus"];
+      /** Source */
+      source: string;
+      /** Title */
+      title: string;
+    };
+    /** JobPage */
+    JobPage: {
+      /** Items */
+      items: components["schemas"]["JobRead"][];
+      /** Limit */
+      limit: number;
+      /** Offset */
+      offset: number;
+      /** Total */
+      total: number;
+      window: components["schemas"]["WindowRead"];
+    };
+    /** JobRead */
+    JobRead: {
+      /** @description Pipeline status for the candidate, when the job is queued */
+      application_status?: components["schemas"]["ApplicationStatus"] | null;
+      /** Application Url */
+      application_url: string | null;
+      ats_type: components["schemas"]["AtsType"];
+      /** Canonical Url */
+      canonical_url: string | null;
+      /** Company */
+      company: string;
+      /** Company Id */
+      company_id: string | null;
+      /** Country */
+      country: string | null;
+      /** Country Code */
+      country_code: string | null;
+      /**
+       * Discovered At
+       * Format: date-time
+       */
+      discovered_at: string;
+      /**
+       * Duplicate Count
+       * @default 0
+       */
+      duplicate_count: number;
+      /** Duplicate Of Id */
+      duplicate_of_id: string | null;
+      employment_type: components["schemas"]["EmploymentType"];
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /**
+       * Last Seen At
+       * Format: date-time
+       */
+      last_seen_at: string;
+      /** Location */
+      location: string | null;
+      /** Posted At */
+      posted_at: string | null;
+      /** Posting Date Basis */
+      posting_date_basis: string | null;
+      posting_date_status: components["schemas"]["PostingDateStatus"];
+      remote_status: components["schemas"]["RemoteStatus"];
+      /** Salary Currency */
+      salary_currency: string | null;
+      /** Salary Max */
+      salary_max: number | null;
+      /** Salary Min */
+      salary_min: number | null;
+      /** Salary Period */
+      salary_period: string | null;
+      seniority: components["schemas"]["Seniority"];
+      /** Source */
+      source: string;
+      /** Source Job Id */
+      source_job_id: string | null;
+      /** Title */
+      title: string;
+      window_status: components["schemas"]["WindowStatus"];
+    };
+    /** JobSourceRead */
+    JobSourceRead: {
+      /** Description */
+      description: string | null;
+      /** Enabled */
+      enabled: boolean;
+      /** Is Mock */
+      is_mock: boolean;
+      /** Key */
+      key: string;
+      kind: components["schemas"]["SourceKind"];
+      /** Last Counts */
+      last_counts: {
+        [key: string]: unknown;
+      };
+      /** Last Error */
+      last_error: string | null;
+      /** Last Run At */
+      last_run_at: string | null;
+      /** Last Status */
+      last_status: string | null;
+      /** Name */
+      name: string;
+      /** Notes */
+      notes: string | null;
+      policy: components["schemas"]["SourcePolicy"];
+      /** Priority */
+      priority: number;
+      /** Rate Limit Per Minute */
+      rate_limit_per_minute: number;
+      /** Runnable */
+      runnable: boolean;
+      /** Skip Reason */
+      skip_reason: string | null;
+    };
+    /** JobStats */
+    JobStats: {
+      /** By Source */
+      by_source: {
+        [key: string]: number;
+      };
+      /**
+       * Duplicates
+       * @description Duplicate listings linked to a primary record
+       */
+      duplicates: number;
+      /**
+       * Found Today
+       * @description Jobs discovered since midnight (TIMEZONE)
+       */
+      found_today: number;
+      /**
+       * In Window
+       * @description Jobs posted within JOB_LOOKBACK_HOURS
+       */
+      in_window: number;
+      last_discovery: components["schemas"]["LastDiscovery"] | null;
+      /**
+       * Total
+       * @description Primary job records (duplicates excluded)
+       */
+      total: number;
+      /** Unknown Date */
+      unknown_date: number;
+      window: components["schemas"]["WindowRead"];
+    };
     /**
      * LanguageLevel
      * @enum {string}
      */
     LanguageLevel: "native" | "fluent" | "professional" | "intermediate" | "basic";
+    /** LastDiscovery */
+    LastDiscovery: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Finished At */
+      finished_at: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Jobs Discovered */
+      jobs_discovered: number;
+      status: components["schemas"]["RunStatus"];
+    };
     /** LivenessResponse */
     LivenessResponse: {
       /** Service */
@@ -940,6 +1642,11 @@ export interface components {
       /** Summary */
       summary: string;
     };
+    /**
+     * PostingDateStatus
+     * @enum {string}
+     */
+    PostingDateStatus: "KNOWN" | "ESTIMATED" | "UNKNOWN";
     /** ProjectEntry */
     "ProjectEntry-Input": {
       /** Bullets */
@@ -981,6 +1688,11 @@ export interface components {
       /** Willing To Relocate */
       willing_to_relocate: boolean | null;
     };
+    /**
+     * RemoteStatus
+     * @enum {string}
+     */
+    RemoteStatus: "REMOTE" | "HYBRID" | "ONSITE" | "UNKNOWN";
     /** RunCreated */
     RunCreated: {
       /**
@@ -1213,6 +1925,11 @@ export interface components {
       /** Telegram Bot Token */
       telegram_bot_token: boolean;
     };
+    /**
+     * Seniority
+     * @enum {string}
+     */
+    Seniority: "INTERN" | "JUNIOR" | "MID" | "SENIOR" | "LEAD" | "PRINCIPAL" | "UNKNOWN";
     /** SkillItem */
     "SkillItem-Input": {
       /** Category */
@@ -1237,6 +1954,16 @@ export interface components {
      * @enum {string}
      */
     SkillStrength: "NONE" | "LISTED" | "DEMONSTRATED";
+    /**
+     * SourceKind
+     * @enum {string}
+     */
+    SourceKind: "ATS_API" | "CAREER_PAGE" | "FEED" | "MANUAL";
+    /**
+     * SourcePolicy
+     * @enum {string}
+     */
+    SourcePolicy: "api_only" | "allowed" | "manual_only" | "disabled";
     /** SpokenLanguage */
     SpokenLanguage: {
       /** Language */
@@ -1367,6 +2094,26 @@ export interface components {
       /** Error Type */
       type: string;
     };
+    /** WindowRead */
+    WindowRead: {
+      /** Lookback Hours */
+      lookback_hours: number;
+      /**
+       * Posted After
+       * Format: date-time
+       */
+      posted_after: string;
+      /**
+       * Posted Before
+       * Format: date-time
+       */
+      posted_before: string;
+    };
+    /**
+     * WindowStatus
+     * @enum {string}
+     */
+    WindowStatus: "IN_WINDOW" | "OUT_OF_WINDOW" | "UNKNOWN_DATE";
     /** WorkAuthorization */
     "WorkAuthorization-Input": {
       /** Current Work Authorizations */
@@ -1949,6 +2696,219 @@ export interface operations {
       };
     };
   };
+  list_companies_api_v1_companies_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompanyRead"][];
+        };
+      };
+    };
+  };
+  create_company_api_v1_companies_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CompanyCreate"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompanyRead"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  import_companies_api_v1_companies_import_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompanyImportResult"];
+        };
+      };
+    };
+  };
+  get_company_api_v1_companies__company_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        company_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompanyRead"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  delete_company_api_v1_companies__company_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        company_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  update_company_api_v1_companies__company_id__patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        company_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CompanyUpdate"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompanyRead"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   live_api_v1_health_live_get: {
     parameters: {
       query?: never;
@@ -1998,6 +2958,249 @@ export interface operations {
       };
     };
   };
+  list_job_sources_api_v1_job_sources_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobSourceRead"][];
+        };
+      };
+    };
+  };
+  list_jobs_api_v1_jobs_get: {
+    parameters: {
+      query?: {
+        window?: "in_window" | "out_of_window" | "all";
+        date_status?: components["schemas"]["PostingDateStatus"] | null;
+        source?: string | null;
+        country?: string | null;
+        q?: string | null;
+        company_id?: string | null;
+        include_duplicates?: boolean;
+        limit?: number;
+        offset?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobPage"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  import_job_api_v1_jobs_import_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["JobImportRequest"];
+      };
+    };
+    responses: {
+      /** @description The posting was already known */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobImportResult"];
+        };
+      };
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobImportResult"];
+        };
+      };
+      /** @description Invalid or unsafe URL */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  import_email_api_v1_jobs_import_email_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["EmailImportRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["EmailImportResult"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  job_stats_api_v1_jobs_stats_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobStats"];
+        };
+      };
+    };
+  };
+  get_job_api_v1_jobs__job_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        job_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobDetail"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  track_job_api_v1_jobs__job_id__track_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        job_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobApplicationRead"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_runs_api_v1_runs_get: {
     parameters: {
       query?: {
@@ -2033,6 +3236,35 @@ export interface operations {
     };
   };
   start_diagnostic_api_v1_runs_diagnostic_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RunCreated"];
+        };
+      };
+      /** @description The task queue is unavailable */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  start_discovery_api_v1_runs_discovery_post: {
     parameters: {
       query?: never;
       header?: never;

@@ -26,6 +26,13 @@ class AuditAction(StrEnum):
     CV_STRUCTURE_UPDATED = "cv.structure_updated"
     CV_CONFIRMED = "cv.confirmed"
     CV_REVISED = "cv.revised"
+    COMPANY_CREATED = "company.created"
+    COMPANY_UPDATED = "company.updated"
+    COMPANY_DELETED = "company.deleted"
+    COMPANIES_IMPORTED = "company.imported"
+    JOB_IMPORTED = "job.imported"
+    JOB_TRACKED = "job.tracked"
+    APPLICATION_STATUS_CHANGED = "application.status_changed"
 
 
 class Actor(StrEnum):

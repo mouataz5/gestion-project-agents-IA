@@ -26,6 +26,7 @@ x-backend-env: &backend-env
     STORAGE_DIR: /app/storage
     CANDIDATE_DIR: /app/candidate
     PROMPTS_DIR: /app/prompts
+    CRAWLER_DIR: /app/crawler
 
 x-backend-deps: &backend-deps
   postgres:

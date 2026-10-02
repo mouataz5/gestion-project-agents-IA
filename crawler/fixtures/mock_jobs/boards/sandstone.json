@@ -1,0 +1,22 @@
+{
+  "company": "Sandstone Analytics",
+  "company_url": "https://sandstone.example",
+  "ats_type": "SMARTRECRUITERS",
+  "jobs": [
+    {
+      "id": "sa-4001",
+      "title": "AI Research Engineer",
+      "location": "Dubai, United Arab Emirates",
+      "workplace": "On-site",
+      "employment_type": "Full-time",
+      "posted_hours_ago": 12,
+      "url": "https://sandstone.example/careers/4001",
+      "description_html": "<p>Research and productionise LLM agents for Arabic and English documents.</p><p>We sponsor work visas and provide relocation to Dubai.</p>",
+      "required_skills": ["LLMs", "Deep Learning", "Python"],
+      "languages": ["English", "Arabic"],
+      "salary": {"min": 25000, "max": 32000, "currency": "AED", "period": "month"},
+      "visa": "We sponsor work visas.",
+      "relocation": "Relocation to Dubai is provided."
+    }
+  ]
+}
