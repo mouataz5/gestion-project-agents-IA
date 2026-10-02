@@ -10,6 +10,8 @@ from zoneinfo import ZoneInfo
 from fastapi import APIRouter, Depends, Query, Response, status
 from pydantic import BaseModel
 
+from app.analysis.schemas import RelevanceResult, VisaResult
+from app.analysis.types import Recommendation, VisaStatus
 from app.api.deps import CurrentCandidate, DbSession, SettingsDep, require_api_token
 from app.applications.lifecycle import ApplicationStatus
 from app.core.clock import utcnow
@@ -17,11 +19,13 @@ from app.core.config import Settings
 from app.core.errors import ConflictError
 from app.jobs.types import PostingDateStatus
 from app.jobs.window import PostingWindow
-from app.models import Job
+from app.models import Job, JobAnalysis
 from app.schemas.common import ErrorResponse
 from app.schemas.jobs import (
+    AnalysisUsage,
     EmailImportRequest,
     EmailImportResult,
+    JobAnalysisRead,
     JobApplicationRead,
     JobDetail,
     JobImportRequest,
@@ -30,14 +34,15 @@ from app.schemas.jobs import (
     JobPage,
     JobRead,
     JobStats,
-    LastDiscovery,
+    LastRun,
+    PromptInfo,
     WindowRead,
 )
 from app.services.applications import ApplicationService
 from app.services.audit import Actor, AuditAction, AuditService
 from app.services.job_imports import ImportResult, JobImportService
 from app.services.job_sources import JobSourceService
-from app.services.jobs import JobFilters, JobService, WindowFilter
+from app.services.jobs import JobFilters, JobService, PipelineInfo, WindowFilter
 
 router = APIRouter(prefix="/jobs", tags=["jobs"], dependencies=[Depends(require_api_token)])
 
@@ -66,19 +71,60 @@ def _model(model: type[M], job: Job, **computed: Any) -> M:
     return model.model_validate({**values, **computed})
 
 
+def _pipeline(info: PipelineInfo | None) -> dict[str, Any]:
+    return {
+        "application_status": info.status if info else None,
+        "recommendation": info.recommendation if info else None,
+        "visa_status": info.visa_status if info else None,
+    }
+
+
 def _read(
     job: Job,
     window: PostingWindow,
     *,
     duplicate_count: int = 0,
-    application_status: str | None = None,
+    pipeline: PipelineInfo | None = None,
 ) -> JobRead:
     return _model(
         JobRead,
         job,
         window_status=JobService.window_status(job, window),
         duplicate_count=duplicate_count,
-        application_status=application_status,
+        **_pipeline(pipeline),
+    )
+
+
+def _analysis_read(analysis: JobAnalysis | None) -> JobAnalysisRead | None:
+    if analysis is None:
+        return None
+    return JobAnalysisRead(
+        id=analysis.id,
+        created_at=analysis.created_at,
+        status=analysis.status,
+        run_id=analysis.run_id,
+        provider=analysis.provider,
+        is_mock=analysis.provider == "mock",
+        requested_model=analysis.requested_model,
+        served_model=analysis.served_model,
+        fallback_used=analysis.fallback_used,
+        prompt=PromptInfo(name=analysis.prompt_name, version=analysis.prompt_version),
+        usage=AnalysisUsage(
+            input_tokens=analysis.input_tokens,
+            output_tokens=analysis.output_tokens,
+            cache_read_input_tokens=analysis.cache_read_input_tokens,
+            cache_creation_input_tokens=analysis.cache_creation_input_tokens,
+        ),
+        duration_ms=analysis.duration_ms,
+        recommendation=analysis.recommendation,
+        llm_recommendation=analysis.llm_recommendation,
+        rule_reasons=list(analysis.rule_reasons),
+        visa=VisaResult.model_validate(analysis.visa) if analysis.visa else None,
+        relevance=(
+            RelevanceResult.model_validate(analysis.relevance) if analysis.relevance else None
+        ),
+        error_code=analysis.error_code,
+        error_message=analysis.error_message,
     )
 
 
@@ -95,6 +141,8 @@ def list_jobs(
     q: Annotated[str | None, Query(max_length=200)] = None,
     company_id: uuid.UUID | None = None,
     include_duplicates: bool = False,
+    recommendation: Recommendation | None = None,
+    visa_status: VisaStatus | None = None,
     limit: Annotated[int, Query(ge=1, le=200)] = 50,
     offset: Annotated[int, Query(ge=0)] = 0,
 ) -> JobPage:
@@ -108,6 +156,8 @@ def list_jobs(
         q=q,
         company_id=company_id,
         include_duplicates=include_duplicates,
+        recommendation=recommendation,
+        visa_status=visa_status,
     )
     jobs, total = service.list_jobs(filters, window=posting_window, limit=limit, offset=offset)
     ids = [job.id for job in jobs]
@@ -119,7 +169,7 @@ def list_jobs(
                 job,
                 posting_window,
                 duplicate_count=duplicates.get(job.id, 0),
-                application_status=statuses.get(job.id),
+                pipeline=statuses.get(job.id),
             )
             for job in jobs
         ],
@@ -138,11 +188,13 @@ def job_stats(db: DbSession, settings: SettingsDep) -> JobStats:
         posting_window.posted_before.astimezone(zone).date(), time(), zone
     )
     stats = _service(db, settings).stats(window=posting_window, today_start=today_start)
-    last = stats.pop("last_discovery")
+    last_discovery = stats.pop("last_discovery")
+    last_analysis = stats.pop("last_analysis")
     return JobStats(
         **stats,
         window=_window_read(posting_window, settings),
-        last_discovery=LastDiscovery.model_validate(last) if last is not None else None,
+        last_discovery=LastRun.model_validate(last_discovery) if last_discovery else None,
+        last_analysis=LastRun.model_validate(last_analysis) if last_analysis else None,
     )
 
 
@@ -165,10 +217,11 @@ def get_job(job_id: uuid.UUID, db: DbSession, settings: SettingsDep) -> JobDetai
         job,
         window_status=JobService.window_status(job, posting_window),
         duplicate_count=len(duplicates),
-        application_status=statuses.get(job.id),
+        **_pipeline(statuses.get(job.id)),
         primary=JobListing.model_validate(primary) if primary else None,
         duplicates=[JobListing.model_validate(item) for item in duplicates],
         applications=[JobApplicationRead.model_validate(item) for item in applications],
+        analysis=_analysis_read(service.latest_analysis(job)),
     )
 
 

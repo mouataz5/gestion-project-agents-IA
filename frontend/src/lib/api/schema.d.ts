@@ -425,6 +425,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/runs/analysis": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Start a job analysis run (all queued jobs, or the jobs given) on a worker */
+    post: operations["start_analysis_api_v1_runs_analysis_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/runs/diagnostic": {
     parameters: {
       query?: never;
@@ -514,6 +531,36 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /**
+     * AnalysisRunRequest
+     * @description Which jobs to analyse: the queued ones by default, or the given jobs (re-analysis).
+     */
+    AnalysisRunRequest: {
+      /**
+       * Force
+       * @description Re-analyse even if nothing changed
+       * @default false
+       */
+      force: boolean;
+      /** Job Ids */
+      job_ids?: string[] | null;
+    };
+    /**
+     * AnalysisStatus
+     * @enum {string}
+     */
+    AnalysisStatus: "SUCCEEDED" | "REFUSED" | "FAILED";
+    /** AnalysisUsage */
+    AnalysisUsage: {
+      /** Cache Creation Input Tokens */
+      cache_creation_input_tokens: number;
+      /** Cache Read Input Tokens */
+      cache_read_input_tokens: number;
+      /** Input Tokens */
+      input_tokens: number;
+      /** Output Tokens */
+      output_tokens: number;
+    };
     /** ApplicationDefaults */
     "ApplicationDefaults-Input": {
       /** Earliest Start Date */
@@ -1177,6 +1224,53 @@ export interface components {
       /** Nationality */
       nationality: string | null;
     };
+    /**
+     * JobAnalysisRead
+     * @description One analysis: provenance, cost, the verified result and the decision with its reasons.
+     */
+    JobAnalysisRead: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Duration Ms */
+      duration_ms: number | null;
+      /** Error Code */
+      error_code: string | null;
+      /** Error Message */
+      error_message: string | null;
+      /** Fallback Used */
+      fallback_used: boolean;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /**
+       * Is Mock
+       * @description Produced offline by the mock provider, not by a model
+       */
+      is_mock: boolean;
+      /** @description What the model suggested (the decision comes from the explicit rules) */
+      llm_recommendation: components["schemas"]["Recommendation"] | null;
+      prompt: components["schemas"]["PromptInfo"];
+      /** Provider */
+      provider: string;
+      recommendation: components["schemas"]["Recommendation"] | null;
+      relevance: components["schemas"]["RelevanceResult"] | null;
+      /** Requested Model */
+      requested_model: string;
+      /** Rule Reasons */
+      rule_reasons: string[];
+      /** Run Id */
+      run_id: string | null;
+      /** Served Model */
+      served_model: string | null;
+      status: components["schemas"]["AnalysisStatus"];
+      usage: components["schemas"]["AnalysisUsage"];
+      visa: components["schemas"]["VisaResult"] | null;
+    };
     /** JobApplicationRead */
     JobApplicationRead: {
       /**
@@ -1203,6 +1297,8 @@ export interface components {
     };
     /** JobDetail */
     JobDetail: {
+      /** @description The latest analysis of this job for the candidate */
+      analysis: components["schemas"]["JobAnalysisRead"] | null;
       /** @description Pipeline status for the candidate, when the job is queued */
       application_status: components["schemas"]["ApplicationStatus"] | null;
       /** Application Url */
@@ -1272,6 +1368,8 @@ export interface components {
       raw_content: {
         [key: string]: unknown;
       };
+      /** @description Decision of the latest analysis (APPLY / REVIEW / SKIP) */
+      recommendation: components["schemas"]["Recommendation"] | null;
       /** Relocation Information */
       relocation_information: string | null;
       remote_status: components["schemas"]["RemoteStatus"];
@@ -1296,6 +1394,8 @@ export interface components {
       title: string;
       /** Visa Information */
       visa_information: string | null;
+      /** @description Visa sponsorship status from the latest analysis */
+      visa_status: components["schemas"]["VisaStatus"] | null;
       window_status: components["schemas"]["WindowStatus"];
     };
     /**
@@ -1417,6 +1517,8 @@ export interface components {
       /** Posting Date Basis */
       posting_date_basis: string | null;
       posting_date_status: components["schemas"]["PostingDateStatus"];
+      /** @description Decision of the latest analysis (APPLY / REVIEW / SKIP) */
+      recommendation: components["schemas"]["Recommendation"] | null;
       remote_status: components["schemas"]["RemoteStatus"];
       /** Salary Currency */
       salary_currency: string | null;
@@ -1433,6 +1535,8 @@ export interface components {
       source_job_id: string | null;
       /** Title */
       title: string;
+      /** @description Visa sponsorship status from the latest analysis */
+      visa_status: components["schemas"]["VisaStatus"] | null;
       window_status: components["schemas"]["WindowStatus"];
     };
     /** JobSourceRead */
@@ -1472,6 +1576,15 @@ export interface components {
     };
     /** JobStats */
     JobStats: {
+      /**
+       * Analysed
+       * @description Jobs with an analysis decision
+       */
+      analysed: number;
+      /** By Recommendation */
+      by_recommendation: {
+        [key: string]: number;
+      };
       /** By Source */
       by_source: {
         [key: string]: number;
@@ -1491,7 +1604,13 @@ export interface components {
        * @description Jobs posted within JOB_LOOKBACK_HOURS
        */
       in_window: number;
-      last_discovery: components["schemas"]["LastDiscovery"] | null;
+      last_analysis: components["schemas"]["LastRun"] | null;
+      last_discovery: components["schemas"]["LastRun"] | null;
+      /**
+       * Qualified
+       * @description Jobs analysed as APPLY or REVIEW
+       */
+      qualified: number;
       /**
        * Total
        * @description Primary job records (duplicates excluded)
@@ -1501,13 +1620,26 @@ export interface components {
       unknown_date: number;
       window: components["schemas"]["WindowRead"];
     };
+    /** LanguageCheck */
+    LanguageCheck: {
+      /** Candidate Level */
+      candidate_level: string | null;
+      /** Language */
+      language: string;
+      /** Level */
+      level: string | null;
+      /** Met */
+      met: boolean | null;
+      /** Required */
+      required: boolean;
+    };
     /**
      * LanguageLevel
      * @enum {string}
      */
     LanguageLevel: "native" | "fluent" | "professional" | "intermediate" | "basic";
-    /** LastDiscovery */
-    LastDiscovery: {
+    /** LastRun */
+    LastRun: {
       /**
        * Created At
        * Format: date-time
@@ -1522,6 +1654,10 @@ export interface components {
       id: string;
       /** Jobs Discovered */
       jobs_discovered: number;
+      /** Jobs Processed */
+      jobs_processed: number;
+      /** Jobs Qualified */
+      jobs_qualified: number;
       status: components["schemas"]["RunStatus"];
     };
     /** LivenessResponse */
@@ -1667,6 +1803,13 @@ export interface components {
       /** Name */
       name: string;
     };
+    /** PromptInfo */
+    PromptInfo: {
+      /** Name */
+      name: string;
+      /** Version */
+      version: number;
+    };
     /** ReadinessResponse */
     ReadinessResponse: {
       /**
@@ -1677,6 +1820,57 @@ export interface components {
       /** Components */
       components: components["schemas"]["ComponentHealth"][];
       status: components["schemas"]["ComponentStatus"];
+    };
+    /**
+     * Recommendation
+     * @enum {string}
+     */
+    Recommendation: "APPLY" | "REVIEW" | "SKIP";
+    /** RelevanceResult */
+    RelevanceResult: {
+      /** Concerns */
+      concerns: string[];
+      /** Language Requirements */
+      language_requirements: components["schemas"]["LanguageCheck"][];
+      /** Languages Met */
+      languages_met: boolean | null;
+      /** Preferred Skill Matches */
+      preferred_skill_matches: components["schemas"]["SkillMatch"][];
+      /**
+       * Reasoning
+       * @default
+       */
+      reasoning: string;
+      /**
+       * Required Count
+       * @default 0
+       */
+      required_count: number;
+      /** Required Coverage */
+      required_coverage: number | null;
+      /** Required Skill Matches */
+      required_skill_matches: components["schemas"]["SkillMatch"][];
+      /**
+       * Role Relevance
+       * @enum {string}
+       */
+      role_relevance: "HIGH" | "MEDIUM" | "LOW";
+      /** Role Relevance Reason */
+      role_relevance_reason: string;
+      /**
+       * Seniority Fit
+       * @enum {string}
+       */
+      seniority_fit: "UNDER_QUALIFIED" | "MATCH" | "OVER_QUALIFIED" | "UNKNOWN";
+      /** Seniority Reason */
+      seniority_reason: string;
+      /** Skill Gaps */
+      skill_gaps: string[];
+      /**
+       * Unsupported Claims
+       * @description Matches the model claimed without CV evidence (removed)
+       */
+      unsupported_claims: string[];
     };
     /** Relocation */
     "Relocation-Input": {
@@ -1944,6 +2138,23 @@ export interface components {
       /** Name */
       name: string;
     };
+    /** SkillMatch */
+    SkillMatch: {
+      /** Candidate Skill */
+      candidate_skill: string;
+      /** Job Skill */
+      job_skill: string;
+      /**
+       * Source
+       * @enum {string}
+       */
+      source: "EXACT" | "LLM";
+      /**
+       * Strength
+       * @enum {string}
+       */
+      strength: "DEMONSTRATED" | "LISTED";
+    };
     /**
      * SkillSource
      * @enum {string}
@@ -1972,6 +2183,8 @@ export interface components {
     };
     /** SystemConfig */
     SystemConfig: {
+      /** Analysis Max Jobs Per Run */
+      analysis_max_jobs_per_run: number;
       /** Ats Max Iterations */
       ats_max_iterations: number;
       /** Ats Target Score */
@@ -1980,10 +2193,21 @@ export interface components {
       daily_run_time: string;
       /** Job Lookback Hours */
       job_lookback_hours: number;
+      /**
+       * Llm Effective Provider
+       * @description Provider that analyses jobs now: claude, mock or unavailable
+       */
+      llm_effective_provider: string;
+      /** Llm Effective Reason */
+      llm_effective_reason?: string | null;
+      /** Llm Effort */
+      llm_effort: string;
       /** Llm Model */
       llm_model: string;
       /** Llm Provider */
       llm_provider: string;
+      /** Llm Refusal Fallback */
+      llm_refusal_fallback: boolean;
       /** Log Format */
       log_format: string;
       /** Log Level */
@@ -2094,6 +2318,59 @@ export interface components {
       /** Error Type */
       type: string;
     };
+    /** VisaEvidence */
+    VisaEvidence: {
+      /** Quote */
+      quote: string;
+      /**
+       * Signal
+       * @enum {string}
+       */
+      signal: "POSITIVE" | "LIKELY" | "NEGATIVE" | "RELOCATION";
+      /**
+       * Source
+       * @enum {string}
+       */
+      source: "RULE" | "LLM";
+    };
+    /** VisaResult */
+    VisaResult: {
+      /**
+       * Conflicting
+       * @description The posting contains both positive and negative statements
+       * @default false
+       */
+      conflicting: boolean;
+      /** Country Code */
+      country_code: string | null;
+      /**
+       * Discarded Quotes
+       * @description Quotes the model gave that are not in the posting (ignored)
+       */
+      discarded_quotes: string[];
+      /** Evidence */
+      evidence: components["schemas"]["VisaEvidence"][];
+      /**
+       * Relocation Available
+       * @default false
+       */
+      relocation_available: boolean;
+      /**
+       * Sponsorship Needed
+       * @description Whether the candidate needs sponsorship there (null: unknown)
+       */
+      sponsorship_needed: boolean | null;
+      status: components["schemas"]["VisaStatus"];
+    };
+    /**
+     * VisaStatus
+     * @enum {string}
+     */
+    VisaStatus:
+      | "SPONSORSHIP_CONFIRMED"
+      | "SPONSORSHIP_LIKELY"
+      | "SPONSORSHIP_UNKNOWN"
+      | "SPONSORSHIP_NOT_AVAILABLE";
     /** WindowRead */
     WindowRead: {
       /** Lookback Hours */
@@ -2988,6 +3265,8 @@ export interface operations {
         q?: string | null;
         company_id?: string | null;
         include_duplicates?: boolean;
+        recommendation?: components["schemas"]["Recommendation"] | null;
+        visa_status?: components["schemas"]["VisaStatus"] | null;
         limit?: number;
         offset?: number;
       };
@@ -3231,6 +3510,48 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  start_analysis_api_v1_runs_analysis_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["AnalysisRunRequest"] | null;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RunCreated"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+      /** @description The task queue is unavailable */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
         };
       };
     };

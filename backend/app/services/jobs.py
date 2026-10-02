@@ -19,11 +19,12 @@ from collections.abc import Collection, Iterable
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
-from typing import Any, Literal
+from typing import Any, Literal, TypeVar
 
 from sqlalchemy import Select, and_, delete, func, or_, select, update
 from sqlalchemy.orm import Session
 
+from app.analysis.types import Recommendation, VisaStatus
 from app.core.errors import NotFoundError
 from app.crawlers.base import NormalizedJob
 from app.cv.evidence import canonical_key
@@ -44,11 +45,14 @@ from app.models import (
     Candidate,
     Company,
     Job,
+    JobAnalysis,
     JobSkill,
     JobSource,
     RunType,
 )
 from app.services.companies import normalize_company_name
+
+_QueryT = TypeVar("_QueryT", bound=Select[*tuple[Any, ...]])
 
 # Fields copied from a normalized posting to its stored record (dates are merged separately).
 _FIELDS: tuple[str, ...] = (
@@ -111,6 +115,17 @@ class JobFilters:
     q: str | None = None
     company_id: uuid.UUID | None = None
     include_duplicates: bool = False
+    recommendation: Recommendation | None = None
+    visa_status: VisaStatus | None = None
+
+
+@dataclass(frozen=True)
+class PipelineInfo:
+    """The default candidate's application for a job."""
+
+    status: str
+    recommendation: str | None
+    visa_status: str | None
 
 
 def _is_empty(value: Any) -> bool:
@@ -321,7 +336,7 @@ class JobService:
             raise NotFoundError(f"Job {job_id} not found")
         return job
 
-    def _visible(self, query: Select[Any]) -> Select[Any]:
+    def _visible(self, query: _QueryT) -> _QueryT:
         return query.where(Job.source.not_in(self._hidden)) if self._hidden else query
 
     @staticmethod
@@ -355,6 +370,15 @@ class JobService:
             query = query.where(Job.country_code == filters.country.upper())
         if filters.company_id is not None:
             query = query.where(Job.company_id == filters.company_id)
+        if filters.recommendation is not None or filters.visa_status is not None:
+            query = query.join(Application, Application.job_id == Job.id).join(
+                Candidate, Candidate.id == Application.candidate_id
+            )
+            query = query.where(Candidate.slug == DEFAULT_CANDIDATE_SLUG)
+            if filters.recommendation is not None:
+                query = query.where(Application.recommendation == filters.recommendation)
+            if filters.visa_status is not None:
+                query = query.where(Application.visa_status == filters.visa_status.value)
         if filters.q and filters.q.strip():
             pattern = f"%{_escape_like(filters.q.strip())}%"
             query = query.where(
@@ -392,17 +416,39 @@ class JobService:
         )
         return {job_id: count for job_id, count in rows if job_id is not None}
 
-    def pipeline_statuses(self, job_ids: Iterable[uuid.UUID]) -> dict[uuid.UUID, str]:
-        """Application status of the default candidate for each job."""
+    def pipeline_statuses(self, job_ids: Iterable[uuid.UUID]) -> dict[uuid.UUID, PipelineInfo]:
+        """Application status and analysis decision of the default candidate for each job."""
         ids = list(job_ids)
         if not ids:
             return {}
         rows = self._session.execute(
-            select(Application.job_id, Application.status)
+            select(
+                Application.job_id,
+                Application.status,
+                Application.recommendation,
+                Application.visa_status,
+            )
             .join(Candidate, Candidate.id == Application.candidate_id)
             .where(Application.job_id.in_(ids), Candidate.slug == DEFAULT_CANDIDATE_SLUG)
         )
-        return {job_id: status.value for job_id, status in rows}
+        return {
+            job_id: PipelineInfo(
+                status=status.value,
+                recommendation=recommendation.value if recommendation else None,
+                visa_status=visa_status,
+            )
+            for job_id, status, recommendation, visa_status in rows
+        }
+
+    def latest_analysis(self, job: Job) -> JobAnalysis | None:
+        """The default candidate's most recent analysis of ``job``."""
+        return self._session.scalar(
+            select(JobAnalysis)
+            .join(Candidate, Candidate.id == JobAnalysis.candidate_id)
+            .where(JobAnalysis.job_id == job.id, Candidate.slug == DEFAULT_CANDIDATE_SLUG)
+            .order_by(JobAnalysis.created_at.desc())
+            .limit(1)
+        )
 
     def stats(self, *, window: PostingWindow, today_start: datetime) -> dict[str, Any]:
         primary = self._visible(select(Job)).where(Job.duplicate_of_id.is_(None)).subquery()
@@ -431,12 +477,19 @@ class JobService:
                 .order_by(primary.c.source)
             ).all()
         )
-        last_run = self._session.scalar(
-            select(AutomationRun)
-            .where(AutomationRun.run_type == RunType.DISCOVERY)
-            .order_by(AutomationRun.created_at.desc())
-            .limit(1)
-        )
+        last_run = self._last_run(RunType.DISCOVERY)
+        decisions = self._visible(
+            select(Application.recommendation, func.count())
+            .join(Job, Job.id == Application.job_id)
+            .join(Candidate, Candidate.id == Application.candidate_id)
+        ).where(Candidate.slug == DEFAULT_CANDIDATE_SLUG, Application.recommendation.is_not(None))
+        by_recommendation = {
+            recommendation.value: count
+            for recommendation, count in self._session.execute(
+                decisions.group_by(Application.recommendation)
+            )
+            if recommendation is not None
+        }
         return {
             "total": count(),
             "found_today": count(primary.c.discovered_at >= today_start),
@@ -445,7 +498,21 @@ class JobService:
             "duplicates": duplicates or 0,
             "by_source": by_source,
             "last_discovery": last_run,
+            "analysed": sum(by_recommendation.values()),
+            "qualified": by_recommendation.get("APPLY", 0) + by_recommendation.get("REVIEW", 0),
+            "by_recommendation": {
+                key: by_recommendation.get(key, 0) for key in ("APPLY", "REVIEW", "SKIP")
+            },
+            "last_analysis": self._last_run(RunType.ANALYSIS),
         }
+
+    def _last_run(self, run_type: RunType) -> AutomationRun | None:
+        return self._session.scalar(
+            select(AutomationRun)
+            .where(AutomationRun.run_type == run_type)
+            .order_by(AutomationRun.created_at.desc())
+            .limit(1)
+        )
 
     @staticmethod
     def window_status(job: Job, window: PostingWindow) -> WindowStatus:

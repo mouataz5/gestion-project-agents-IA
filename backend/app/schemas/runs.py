@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.models import EventLevel, RunStatus, RunTrigger, RunType
 
@@ -67,3 +67,12 @@ class RunCreated(BaseModel):
     run_id: uuid.UUID
     status: RunStatus
     task_id: str | None
+
+
+class AnalysisRunRequest(BaseModel):
+    """Which jobs to analyse: the queued ones by default, or the given jobs (re-analysis)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    job_ids: list[uuid.UUID] | None = Field(default=None, max_length=200)
+    force: bool = Field(default=False, description="Re-analyse even if nothing changed")

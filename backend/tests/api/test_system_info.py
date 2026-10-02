@@ -22,7 +22,13 @@ def test_system_info_reports_the_safe_configuration(unit_client: TestClient) -> 
     assert body["config"]["daily_run_time"] == "08:00"
     assert body["config"]["timezone"] == "Africa/Tunis"
     assert body["config"]["llm_provider"] == "claude"
-    assert body["config"]["llm_model"] == "claude-opus-5"
+    assert body["config"]["llm_model"] == "claude-opus-5-5"
+    assert body["config"]["llm_effort"] == "medium"
+    assert body["config"]["llm_refusal_fallback"] is True
+    assert body["config"]["analysis_max_jobs_per_run"] == 25
+    # Mock mode without an API key: analysis runs offline, and the page says why.
+    assert body["config"]["llm_effective_provider"] == "mock"
+    assert "ANTHROPIC_API_KEY" in body["config"]["llm_effective_reason"]
 
 
 def test_system_info_reports_secrets_only_as_booleans(

@@ -1,6 +1,73 @@
 {
   "components": {
     "schemas": {
+      "AnalysisRunRequest": {
+        "additionalProperties": false,
+        "description": "Which jobs to analyse: the queued ones by default, or the given jobs (re-analysis).",
+        "properties": {
+          "force": {
+            "default": false,
+            "description": "Re-analyse even if nothing changed",
+            "title": "Force",
+            "type": "boolean"
+          },
+          "job_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "maxItems": 200,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Ids"
+          }
+        },
+        "title": "AnalysisRunRequest",
+        "type": "object"
+      },
+      "AnalysisStatus": {
+        "enum": [
+          "SUCCEEDED",
+          "REFUSED",
+          "FAILED"
+        ],
+        "title": "AnalysisStatus",
+        "type": "string"
+      },
+      "AnalysisUsage": {
+        "properties": {
+          "cache_creation_input_tokens": {
+            "title": "Cache Creation Input Tokens",
+            "type": "integer"
+          },
+          "cache_read_input_tokens": {
+            "title": "Cache Read Input Tokens",
+            "type": "integer"
+          },
+          "input_tokens": {
+            "title": "Input Tokens",
+            "type": "integer"
+          },
+          "output_tokens": {
+            "title": "Output Tokens",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "input_tokens",
+          "output_tokens",
+          "cache_read_input_tokens",
+          "cache_creation_input_tokens"
+        ],
+        "title": "AnalysisUsage",
+        "type": "object"
+      },
       "ApplicationDefaults-Input": {
         "additionalProperties": false,
         "properties": {
@@ -2058,6 +2125,174 @@
         "title": "Identity",
         "type": "object"
       },
+      "JobAnalysisRead": {
+        "description": "One analysis: provenance, cost, the verified result and the decision with its reasons.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "duration_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Ms"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          },
+          "fallback_used": {
+            "title": "Fallback Used",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_mock": {
+            "description": "Produced offline by the mock provider, not by a model",
+            "title": "Is Mock",
+            "type": "boolean"
+          },
+          "llm_recommendation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Recommendation"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What the model suggested (the decision comes from the explicit rules)"
+          },
+          "prompt": {
+            "$ref": "#/components/schemas/PromptInfo"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Recommendation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "relevance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RelevanceResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "requested_model": {
+            "title": "Requested Model",
+            "type": "string"
+          },
+          "rule_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Rule Reasons",
+            "type": "array"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "served_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Served Model"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AnalysisStatus"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/AnalysisUsage"
+          },
+          "visa": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisaResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "status",
+          "run_id",
+          "provider",
+          "is_mock",
+          "requested_model",
+          "served_model",
+          "fallback_used",
+          "prompt",
+          "usage",
+          "duration_ms",
+          "recommendation",
+          "llm_recommendation",
+          "rule_reasons",
+          "visa",
+          "relevance",
+          "error_code",
+          "error_message"
+        ],
+        "title": "JobAnalysisRead",
+        "type": "object"
+      },
       "JobApplicationRead": {
         "properties": {
           "candidate_id": {
@@ -2096,6 +2331,17 @@
       },
       "JobDetail": {
         "properties": {
+          "analysis": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobAnalysisRead"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The latest analysis of this job for the candidate"
+          },
           "application_status": {
             "anyOf": [
               {
@@ -2335,6 +2581,17 @@
             "title": "Raw Content",
             "type": "object"
           },
+          "recommendation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Recommendation"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Decision of the latest analysis (APPLY / REVIEW / SKIP)"
+          },
           "relocation_information": {
             "anyOf": [
               {
@@ -2440,6 +2697,17 @@
             ],
             "title": "Visa Information"
           },
+          "visa_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisaStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Visa sponsorship status from the latest analysis"
+          },
           "window_status": {
             "$ref": "#/components/schemas/WindowStatus"
           }
@@ -2473,6 +2741,8 @@
           "duplicate_of_id",
           "duplicate_count",
           "application_status",
+          "recommendation",
+          "visa_status",
           "description",
           "company_url",
           "visa_information",
@@ -2487,7 +2757,8 @@
           "discovery_run_id",
           "primary",
           "duplicates",
-          "applications"
+          "applications",
+          "analysis"
         ],
         "title": "JobDetail",
         "type": "object"
@@ -2857,6 +3128,17 @@
           "posting_date_status": {
             "$ref": "#/components/schemas/PostingDateStatus"
           },
+          "recommendation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Recommendation"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Decision of the latest analysis (APPLY / REVIEW / SKIP)"
+          },
           "remote_status": {
             "$ref": "#/components/schemas/RemoteStatus"
           },
@@ -2926,6 +3208,17 @@
             "title": "Title",
             "type": "string"
           },
+          "visa_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisaStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Visa sponsorship status from the latest analysis"
+          },
           "window_status": {
             "$ref": "#/components/schemas/WindowStatus"
           }
@@ -2958,7 +3251,9 @@
           "ats_type",
           "duplicate_of_id",
           "duplicate_count",
-          "application_status"
+          "application_status",
+          "recommendation",
+          "visa_status"
         ],
         "title": "JobRead",
         "type": "object"
@@ -3095,6 +3390,18 @@
       },
       "JobStats": {
         "properties": {
+          "analysed": {
+            "description": "Jobs with an analysis decision",
+            "title": "Analysed",
+            "type": "integer"
+          },
+          "by_recommendation": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "By Recommendation",
+            "type": "object"
+          },
           "by_source": {
             "additionalProperties": {
               "type": "integer"
@@ -3117,15 +3424,30 @@
             "title": "In Window",
             "type": "integer"
           },
-          "last_discovery": {
+          "last_analysis": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/LastDiscovery"
+                "$ref": "#/components/schemas/LastRun"
               },
               {
                 "type": "null"
               }
             ]
+          },
+          "last_discovery": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LastRun"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "qualified": {
+            "description": "Jobs analysed as APPLY or REVIEW",
+            "title": "Qualified",
+            "type": "integer"
           },
           "total": {
             "description": "Primary job records (duplicates excluded)",
@@ -3148,9 +3470,67 @@
           "duplicates",
           "by_source",
           "window",
-          "last_discovery"
+          "last_discovery",
+          "analysed",
+          "qualified",
+          "by_recommendation",
+          "last_analysis"
         ],
         "title": "JobStats",
+        "type": "object"
+      },
+      "LanguageCheck": {
+        "properties": {
+          "candidate_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Candidate Level"
+          },
+          "language": {
+            "title": "Language",
+            "type": "string"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "met": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Met"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "language",
+          "required",
+          "level",
+          "candidate_level",
+          "met"
+        ],
+        "title": "LanguageCheck",
         "type": "object"
       },
       "LanguageLevel": {
@@ -3164,7 +3544,7 @@
         "title": "LanguageLevel",
         "type": "string"
       },
-      "LastDiscovery": {
+      "LastRun": {
         "properties": {
           "created_at": {
             "format": "date-time",
@@ -3192,6 +3572,14 @@
             "title": "Jobs Discovered",
             "type": "integer"
           },
+          "jobs_processed": {
+            "title": "Jobs Processed",
+            "type": "integer"
+          },
+          "jobs_qualified": {
+            "title": "Jobs Qualified",
+            "type": "integer"
+          },
           "status": {
             "$ref": "#/components/schemas/RunStatus"
           }
@@ -3201,9 +3589,11 @@
           "status",
           "created_at",
           "finished_at",
-          "jobs_discovered"
+          "jobs_discovered",
+          "jobs_processed",
+          "jobs_qualified"
         ],
-        "title": "LastDiscovery",
+        "title": "LastRun",
         "type": "object"
       },
       "LivenessResponse": {
@@ -3701,6 +4091,24 @@
         "title": "ProjectEntry",
         "type": "object"
       },
+      "PromptInfo": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "version"
+        ],
+        "title": "PromptInfo",
+        "type": "object"
+      },
       "ReadinessResponse": {
         "properties": {
           "checked_at": {
@@ -3725,6 +4133,139 @@
           "checked_at"
         ],
         "title": "ReadinessResponse",
+        "type": "object"
+      },
+      "Recommendation": {
+        "enum": [
+          "APPLY",
+          "REVIEW",
+          "SKIP"
+        ],
+        "title": "Recommendation",
+        "type": "string"
+      },
+      "RelevanceResult": {
+        "properties": {
+          "concerns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Concerns",
+            "type": "array"
+          },
+          "language_requirements": {
+            "items": {
+              "$ref": "#/components/schemas/LanguageCheck"
+            },
+            "title": "Language Requirements",
+            "type": "array"
+          },
+          "languages_met": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Languages Met"
+          },
+          "preferred_skill_matches": {
+            "items": {
+              "$ref": "#/components/schemas/SkillMatch"
+            },
+            "title": "Preferred Skill Matches",
+            "type": "array"
+          },
+          "reasoning": {
+            "default": "",
+            "title": "Reasoning",
+            "type": "string"
+          },
+          "required_count": {
+            "default": 0,
+            "title": "Required Count",
+            "type": "integer"
+          },
+          "required_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Coverage"
+          },
+          "required_skill_matches": {
+            "items": {
+              "$ref": "#/components/schemas/SkillMatch"
+            },
+            "title": "Required Skill Matches",
+            "type": "array"
+          },
+          "role_relevance": {
+            "enum": [
+              "HIGH",
+              "MEDIUM",
+              "LOW"
+            ],
+            "title": "Role Relevance",
+            "type": "string"
+          },
+          "role_relevance_reason": {
+            "title": "Role Relevance Reason",
+            "type": "string"
+          },
+          "seniority_fit": {
+            "enum": [
+              "UNDER_QUALIFIED",
+              "MATCH",
+              "OVER_QUALIFIED",
+              "UNKNOWN"
+            ],
+            "title": "Seniority Fit",
+            "type": "string"
+          },
+          "seniority_reason": {
+            "title": "Seniority Reason",
+            "type": "string"
+          },
+          "skill_gaps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skill Gaps",
+            "type": "array"
+          },
+          "unsupported_claims": {
+            "description": "Matches the model claimed without CV evidence (removed)",
+            "items": {
+              "type": "string"
+            },
+            "title": "Unsupported Claims",
+            "type": "array"
+          }
+        },
+        "required": [
+          "role_relevance",
+          "role_relevance_reason",
+          "seniority_fit",
+          "seniority_reason",
+          "required_skill_matches",
+          "preferred_skill_matches",
+          "skill_gaps",
+          "unsupported_claims",
+          "required_count",
+          "required_coverage",
+          "language_requirements",
+          "languages_met",
+          "concerns",
+          "reasoning"
+        ],
+        "title": "RelevanceResult",
         "type": "object"
       },
       "Relocation-Input": {
@@ -4459,6 +5000,42 @@
         "title": "SkillItem",
         "type": "object"
       },
+      "SkillMatch": {
+        "properties": {
+          "candidate_skill": {
+            "title": "Candidate Skill",
+            "type": "string"
+          },
+          "job_skill": {
+            "title": "Job Skill",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "EXACT",
+              "LLM"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "strength": {
+            "enum": [
+              "DEMONSTRATED",
+              "LISTED"
+            ],
+            "title": "Strength",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_skill",
+          "candidate_skill",
+          "strength",
+          "source"
+        ],
+        "title": "SkillMatch",
+        "type": "object"
+      },
       "SkillSource": {
         "enum": [
           "MASTER_CV",
@@ -4518,6 +5095,10 @@
       },
       "SystemConfig": {
         "properties": {
+          "analysis_max_jobs_per_run": {
+            "title": "Analysis Max Jobs Per Run",
+            "type": "integer"
+          },
           "ats_max_iterations": {
             "title": "Ats Max Iterations",
             "type": "integer"
@@ -4534,6 +5115,26 @@
             "title": "Job Lookback Hours",
             "type": "integer"
           },
+          "llm_effective_provider": {
+            "description": "Provider that analyses jobs now: claude, mock or unavailable",
+            "title": "Llm Effective Provider",
+            "type": "string"
+          },
+          "llm_effective_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm Effective Reason"
+          },
+          "llm_effort": {
+            "title": "Llm Effort",
+            "type": "string"
+          },
           "llm_model": {
             "title": "Llm Model",
             "type": "string"
@@ -4541,6 +5142,10 @@
           "llm_provider": {
             "title": "Llm Provider",
             "type": "string"
+          },
+          "llm_refusal_fallback": {
+            "title": "Llm Refusal Fallback",
+            "type": "boolean"
           },
           "log_format": {
             "title": "Log Format",
@@ -4583,6 +5188,10 @@
           "timezone",
           "llm_provider",
           "llm_model",
+          "llm_effort",
+          "llm_refusal_fallback",
+          "llm_effective_provider",
+          "analysis_max_jobs_per_run",
           "notification_channels",
           "storage_backend",
           "max_upload_mb",
@@ -4865,6 +5474,116 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "VisaEvidence": {
+        "properties": {
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "signal": {
+            "enum": [
+              "POSITIVE",
+              "LIKELY",
+              "NEGATIVE",
+              "RELOCATION"
+            ],
+            "title": "Signal",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "RULE",
+              "LLM"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quote",
+          "signal",
+          "source"
+        ],
+        "title": "VisaEvidence",
+        "type": "object"
+      },
+      "VisaResult": {
+        "properties": {
+          "conflicting": {
+            "default": false,
+            "description": "The posting contains both positive and negative statements",
+            "title": "Conflicting",
+            "type": "boolean"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code"
+          },
+          "discarded_quotes": {
+            "description": "Quotes the model gave that are not in the posting (ignored)",
+            "items": {
+              "type": "string"
+            },
+            "title": "Discarded Quotes",
+            "type": "array"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/VisaEvidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "relocation_available": {
+            "default": false,
+            "title": "Relocation Available",
+            "type": "boolean"
+          },
+          "sponsorship_needed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Whether the candidate needs sponsorship there (null: unknown)",
+            "title": "Sponsorship Needed"
+          },
+          "status": {
+            "$ref": "#/components/schemas/VisaStatus"
+          }
+        },
+        "required": [
+          "status",
+          "evidence",
+          "relocation_available",
+          "country_code",
+          "sponsorship_needed",
+          "conflicting",
+          "discarded_quotes"
+        ],
+        "title": "VisaResult",
+        "type": "object"
+      },
+      "VisaStatus": {
+        "enum": [
+          "SPONSORSHIP_CONFIRMED",
+          "SPONSORSHIP_LIKELY",
+          "SPONSORSHIP_UNKNOWN",
+          "SPONSORSHIP_NOT_AVAILABLE"
+        ],
+        "title": "VisaStatus",
+        "type": "string"
       },
       "WindowRead": {
         "properties": {
@@ -6369,6 +7088,38 @@
           },
           {
             "in": "query",
+            "name": "recommendation",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Recommendation"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Recommendation"
+            }
+          },
+          {
+            "in": "query",
+            "name": "visa_status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/VisaStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Visa Status"
+            }
+          },
+          {
+            "in": "query",
             "name": "limit",
             "required": false,
             "schema": {
@@ -6766,6 +7517,69 @@
           }
         ],
         "summary": "List automation runs (newest first)",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/api/v1/runs/analysis": {
+      "post": {
+        "operationId": "start_analysis_api_v1_runs_analysis_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/AnalysisRunRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The task queue is unavailable"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start a job analysis run (all queued jobs, or the jobs given) on a worker",
         "tags": [
           "runs"
         ]

@@ -1,5 +1,6 @@
 """ORM models. Importing this package registers every table on ``Base.metadata``."""
 
+from app.models.analysis import JobAnalysis
 from app.models.application import Application
 from app.models.audit_log import AuditLog
 from app.models.automation_run import (
@@ -41,6 +42,7 @@ __all__ = [
     "EventLevel",
     "Experience",
     "Job",
+    "JobAnalysis",
     "JobSkill",
     "JobSource",
     "Project",

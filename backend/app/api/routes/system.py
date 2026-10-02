@@ -8,6 +8,7 @@ from app import __version__
 from app.api.deps import HealthServiceDep, SettingsDep, require_api_token
 from app.core.clock import utcnow
 from app.core.phases import PHASES
+from app.llm.factory import effective_llm_provider
 from app.schemas.system import PhaseInfo, SecretsStatus, SystemConfig, SystemInfo, SystemStatus
 from app.services.health import aggregate_status
 
@@ -17,6 +18,9 @@ router = APIRouter(prefix="/system", tags=["system"], dependencies=[Depends(requ
 @router.get("/info", response_model=SystemInfo, summary="Safe configuration and roadmap")
 def system_info(settings: SettingsDep) -> SystemInfo:
     summary = settings.safe_summary()
+    effective = effective_llm_provider(settings)
+    summary["llm_effective_provider"] = effective.name
+    summary["llm_effective_reason"] = effective.reason
     return SystemInfo(
         name=settings.app_name,
         version=__version__,

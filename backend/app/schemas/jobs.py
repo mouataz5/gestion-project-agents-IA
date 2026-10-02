@@ -8,6 +8,8 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.analysis.schemas import RelevanceResult, VisaResult
+from app.analysis.types import AnalysisStatus, Recommendation, VisaStatus
 from app.applications.lifecycle import ApplicationStatus
 from app.crawlers.base import SourceKind, SourcePolicy
 from app.jobs.types import (
@@ -64,6 +66,12 @@ class JobRead(BaseModel):
     duplicate_count: int = 0
     application_status: ApplicationStatus | None = Field(
         default=None, description="Pipeline status for the candidate, when the job is queued"
+    )
+    recommendation: Recommendation | None = Field(
+        default=None, description="Decision of the latest analysis (APPLY / REVIEW / SKIP)"
+    )
+    visa_status: VisaStatus | None = Field(
+        default=None, description="Visa sponsorship status from the latest analysis"
     )
 
 
@@ -125,9 +133,52 @@ class JobDetail(JobRead):
     )
     duplicates: list[JobListing] = Field(default_factory=list)
     applications: list[JobApplicationRead] = Field(default_factory=list)
+    analysis: JobAnalysisRead | None = Field(
+        default=None, description="The latest analysis of this job for the candidate"
+    )
 
 
-class LastDiscovery(BaseModel):
+class PromptInfo(BaseModel):
+    name: str
+    version: int
+
+
+class AnalysisUsage(BaseModel):
+    input_tokens: int
+    output_tokens: int
+    cache_read_input_tokens: int
+    cache_creation_input_tokens: int
+
+
+class JobAnalysisRead(BaseModel):
+    """One analysis: provenance, cost, the verified result and the decision with its reasons."""
+
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)
+
+    id: uuid.UUID
+    created_at: datetime
+    status: AnalysisStatus
+    run_id: uuid.UUID | None
+    provider: str
+    is_mock: bool = Field(description="Produced offline by the mock provider, not by a model")
+    requested_model: str
+    served_model: str | None
+    fallback_used: bool
+    prompt: PromptInfo
+    usage: AnalysisUsage
+    duration_ms: int | None
+    recommendation: Recommendation | None
+    llm_recommendation: Recommendation | None = Field(
+        description="What the model suggested (the decision comes from the explicit rules)"
+    )
+    rule_reasons: list[str]
+    visa: VisaResult | None
+    relevance: RelevanceResult | None
+    error_code: str | None
+    error_message: str | None
+
+
+class LastRun(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
@@ -135,6 +186,8 @@ class LastDiscovery(BaseModel):
     created_at: datetime
     finished_at: datetime | None
     jobs_discovered: int
+    jobs_processed: int
+    jobs_qualified: int
 
 
 class JobStats(BaseModel):
@@ -145,7 +198,11 @@ class JobStats(BaseModel):
     duplicates: int = Field(description="Duplicate listings linked to a primary record")
     by_source: dict[str, int]
     window: WindowRead
-    last_discovery: LastDiscovery | None
+    last_discovery: LastRun | None
+    analysed: int = Field(description="Jobs with an analysis decision")
+    qualified: int = Field(description="Jobs analysed as APPLY or REVIEW")
+    by_recommendation: dict[str, int]
+    last_analysis: LastRun | None
 
 
 class JobImportRequest(BaseModel):

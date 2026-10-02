@@ -19,12 +19,15 @@ from structlog.types import EventDict, Processor, WrappedLogger
 from app.core.config import Settings
 from app.core.redaction import redact, redact_text
 
+# Kept at WARNING whatever LOG_LEVEL: connection chatter, and HTTP clients that log whole request
+# bodies at DEBUG (the Anthropic SDK logs every prompt: job postings and candidate facts).
 _QUIET_LOGGERS = (
     "sqlalchemy.engine",
     "sqlalchemy.pool",
     "httpx",
     "httpx2",
     "httpcore",
+    "anthropic",
     "kombu",
     "amqp",
 )

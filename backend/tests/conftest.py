@@ -24,11 +24,16 @@ from reportlab.pdfgen import canvas
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import REPO_ROOT, Settings
+from app.core.storage import LocalStorageProvider
 from app.db.session import create_db_engine, create_session_factory
+from app.llm.base import LLMProvider
 from app.main import create_app
 from app.models import RunTrigger, RunType
+from app.services.analysis import AnalysisService
+from app.services.candidate_profile import CandidateService
 from app.services.companies import CompanyService
 from app.services.discovery import DiscoveryService
+from app.services.master_cv import MasterCvService
 from app.services.runs import RunService
 
 # (style, text) — styles: title, heading (Word heading style), caps (plain bold paragraph used
@@ -189,6 +194,22 @@ class RunSnapshot:
     error_count: int
     summary: dict[str, Any]
     events: list[tuple[str, str, str]]  # (stage, level, message)
+    jobs_qualified: int = 0
+
+
+def snapshot_run(session_factory: sessionmaker[Session], run_id: uuid.UUID) -> RunSnapshot:
+    with session_factory() as session:
+        run = RunService(session).get_run(run_id)
+        return RunSnapshot(
+            id=run.id,
+            status=run.status.value,
+            jobs_discovered=run.jobs_discovered,
+            jobs_processed=run.jobs_processed,
+            error_count=run.error_count,
+            summary=dict(run.summary),
+            events=[(e.stage, e.level.value, e.message) for e in run.events],
+            jobs_qualified=run.jobs_qualified,
+        )
 
 
 @pytest.fixture
@@ -231,17 +252,60 @@ def discover(jobs_settings: Settings, jobs_db: sessionmaker[Session]) -> Callabl
             session.commit()
             run_id = run.id
         DiscoveryService(settings=settings, session_factory=jobs_db, clock=clock).execute(run_id)
+        return snapshot_run(jobs_db, run_id)
+
+    return _run
+
+
+@pytest.fixture
+def confirm_master_cv(
+    jobs_settings: Settings,
+    jobs_db: sessionmaker[Session],
+    cv_docx: Callable[[CvLines], bytes],
+    sample_cv_en: CvLines,
+    tmp_path: Path,
+) -> Callable[[], uuid.UUID]:
+    """Upload and confirm the fictional sample CV for the default candidate."""
+
+    def _confirm() -> uuid.UUID:
         with jobs_db() as session:
-            run = RunService(session).get_run(run_id)
-            return RunSnapshot(
-                id=run.id,
-                status=run.status.value,
-                jobs_discovered=run.jobs_discovered,
-                jobs_processed=run.jobs_processed,
-                error_count=run.error_count,
-                summary=dict(run.summary),
-                events=[(e.stage, e.level.value, e.message) for e in run.events],
+            candidate, _ = CandidateService(
+                session, candidate_dir=jobs_settings.candidate_dir
+            ).get_or_import_default()
+            cvs = MasterCvService(session, LocalStorageProvider(tmp_path / "cv-storage"))
+            version = cvs.upload(candidate, filename="cv.docx", data=cv_docx(sample_cv_en))
+            cvs.confirm(candidate, version.id)
+            session.commit()
+            return version.id
+
+    return _confirm
+
+
+@pytest.fixture
+def analyse(jobs_settings: Settings, jobs_db: sessionmaker[Session]) -> Callable[..., RunSnapshot]:
+    """Run a job analysis synchronously (as the worker does) and return a snapshot of the run."""
+
+    def _run(
+        *,
+        provider: LLMProvider | None = None,
+        job_ids: Sequence[uuid.UUID] | None = None,
+        force: bool = False,
+        **overrides: Any,
+    ) -> RunSnapshot:
+        settings = jobs_settings.model_copy(update=overrides) if overrides else jobs_settings
+        parameters: dict[str, Any] = {"force": force}
+        if job_ids is not None:
+            parameters["job_ids"] = [str(job_id) for job_id in job_ids]
+        with jobs_db() as session:
+            run = RunService(session).create_run(
+                run_type=RunType.ANALYSIS, trigger=RunTrigger.MANUAL, parameters=parameters
             )
+            session.commit()
+            run_id = run.id
+        AnalysisService(settings=settings, session_factory=jobs_db, provider=provider).execute(
+            run_id
+        )
+        return snapshot_run(jobs_db, run_id)
 
     return _run
 

@@ -105,10 +105,16 @@ class Settings(BaseSettings):
 
     # --- LLM -------------------------------------------------------------------------
     llm_provider: Literal["claude", "mock"] = "claude"
-    claude_model: str = "claude-opus-5"
+    claude_model: str = "claude-opus-5-5"
     anthropic_api_key: SecretStr | None = None
     llm_timeout_seconds: float = Field(default=300.0, gt=0)
     llm_max_retries: int = Field(default=2, ge=0, le=10)
+    # Thinking depth and cost; the model's own default is "medium".
+    llm_effort: Literal["low", "medium", "high", "xhigh", "max"] = "medium"
+    llm_max_tokens: int = Field(default=16000, ge=1024, le=64000)
+    # Re-run a request the model declines on Anthropic's recommended fallback model.
+    llm_refusal_fallback: bool = True
+    analysis_max_jobs_per_run: int = Field(default=25, ge=1, le=500)
 
     # --- Notifications ---------------------------------------------------------------
     notification_channels: Annotated[list[NotificationChannel], NoDecode] = Field(
@@ -260,6 +266,10 @@ class Settings(BaseSettings):
             )
         if not self.mock_mode:
             warnings.append("MOCK_MODE is disabled: the system may contact real job sites.")
+            if self.llm_provider == "claude" and self.anthropic_api_key is None:
+                warnings.append(
+                    "ANTHROPIC_API_KEY is not set: job analysis cannot run with LLM_PROVIDER=claude."
+                )
         return warnings
 
     def safe_summary(self) -> dict[str, Any]:
@@ -281,6 +291,9 @@ class Settings(BaseSettings):
             "timezone": self.timezone,
             "llm_provider": self.llm_provider,
             "llm_model": self.llm_model,
+            "llm_effort": self.llm_effort,
+            "llm_refusal_fallback": self.llm_refusal_fallback,
+            "analysis_max_jobs_per_run": self.analysis_max_jobs_per_run,
             "notification_channels": list(self.notification_channels),
             "storage_backend": "local",
             "max_upload_mb": self.max_upload_mb,

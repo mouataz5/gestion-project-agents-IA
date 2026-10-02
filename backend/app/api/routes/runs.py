@@ -13,7 +13,7 @@ from app.core.logging import get_logger
 from app.core.tasks import TaskName
 from app.models import RunStatus, RunTrigger, RunType
 from app.schemas.common import ErrorResponse
-from app.schemas.runs import RunCreated, RunDetail, RunPage, RunSummary
+from app.schemas.runs import AnalysisRunRequest, RunCreated, RunDetail, RunPage, RunSummary
 from app.services.audit import Actor, AuditAction, AuditService
 from app.services.runs import RunService
 
@@ -50,10 +50,16 @@ def get_run(run_id: uuid.UUID, db: DbSession) -> RunDetail:
     return RunDetail.model_validate(RunService(db).get_run(run_id))
 
 
-def _start_run(db: DbSession, queue: TaskQueueDep, run_type: RunType, task: TaskName) -> RunCreated:
+def _start_run(
+    db: DbSession,
+    queue: TaskQueueDep,
+    run_type: RunType,
+    task: TaskName,
+    parameters: dict[str, Any] | None = None,
+) -> RunCreated:
     runs = RunService(db)
     audit = AuditService(db)
-    run = runs.create_run(run_type=run_type, trigger=RunTrigger.API)
+    run = runs.create_run(run_type=run_type, trigger=RunTrigger.API, parameters=parameters)
     audit.record(
         action=AuditAction.RUN_REQUESTED,
         actor=Actor.USER,
@@ -110,3 +116,20 @@ def start_diagnostic(db: DbSession, queue: TaskQueueDep) -> RunCreated:
 )
 def start_discovery(db: DbSession, queue: TaskQueueDep) -> RunCreated:
     return _start_run(db, queue, RunType.DISCOVERY, TaskName.RUN_DISCOVERY)
+
+
+@router.post(
+    "/analysis",
+    response_model=RunCreated,
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Start a job analysis run (all queued jobs, or the jobs given) on a worker",
+    responses=_QUEUE_UNAVAILABLE,
+)
+def start_analysis(
+    db: DbSession, queue: TaskQueueDep, payload: AnalysisRunRequest | None = None
+) -> RunCreated:
+    request = payload or AnalysisRunRequest()
+    parameters: dict[str, Any] = {"force": request.force}
+    if request.job_ids is not None:
+        parameters["job_ids"] = [str(job_id) for job_id in request.job_ids]
+    return _start_run(db, queue, RunType.ANALYSIS, TaskName.RUN_ANALYSIS, parameters)

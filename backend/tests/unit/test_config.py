@@ -26,7 +26,11 @@ def test_defaults_are_safe_and_match_the_specification() -> None:
     assert settings.daily_run_time == "08:00"
     assert settings.timezone == "Africa/Tunis"
     assert settings.llm_provider == "claude"
-    assert settings.claude_model == "claude-opus-5"
+    assert settings.claude_model == "claude-opus-5-5"
+    assert settings.llm_effort == "medium"
+    assert settings.llm_max_tokens == 16000
+    assert settings.llm_refusal_fallback is True  # server-side fallback after a refusal
+    assert settings.analysis_max_jobs_per_run == 25
     assert settings.api_prefix == "/api/v1"
 
 

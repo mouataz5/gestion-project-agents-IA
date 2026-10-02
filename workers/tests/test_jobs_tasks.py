@@ -8,12 +8,16 @@ from sqlalchemy import func, select
 from app.core.config import REPO_ROOT, Settings
 from app.core.tasks import TaskName
 from app.main import create_app
-from app.models import AuditLog, Job, RunStatus, RunTrigger, RunType
+from app.models import AuditLog, Job, JobAnalysis, RunStatus, RunTrigger, RunType
+from app.services.candidate_profile import CandidateService
 from app.services.companies import CompanyService
+from app.services.master_cv import MasterCvService
 from app.services.runs import RunService
 from job_agent_workers.celery_app import celery_app
 from job_agent_workers.runtime import WorkerRuntime
-from job_agent_workers.tasks.jobs import run_discovery
+from job_agent_workers.tasks.jobs import run_analysis, run_discovery
+
+SAMPLE_CV = REPO_ROOT / "playwright" / "fixtures" / "sample-cv.docx"
 
 pytestmark = pytest.mark.feature("job-discovery")
 
@@ -28,6 +32,11 @@ def _pending_discovery(runtime: WorkerRuntime) -> uuid.UUID:
 
 def test_the_discovery_task_is_registered() -> None:
     assert TaskName.RUN_DISCOVERY.value in celery_app.tasks
+
+
+@pytest.mark.feature("job-analysis")
+def test_the_analysis_task_is_registered() -> None:
+    assert TaskName.RUN_ANALYSIS.value in celery_app.tasks
 
 
 @pytest.mark.integration
@@ -69,3 +78,33 @@ def test_api_to_worker_discovery_end_to_end(
     assert run["run_type"] == "DISCOVERY"
     assert run["jobs_discovered"] == 14
     assert jobs["total"] == 9
+
+
+@pytest.mark.integration
+@pytest.mark.feature("job-analysis")
+def test_the_worker_runs_a_recorded_analysis(worker_runtime: WorkerRuntime) -> None:
+    run_discovery.apply(args=[str(_pending_discovery(worker_runtime))]).get()
+    with worker_runtime.session_factory() as session:
+        candidate, _ = CandidateService(
+            session, candidate_dir=worker_runtime.settings.candidate_dir
+        ).get_or_import_default()
+        cvs = MasterCvService(session, worker_runtime.storage)
+        version = cvs.upload(candidate, filename="sample-cv.docx", data=SAMPLE_CV.read_bytes())
+        cvs.confirm(candidate, version.id)
+        run = RunService(session).create_run(run_type=RunType.ANALYSIS, trigger=RunTrigger.API)
+        session.commit()
+        run_id = run.id
+
+    result = run_analysis.apply(args=[str(run_id)]).get()
+
+    assert result["status"] == "SUCCEEDED"
+    assert result["jobs_processed"] == 8
+    with worker_runtime.session_factory() as session:
+        run = RunService(session).get_run(run_id)
+        assert run.status is RunStatus.SUCCEEDED
+        assert run.task_id
+        assert session.scalar(select(func.count()).select_from(JobAnalysis)) == 8
+        actions = session.scalars(
+            select(AuditLog.action).where(AuditLog.entity_id == str(run_id))
+        ).all()
+        assert set(actions) == {"run.started", "run.finished"}

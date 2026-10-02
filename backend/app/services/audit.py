@@ -33,6 +33,9 @@ class AuditAction(StrEnum):
     JOB_IMPORTED = "job.imported"
     JOB_TRACKED = "job.tracked"
     APPLICATION_STATUS_CHANGED = "application.status_changed"
+    ANALYSIS_COMPLETED = "analysis.completed"
+    ANALYSIS_REFUSED = "analysis.refused"
+    ANALYSIS_FAILED = "analysis.failed"
 
 
 class Actor(StrEnum):

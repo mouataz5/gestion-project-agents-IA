@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.schemas.health import ComponentHealth, ComponentStatus
 
@@ -23,6 +23,13 @@ class SystemConfig(BaseModel):
     timezone: str
     llm_provider: str
     llm_model: str
+    llm_effort: str
+    llm_refusal_fallback: bool
+    llm_effective_provider: str = Field(
+        description="Provider that analyses jobs now: claude, mock or unavailable"
+    )
+    llm_effective_reason: str | None = None
+    analysis_max_jobs_per_run: int
     notification_channels: list[str]
     storage_backend: str
     max_upload_mb: int

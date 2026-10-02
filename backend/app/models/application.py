@@ -8,6 +8,7 @@ from datetime import date, datetime
 from sqlalchemy import ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.analysis.types import Recommendation
 from app.applications.lifecycle import ApplicationStatus
 from app.db.base import Base, TimestampMixin, UUIDPrimaryKeyMixin, str_enum
 
@@ -40,6 +41,10 @@ class Application(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
     ats_score: Mapped[float | None]
     visa_status: Mapped[str | None] = mapped_column(String(40))
+    # Latest analysis decision (Phase 4); the full history is in ``job_analyses``.
+    recommendation: Mapped[Recommendation | None] = mapped_column(
+        str_enum(Recommendation, "application_recommendation"), index=True
+    )
     notes: Mapped[str | None] = mapped_column(Text)
     recruiter: Mapped[str | None] = mapped_column(String(200))
     follow_up_date: Mapped[date | None]

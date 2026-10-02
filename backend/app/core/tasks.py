@@ -10,6 +10,7 @@ class TaskName(StrEnum):
     PING = "system.ping"
     RUN_DIAGNOSTIC = "system.run_diagnostic"
     RUN_DISCOVERY = "jobs.run_discovery"
+    RUN_ANALYSIS = "jobs.run_analysis"
 
 
 class QueueName(StrEnum):
