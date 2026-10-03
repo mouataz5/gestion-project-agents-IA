@@ -10,6 +10,7 @@ import {
   windowLabel,
 } from "@/lib/jobs";
 
+import { RecommendationBadge, VisaBadge } from "./job-analysis";
 import { Badge, EmptyState, StatusBadge } from "./ui";
 
 export function PostingDateBadge({
@@ -50,6 +51,7 @@ export function JobsTable({
             <th className="py-2 pr-4 font-medium">Location</th>
             <th className="py-2 pr-4 font-medium">Posted</th>
             <th className="py-2 pr-4 font-medium">Source</th>
+            <th className="py-2 pr-4 font-medium">Analysis</th>
             <th className="py-2 font-medium">Pipeline</th>
           </tr>
         </thead>
@@ -89,6 +91,18 @@ export function JobsTable({
                 <PostingDateBadge job={job} hours={hours} />
               </td>
               <td className="py-2.5 pr-4 font-mono text-xs">{job.source}</td>
+              <td className="py-2.5 pr-4">
+                {job.recommendation || job.visa_status ? (
+                  <div className="flex flex-col items-start gap-1">
+                    {job.recommendation && (
+                      <RecommendationBadge recommendation={job.recommendation} />
+                    )}
+                    {job.visa_status && <VisaBadge status={job.visa_status} />}
+                  </div>
+                ) : (
+                  <span className="text-xs text-slate-400">—</span>
+                )}
+              </td>
               <td className="py-2.5">
                 {job.application_status ? (
                   <StatusBadge status={job.application_status} />

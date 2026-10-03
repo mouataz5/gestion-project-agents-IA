@@ -2,7 +2,15 @@
  * Pure helpers for the jobs pages: URL filters, API query parameters and labels for posting
  * dates, salaries and imported jobs whose fields were not provided.
  */
-import type { JobRead, PostingDateStatus, WindowStatus } from "@/lib/api/types";
+import {
+  type JobRead,
+  type PostingDateStatus,
+  RECOMMENDATIONS,
+  type Recommendation,
+  VISA_STATUSES,
+  type VisaStatus,
+  type WindowStatus,
+} from "@/lib/api/types";
 import { formatRelative, type Tone } from "@/lib/format";
 
 /** Tabs of the jobs list: posted in the window (default), every job, or date unknown. */
@@ -14,6 +22,8 @@ export interface JobFilters {
   country?: string;
   q?: string;
   duplicates: boolean;
+  recommendation?: Recommendation;
+  visa?: VisaStatus;
   offset: number;
 }
 
@@ -24,6 +34,10 @@ type SearchParams = Record<string, string | string[] | undefined>;
 
 function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
+}
+
+function oneOf<T extends string>(value: string | undefined, allowed: readonly T[]): T | undefined {
+  return allowed.find((item) => item === value);
 }
 
 /** Filters from the page URL. Anything malformed is ignored rather than sent to the API. */
@@ -40,8 +54,22 @@ export function parseJobFilters(params: SearchParams): JobFilters {
     country: country && /^[A-Za-z]{2}$/.test(country) ? country.toUpperCase() : undefined,
     q: q || undefined,
     duplicates: duplicates === "1" || duplicates === "true",
+    recommendation: oneOf(first(params.recommendation), RECOMMENDATIONS),
+    visa: oneOf(first(params.visa), VISA_STATUSES),
     offset: Number.isFinite(offset) && offset > 0 ? offset : 0,
   };
+}
+
+/** True when the list is narrowed by anything other than the tab and the page. */
+export function hasActiveFilters(filters: JobFilters): boolean {
+  return Boolean(
+    filters.source ||
+    filters.country ||
+    filters.q ||
+    filters.duplicates ||
+    filters.recommendation ||
+    filters.visa,
+  );
 }
 
 /** Query parameters of ``GET /jobs`` for the given filters. */
@@ -56,6 +84,8 @@ export function jobsApiParams(
     country: filters.country,
     q: filters.q,
     include_duplicates: filters.duplicates ? "true" : undefined,
+    recommendation: filters.recommendation,
+    visa_status: filters.visa,
     limit,
     offset: filters.offset || undefined,
   };
@@ -69,6 +99,8 @@ export function jobsHref(filters: Partial<JobFilters>): string {
   if (filters.country) params.set("country", filters.country);
   if (filters.q) params.set("q", filters.q);
   if (filters.duplicates) params.set("duplicates", "1");
+  if (filters.recommendation) params.set("recommendation", filters.recommendation);
+  if (filters.visa) params.set("visa", filters.visa);
   if (filters.offset && filters.offset > 0) params.set("offset", String(filters.offset));
   const query = params.toString();
   return query ? `/jobs?${query}` : "/jobs";

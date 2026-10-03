@@ -202,7 +202,9 @@ class AnalysisService:
             if stopped_by_config:
                 status = RunStatus.PARTIAL_SUCCESS if totals["analysed"] else RunStatus.FAILED
             elif totals["failed"]:
-                status = RunStatus.PARTIAL_SUCCESS
+                # FAILED when every attempted job failed; a refusal is an answer, not a failure.
+                answered = totals["analysed"] + totals["refused"]
+                status = RunStatus.PARTIAL_SUCCESS if answered else RunStatus.FAILED
             recorder.finish(status, summary=summary)
         return self._finished(run_id, status, totals)
 

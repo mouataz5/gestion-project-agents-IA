@@ -5,6 +5,7 @@ import {
   displayCompany,
   displayTitle,
   formatSalary,
+  hasActiveFilters,
   hostOf,
   importErrorMessage,
   jobsApiParams,
@@ -28,6 +29,8 @@ describe("job filters", () => {
       country: undefined,
       q: undefined,
       include_duplicates: undefined,
+      recommendation: undefined,
+      visa_status: undefined,
       limit: 25,
       offset: undefined,
     });
@@ -40,6 +43,8 @@ describe("job filters", () => {
       country: "fr",
       q: "  computer vision ",
       duplicates: "1",
+      recommendation: "APPLY",
+      visa: "SPONSORSHIP_LIKELY",
       offset: ["25", "50"],
     });
 
@@ -49,12 +54,16 @@ describe("job filters", () => {
       country: "FR",
       q: "computer vision",
       duplicates: true,
+      recommendation: "APPLY",
+      visa: "SPONSORSHIP_LIKELY",
       offset: 25,
     });
     expect(jobsApiParams(filters, 25)).toMatchObject({
       window: "all",
       date_status: "UNKNOWN",
       include_duplicates: "true",
+      recommendation: "APPLY",
+      visa_status: "SPONSORSHIP_LIKELY",
       offset: 25,
     });
   });
@@ -66,6 +75,8 @@ describe("job filters", () => {
     [{ offset: "-10" }, { offset: 0 }],
     [{ offset: "abc" }, { offset: 0 }],
     [{ q: "   " }, { q: undefined }],
+    [{ recommendation: "MAYBE" }, { recommendation: undefined }],
+    [{ visa: "YES" }, { visa: undefined }],
   ])("ignores malformed values %o", (params, expected) => {
     expect(parseJobFilters(params)).toMatchObject(expected);
   });
@@ -82,8 +93,22 @@ describe("job filters", () => {
       country: "DE",
       q: "ml ops",
       duplicates: true,
+      recommendation: undefined,
+      visa: undefined,
       offset: 50,
     });
+  });
+
+  it("links to analysed jobs by recommendation and visa status", () => {
+    const href = jobsHref({ tab: "all", recommendation: "REVIEW", visa: "SPONSORSHIP_CONFIRMED" });
+    expect(href).toBe("/jobs?tab=all&recommendation=REVIEW&visa=SPONSORSHIP_CONFIRMED");
+    const params = Object.fromEntries(new URL(href, "http://x").searchParams);
+    expect(parseJobFilters(params)).toMatchObject({
+      recommendation: "REVIEW",
+      visa: "SPONSORSHIP_CONFIRMED",
+    });
+    expect(hasActiveFilters(parseJobFilters(params))).toBe(true);
+    expect(hasActiveFilters(DEFAULT_JOB_FILTERS)).toBe(false);
   });
 
   it("labels the tabs with the configured window", () => {

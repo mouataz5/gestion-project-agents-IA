@@ -3395,6 +3395,11 @@
             "title": "Analysed",
             "type": "integer"
           },
+          "awaiting_analysis": {
+            "description": "Queued jobs not analysed yet (DISCOVERED)",
+            "title": "Awaiting Analysis",
+            "type": "integer"
+          },
           "by_recommendation": {
             "additionalProperties": {
               "type": "integer"
@@ -3474,7 +3479,8 @@
           "analysed",
           "qualified",
           "by_recommendation",
-          "last_analysis"
+          "last_analysis",
+          "awaiting_analysis"
         ],
         "title": "JobStats",
         "type": "object"

@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { AnalyseJobButton } from "@/components/analyse-job-button";
 import { Notice } from "@/components/form";
+import { HighlightedText, JobAnalysisPanel } from "@/components/job-analysis";
 import { PostingDateBadge } from "@/components/jobs-table";
 import { TrackJobButton } from "@/components/track-job-button";
 import {
@@ -88,6 +90,10 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
     : searchParams.imported;
   const salary = formatSalary(job);
   const queued = job.applications.length > 0;
+  const analysis = job.analysis;
+  const quotes = analysis?.visa?.evidence.map((evidence) => evidence.quote) ?? [];
+  const llm = infoResult.ok ? infoResult.data.config : null;
+  const analysable = !job.duplicate_of_id && llm?.llm_effective_provider !== "unavailable";
 
   return (
     <>
@@ -136,6 +142,41 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Card
+          title="Analysis"
+          className="lg:col-span-3"
+          action={
+            analysable ? <AnalyseJobButton jobId={job.id} analysed={Boolean(analysis)} /> : null
+          }
+        >
+          {analysis ? (
+            <JobAnalysisPanel analysis={analysis} timeZone={timeZone} />
+          ) : job.duplicate_of_id ? (
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Duplicate listings are analysed through their primary record.
+            </p>
+          ) : (
+            <div className="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+              <p>
+                Not analysed yet. The analysis classifies visa sponsorship from the posting&apos;s
+                own words and matches the job against your confirmed master CV: every visa claim
+                quotes the posting and every skill match is backed by your CV.
+              </p>
+              {llm?.llm_effective_provider === "mock" && (
+                <p>
+                  Analyses run offline with deterministic rules (mock mode,{" "}
+                  {llm.llm_effective_reason ?? "no language model"}).
+                </p>
+              )}
+              {llm?.llm_effective_provider === "unavailable" && (
+                <Notice tone="warning">
+                  Analysis is unavailable: {llm.llm_effective_reason ?? "check the LLM settings"}.
+                </Notice>
+              )}
+            </div>
+          )}
+        </Card>
+
         <Card title="Overview" className="lg:col-span-2">
           <DefinitionList
             items={[
@@ -190,7 +231,9 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
 
         <Card title="Description" className="lg:col-span-2">
           {job.description ? (
-            <div className="text-sm leading-6 whitespace-pre-line">{job.description}</div>
+            <div className="text-sm leading-6 whitespace-pre-line" data-testid="job-description">
+              <HighlightedText text={job.description} quotes={quotes} />
+            </div>
           ) : (
             <EmptyState>
               No description stored. Imported links are not fetched: open the posting to read it.
@@ -218,9 +261,11 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
                 : "Automatic queueing needs an AI/ML title, a target country and a posting date in the window."}
             </p>
           )}
-          <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-            Analysis, visa classification and matching arrive in Phase 4.
-          </p>
+          {queued && !analysis && (
+            <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+              Waiting for the analysis: run it from this page or with “Analyse new jobs”.
+            </p>
+          )}
         </Card>
 
         <Card title="Requirements" className="lg:col-span-2">
@@ -231,7 +276,14 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
               ["Languages", <Tags key="languages" items={job.languages} />],
               ["Education", job.education_requirements ?? "—"],
               ["Experience", job.experience_requirements ?? "—"],
-              ["Visa", job.visa_information ?? "Not stated"],
+              [
+                "Visa",
+                job.visa_information ? (
+                  <HighlightedText key="visa" text={job.visa_information} quotes={quotes} />
+                ) : (
+                  "Not stated"
+                ),
+              ],
               ["Relocation", job.relocation_information ?? "Not stated"],
             ]}
           />

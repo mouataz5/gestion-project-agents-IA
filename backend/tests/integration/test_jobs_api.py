@@ -104,6 +104,8 @@ def test_stats_summarise_the_discovery(jobs_client: TestClient, discovered: dict
     assert stats["by_source"] == {"mock_ats": 8, "mock_feed": 6}
     assert stats["last_discovery"]["status"] == "SUCCEEDED"
     assert stats["last_discovery"]["id"] == discovered["run_id"]
+    assert stats["awaiting_analysis"] == 8  # every queued job waits for the analysis
+    assert (stats["analysed"], stats["last_analysis"]) == (0, None)
 
 
 def test_unknown_date_jobs_can_be_tracked_manually(

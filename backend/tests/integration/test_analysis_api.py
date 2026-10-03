@@ -114,6 +114,7 @@ def test_stats_include_the_analysis(jobs_client: TestClient, analysed: dict[str,
     assert stats["qualified"] == 7
     assert stats["by_recommendation"] == {"APPLY": 2, "REVIEW": 5, "SKIP": 1}
     assert stats["last_analysis"]["id"] == analysed["run_id"]
+    assert stats["awaiting_analysis"] == 0
 
 
 def test_system_info_reports_the_llm_without_secrets(

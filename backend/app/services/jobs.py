@@ -25,6 +25,7 @@ from sqlalchemy import Select, and_, delete, func, or_, select, update
 from sqlalchemy.orm import Session
 
 from app.analysis.types import Recommendation, VisaStatus
+from app.applications.lifecycle import ApplicationStatus
 from app.core.errors import NotFoundError
 from app.crawlers.base import NormalizedJob
 from app.cv.evidence import canonical_key
@@ -490,6 +491,18 @@ class JobService:
             )
             if recommendation is not None
         }
+        awaiting = self._session.scalar(
+            self._visible(
+                select(func.count())
+                .select_from(Application)
+                .join(Job, Job.id == Application.job_id)
+                .join(Candidate, Candidate.id == Application.candidate_id)
+            ).where(
+                Candidate.slug == DEFAULT_CANDIDATE_SLUG,
+                Application.status == ApplicationStatus.DISCOVERED,
+                Job.duplicate_of_id.is_(None),
+            )
+        )
         return {
             "total": count(),
             "found_today": count(primary.c.discovered_at >= today_start),
@@ -504,6 +517,7 @@ class JobService:
                 key: by_recommendation.get(key, 0) for key in ("APPLY", "REVIEW", "SKIP")
             },
             "last_analysis": self._last_run(RunType.ANALYSIS),
+            "awaiting_analysis": awaiting or 0,
         }
 
     def _last_run(self, run_type: RunType) -> AutomationRun | None:

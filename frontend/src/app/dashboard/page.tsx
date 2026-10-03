@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { HealthGrid } from "@/components/health-grid";
-import { RunDiagnosticButton, RunDiscoveryButton } from "@/components/start-run-button";
+import {
+  RunAnalysisButton,
+  RunDiagnosticButton,
+  RunDiscoveryButton,
+} from "@/components/start-run-button";
 import { RunsTable } from "@/components/runs-table";
 import {
   BackendError,
@@ -12,8 +16,16 @@ import {
   PageHeader,
   StatusBadge,
 } from "@/components/ui";
-import type { JobStats, RunPage, SystemInfo, SystemStatus } from "@/lib/api/types";
+import { recommendationLabel, recommendationTone } from "@/lib/analysis";
+import {
+  type JobStats,
+  RECOMMENDATIONS,
+  type RunPage,
+  type SystemInfo,
+  type SystemStatus,
+} from "@/lib/api/types";
 import { formatDateTime, type Tone } from "@/lib/format";
+import { jobsHref } from "@/lib/jobs";
 import { backendGet } from "@/lib/server/backend";
 
 export const metadata: Metadata = { title: "Dashboard" };
@@ -65,6 +77,75 @@ function DiscoverySummary({ stats, timeZone }: { stats: JobStats; timeZone: stri
         ) : (
           "No discovery has run yet. Import the example companies on the Companies page, then run a discovery."
         )}
+      </p>
+    </div>
+  );
+}
+
+function engineLabel(config: SystemInfo["config"]): string {
+  if (config.llm_effective_provider === "claude")
+    return `Claude · ${config.llm_model} · effort ${config.llm_effort}`;
+  if (config.llm_effective_provider === "mock")
+    return `Offline mock (${config.llm_effective_reason ?? "no language model"})`;
+  return `Unavailable: ${config.llm_effective_reason ?? "check the LLM settings"}`;
+}
+
+function AnalysisSummary({
+  stats,
+  config,
+  timeZone,
+}: {
+  stats: JobStats;
+  config: SystemInfo["config"];
+  timeZone: string;
+}) {
+  const last = stats.last_analysis;
+  return (
+    <div className="flex flex-col gap-4" data-testid="analysis-summary">
+      <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {RECOMMENDATIONS.map((recommendation) => (
+          <div
+            key={recommendation}
+            className="rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800/50"
+          >
+            <dt className="text-xs font-medium">
+              <Badge tone={recommendationTone(recommendation)}>
+                {recommendationLabel(recommendation)}
+              </Badge>
+            </dt>
+            <dd className="mt-1 text-2xl font-semibold tabular-nums">
+              <Link
+                href={jobsHref({ tab: "all", recommendation })}
+                className="hover:text-indigo-600 dark:hover:text-indigo-400"
+              >
+                {stats.by_recommendation[recommendation] ?? 0}
+              </Link>
+            </dd>
+          </div>
+        ))}
+        <div className="rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800/50">
+          <dt className="text-xs font-medium text-slate-500 dark:text-slate-400">
+            Waiting for analysis
+          </dt>
+          <dd className="mt-1 text-2xl font-semibold tabular-nums">{stats.awaiting_analysis}</dd>
+        </div>
+      </dl>
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        {last ? (
+          <>
+            Last analysis:{" "}
+            <Link href={`/runs/${last.id}`} className="inline-flex items-center gap-2">
+              <StatusBadge status={last.status} />
+            </Link>{" "}
+            {formatDateTime(last.finished_at ?? last.created_at, timeZone)} · {last.jobs_processed}{" "}
+            job(s) analysed · {last.jobs_qualified} worth a look
+          </>
+        ) : (
+          "No analysis has run yet. Confirm your master CV, run a discovery, then analyse the new jobs."
+        )}
+      </p>
+      <p className="text-xs text-slate-500 dark:text-slate-400" data-testid="analysis-engine">
+        Engine: {engineLabel(config)}
       </p>
     </div>
   );
@@ -154,6 +235,18 @@ export default async function DashboardPage() {
           )}
         </Card>
 
+        <Card
+          title="Job analysis"
+          className="lg:col-span-3"
+          action={<RunAnalysisButton variant="secondary" />}
+        >
+          {jobStatsResult.ok ? (
+            <AnalysisSummary stats={jobStatsResult.data} config={info.config} timeZone={timeZone} />
+          ) : (
+            <BackendError message={jobStatsResult.message} />
+          )}
+        </Card>
+
         <Card title="Pipeline configuration" className="lg:col-span-3">
           <DefinitionList
             items={[
@@ -166,7 +259,7 @@ export default async function DashboardPage() {
                 "Daily schedule",
                 `${info.config.daily_run_time} ${info.config.timezone}${info.config.scheduler_enabled ? "" : " (disabled)"}`,
               ],
-              ["LLM", `${info.config.llm_provider} · ${info.config.llm_model}`],
+              ["LLM", engineLabel(info.config)],
             ]}
           />
         </Card>
@@ -204,8 +297,8 @@ export default async function DashboardPage() {
             ))}
           </ol>
           <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-            Application, interview and offer metrics appear on this dashboard as the analysis and
-            application phases are delivered.
+            Application, interview and offer metrics appear on this dashboard as the application
+            phases are delivered.
           </p>
         </Card>
       </div>

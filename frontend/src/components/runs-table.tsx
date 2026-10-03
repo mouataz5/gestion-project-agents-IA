@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import type { RunSummary } from "@/lib/api/types";
 import { formatDateTime, formatDuration, humanize } from "@/lib/format";
+import { runJobCount } from "@/lib/runs";
 
 import { EmptyState, StatusBadge } from "./ui";
 
@@ -49,7 +50,7 @@ export function RunsTable({ runs, timeZone }: { runs: RunSummary[]; timeZone: st
                 {formatDateTime(run.created_at, timeZone)}
               </td>
               <td className="py-2.5 pr-4">{formatDuration(run.duration_seconds)}</td>
-              <td className="py-2.5 pr-4 text-right tabular-nums">{run.jobs_discovered}</td>
+              <td className="py-2.5 pr-4 text-right tabular-nums">{runJobCount(run)}</td>
               <td className="py-2.5 text-right tabular-nums">{run.error_count}</td>
             </tr>
           ))}

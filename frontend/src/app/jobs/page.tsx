@@ -5,10 +5,19 @@ import { buttonClass, controlClass } from "@/components/form";
 import { JobImportForm } from "@/components/job-import-form";
 import { JobSourcesTable } from "@/components/job-sources-table";
 import { JobsTable } from "@/components/jobs-table";
-import { RunDiscoveryButton } from "@/components/start-run-button";
+import { RunAnalysisButton, RunDiscoveryButton } from "@/components/start-run-button";
 import { BackendError, Card, PageHeader } from "@/components/ui";
-import type { JobPage, JobSource, JobStats, SystemInfo } from "@/lib/api/types";
+import { recommendationLabel, visaLabel } from "@/lib/analysis";
 import {
+  type JobPage,
+  type JobSource,
+  type JobStats,
+  RECOMMENDATIONS,
+  type SystemInfo,
+  VISA_STATUSES,
+} from "@/lib/api/types";
+import {
+  hasActiveFilters,
   JOB_PAGE_SIZE,
   type JobFilters,
   type JobTab,
@@ -34,7 +43,7 @@ function Stat({ label, value, hint }: { label: string; value: number | string; h
 }
 
 function FilterBar({ filters, sources }: { filters: JobFilters; sources: JobSource[] }) {
-  const active = Boolean(filters.source || filters.country || filters.q || filters.duplicates);
+  const active = hasActiveFilters(filters);
   return (
     <form method="get" action="/jobs" className="flex flex-wrap items-end gap-3" role="search">
       {filters.tab !== "recent" && <input type="hidden" name="tab" value={filters.tab} />}
@@ -74,6 +83,32 @@ function FilterBar({ filters, sources }: { filters: JobFilters; sources: JobSour
           title="Two-letter country code"
           className={`${controlClass(false, true)} w-20 uppercase`}
         />
+      </label>
+      <label className="flex flex-col gap-1 text-xs font-medium text-slate-500 dark:text-slate-400">
+        Recommendation
+        <select
+          name="recommendation"
+          defaultValue={filters.recommendation ?? ""}
+          className={controlClass(false, true)}
+        >
+          <option value="">Any</option>
+          {RECOMMENDATIONS.map((recommendation) => (
+            <option key={recommendation} value={recommendation}>
+              {recommendationLabel(recommendation)}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="flex flex-col gap-1 text-xs font-medium text-slate-500 dark:text-slate-400">
+        Visa
+        <select name="visa" defaultValue={filters.visa ?? ""} className={controlClass(false, true)}>
+          <option value="">Any</option>
+          {VISA_STATUSES.map((status) => (
+            <option key={status} value={status}>
+              {visaLabel(status)}
+            </option>
+          ))}
+        </select>
       </label>
       <label className="flex items-center gap-2 pb-2 text-sm text-slate-600 dark:text-slate-300">
         <input
@@ -125,6 +160,7 @@ export default async function JobsPage(props: PageProps<"/jobs">) {
           <div className="flex flex-wrap items-start gap-2">
             <JobImportForm />
             <RunDiscoveryButton />
+            <RunAnalysisButton variant="secondary" />
           </div>
         }
       />
@@ -177,7 +213,7 @@ export default async function JobsPage(props: PageProps<"/jobs">) {
               hours={hours}
               timeZone={timeZone}
               empty={
-                filters.tab === "recent" && !filters.q && !filters.source && !filters.country
+                filters.tab === "recent" && !hasActiveFilters(filters)
                   ? `No job posted in the last ${hours} hours yet. Run a discovery or import a job URL.`
                   : "No job matches these filters."
               }

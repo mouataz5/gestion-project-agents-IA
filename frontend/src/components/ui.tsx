@@ -22,10 +22,20 @@ const DOT_CLASSES: Record<Tone, string> = {
   neutral: "bg-slate-400",
 };
 
-export function Badge({ tone, children }: { tone: Tone; children: ReactNode }) {
+export function Badge({
+  tone,
+  size = "sm",
+  children,
+}: {
+  tone: Tone;
+  size?: "sm" | "lg";
+  children: ReactNode;
+}) {
+  const sizing =
+    size === "lg" ? "px-3 py-1 text-sm font-semibold" : "px-2 py-0.5 text-xs font-medium";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${TONE_CLASSES[tone]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full ring-1 ring-inset ${sizing} ${TONE_CLASSES[tone]}`}
     >
       {children}
     </span>

@@ -1581,6 +1581,11 @@ export interface components {
        * @description Jobs with an analysis decision
        */
       analysed: number;
+      /**
+       * Awaiting Analysis
+       * @description Queued jobs not analysed yet (DISCOVERED)
+       */
+      awaiting_analysis: number;
       /** By Recommendation */
       by_recommendation: {
         [key: string]: number;

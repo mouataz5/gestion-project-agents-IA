@@ -9,6 +9,7 @@ import type { ApiErrorResponse, RunCreated } from "@/lib/api/types";
 const RUNS = {
   diagnostic: { path: "/api/backend/runs/diagnostic", label: "Run system diagnostic" },
   discovery: { path: "/api/backend/runs/discovery", label: "Run job discovery" },
+  analysis: { path: "/api/backend/runs/analysis", label: "Analyse new jobs" },
 } as const;
 
 /** Starts a recorded automation run on a worker, then opens the run's live timeline. */
@@ -68,4 +69,8 @@ export function RunDiagnosticButton() {
 
 export function RunDiscoveryButton({ variant }: { variant?: "primary" | "secondary" }) {
   return <StartRunButton run="discovery" variant={variant} />;
+}
+
+export function RunAnalysisButton({ variant }: { variant?: "primary" | "secondary" }) {
+  return <StartRunButton run="analysis" variant={variant} />;
 }

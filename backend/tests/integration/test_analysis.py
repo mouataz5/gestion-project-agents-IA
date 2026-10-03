@@ -298,6 +298,27 @@ def test_failures_and_refusals_are_isolated(
     assert any(level == "WARNING" and "declined" in message for _, level, message in run.events)
 
 
+def test_the_run_stops_after_three_consecutive_failures(
+    ready: None, analyse: Callable[..., Any], jobs_db: sessionmaker[Session]
+) -> None:
+    def script(job: dict[str, Any]) -> JobAnalysisOutput:
+        raise LLMUnavailableError("Anthropic API unavailable (HTTP 529)")
+
+    provider = ScriptedProvider(script)
+    run = analyse(provider=provider)
+
+    assert len(provider.calls) == 3  # the other queued jobs are not attempted
+    assert run.status == "FAILED"  # every attempted job failed
+    assert (run.jobs_processed, run.summary["totals"]["failed"]) == (0, 3)
+    assert any(
+        level == "WARNING" and "3 consecutive failures" in message
+        for _, level, message in run.events
+    )
+    with jobs_db() as session:
+        statuses = {status.value for status in session.scalars(select(Application.status))}
+    assert statuses == {"DISCOVERED"}  # everything stays queued for the next run
+
+
 def test_a_configuration_error_stops_the_run(ready: None, analyse: Callable[..., Any]) -> None:
     def script(job: dict[str, Any]) -> JobAnalysisOutput:
         raise LLMConfigError("The Anthropic API rejected the API key (HTTP 401)")

@@ -203,6 +203,7 @@ class JobStats(BaseModel):
     qualified: int = Field(description="Jobs analysed as APPLY or REVIEW")
     by_recommendation: dict[str, int]
     last_analysis: LastRun | None
+    awaiting_analysis: int = Field(description="Queued jobs not analysed yet (DISCOVERED)")
 
 
 class JobImportRequest(BaseModel):

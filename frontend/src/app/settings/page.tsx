@@ -51,8 +51,6 @@ export default async function SettingsPage() {
               ["DAILY_RUN_TIME", config.daily_run_time],
               ["TIMEZONE", config.timezone],
               ["SCHEDULER_ENABLED", config.scheduler_enabled ? "true" : "false"],
-              ["LLM_PROVIDER", config.llm_provider],
-              ["Model", config.llm_model],
               [
                 "NOTIFICATION_CHANNELS",
                 config.notification_channels.length
@@ -61,6 +59,46 @@ export default async function SettingsPage() {
               ],
             ]}
           />
+        </Card>
+
+        <Card title="Language model">
+          <DefinitionList
+            items={[
+              [
+                "In use",
+                <span key="effective" data-testid="llm-effective">
+                  {config.llm_effective_provider === "claude" ? (
+                    <Badge tone="success">Claude</Badge>
+                  ) : config.llm_effective_provider === "mock" ? (
+                    <Badge tone="warning">Offline mock</Badge>
+                  ) : (
+                    <Badge tone="danger">Unavailable</Badge>
+                  )}
+                  {config.llm_effective_reason && (
+                    <span className="mt-1 block text-xs font-normal text-slate-500 dark:text-slate-400">
+                      {config.llm_effective_reason}
+                    </span>
+                  )}
+                </span>,
+              ],
+              ["LLM_PROVIDER", config.llm_provider],
+              ["CLAUDE_MODEL", config.llm_model],
+              ["LLM_EFFORT", config.llm_effort],
+              [
+                "LLM_REFUSAL_FALLBACK",
+                config.llm_refusal_fallback
+                  ? "true (a declined request is retried on the fallback model)"
+                  : "false",
+              ],
+              ["ANALYSIS_MAX_JOBS_PER_RUN", String(config.analysis_max_jobs_per_run)],
+              ["ANTHROPIC_API_KEY", info.secrets.anthropic_api_key ? "configured" : "not set"],
+            ]}
+          />
+          <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+            Job postings and a minimal set of CV facts (skills, experience, languages, work
+            authorization; never contact details or employer names) are sent to the provider.
+            Prompts and answers are never logged.
+          </p>
         </Card>
 
         <Card title="Secrets">

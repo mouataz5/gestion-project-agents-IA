@@ -58,6 +58,27 @@ export type WindowStatus = Schemas["WindowStatus"];
 export type PostingWindow = Schemas["WindowRead"];
 export type ApplicationStatus = Schemas["ApplicationStatus"];
 
+// Job analysis (Phase 4).
+export type JobAnalysis = Schemas["JobAnalysisRead"];
+export type AnalysisStatus = Schemas["AnalysisStatus"];
+export type AnalysisRunRequest = Schemas["AnalysisRunRequest"];
+export type Recommendation = Schemas["Recommendation"];
+export type VisaStatus = Schemas["VisaStatus"];
+export type VisaResult = Schemas["VisaResult"];
+export type VisaEvidence = Schemas["VisaEvidence"];
+export type RelevanceResult = Schemas["RelevanceResult"];
+export type SkillMatch = Schemas["SkillMatch"];
+export type LanguageCheck = Schemas["LanguageCheck"];
+export type LastRun = Schemas["LastRun"];
+
+export const RECOMMENDATIONS: readonly Recommendation[] = ["APPLY", "REVIEW", "SKIP"];
+export const VISA_STATUSES: readonly VisaStatus[] = [
+  "SPONSORSHIP_CONFIRMED",
+  "SPONSORSHIP_LIKELY",
+  "SPONSORSHIP_UNKNOWN",
+  "SPONSORSHIP_NOT_AVAILABLE",
+];
+
 // Company watchlist (Phase 3).
 export type CompanyRead = Schemas["CompanyRead"];
 export type CompanyCreate = Schemas["CompanyCreate"];
