@@ -24,7 +24,9 @@ candidate's behalf. Security and compliance are therefore design constraints, no
 | Secrets leaked to the browser | The API token and backend URL are server-only (`server-only` modules); the browser talks only to the Next.js origin |
 | Unauthorized API access | Bearer token on every non-health endpoint (required when `APP_ENV=production`); all Compose ports bound to `127.0.0.1` |
 | Unintended job applications | `AUTO_SUBMIT=false`, explicit approval, `SubmissionGuard`, `MOCK_MODE=true` default, idempotent submission, audit log (Phases 8–9) |
-| Prompt injection inside job postings | Job text is treated as data inside structured prompts; outputs are schema-validated; the truthfulness guard checks every claim against the master CV; LLM output never triggers actions without the guards (Phases 4–7) |
+| Prompt injection inside job postings | Phase 4: the posting is sent inside `<job_posting>` tags (embedded tags neutralised) and the prompt declares it untrusted data; no tools are offered; answers must match a JSON schema; deterministic guards keep only visa quotes found verbatim in the posting and skill matches backed by the confirmed CV; explicit rules — not the model — decide APPLY/REVIEW/SKIP. Later phases add the truthfulness guard for generated documents; LLM output never triggers actions without the guards |
+| Personal data sent to the LLM provider | Phase 4 sends only the facts that change the analysis (targets, work authorization, languages, CV-backed skills, experience/project bullets and technologies, degrees); never the name, contact details, employer or school names. Mock mode sends nothing |
+| Prompts or answers leaking into logs | Only metadata is logged (provider, model, tokens, duration, request id); the Anthropic SDK and HTTP-client loggers are pinned at WARNING because they log whole request bodies at DEBUG; schema errors never echo the model's text (tested at `LOG_LEVEL=DEBUG`) |
 | Fabricated CV content | Truthfulness guard + evidence ledger; unsupported keywords must be zero; unknown answers become `NEEDS_USER_INPUT` |
 | SSRF through job-import URLs | Phase 3 never fetches imported URLs. `validate_public_url` accepts only http/https on ports 80/443 without credentials and rejects local/internal/single-label host names and non-global IP addresses in every notation (tested). Phase 10 fetchers add resolved-address checks at connection time, redirect re-validation, size and time limits |
 | Malicious uploads (CV files) | Size limit, extension + magic-byte check, parsing in the worker with limits (zip-bomb safe DOCX reading), files stored with generated names (Phase 2) |
@@ -93,6 +95,23 @@ Tests assert that these values never appear in log output.
 - Third-party processing: job descriptions and CV content are sent to the configured LLM provider only
   for analysis/tailoring. Choose a provider/plan whose data-retention terms you accept; a local model
   provider (Ollama) can be added behind `LLMProvider`.
+
+### 7.2 Job analysis (Phase 4)
+
+- **What is sent to Anthropic** when `ANTHROPIC_API_KEY` is set: the job posting and the *candidate
+  facts* document.
+  - The facts are the target roles and countries, work authorization and relocation, languages, skills
+    backed by the confirmed CV, experience and project titles with periods, bullets and technologies,
+    degree names, certifications and years of experience.
+  - Never sent: the candidate's name, email, phone, address, links, employer names or school names.
+  - The document is built deterministically (`app/analysis/facts.py`) and covered by a test that checks
+    contact data and employer names are absent.
+- **What is stored**: the validated analysis (verdicts, quotes from the posting, reasons), token counts,
+  the request id and the models. The raw model answer is not stored. Error messages are redacted.
+- **Mock mode** without a key sends nothing anywhere; analyses are labelled "Mock analysis".
+- **Key handling**: `ANTHROPIC_API_KEY` lives only in `.env`. It is passed to the SDK client and
+  appears nowhere else: not in logs, run events, audit entries, error messages or the API (system
+  info reports it as a boolean). Tests check that the key and the prompt text never reach the logs.
 
 ### 7.1 Candidate profile and master CV (Phase 2)
 

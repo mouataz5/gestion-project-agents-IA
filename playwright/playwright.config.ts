@@ -18,5 +18,19 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "chromium",
+      testIgnore: /analysis\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+    },
+    // The analysis needs what the other specs create (confirmed CV, discovered jobs): it runs
+    // once they are done, whatever the number of workers.
+    {
+      name: "analysis",
+      testMatch: /analysis\.spec\.ts/,
+      dependencies: ["chromium"],
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
 });

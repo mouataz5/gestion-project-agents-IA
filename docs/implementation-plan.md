@@ -1,8 +1,16 @@
 # Implementation Plan
 
-The system is built in 11 incremental phases. Each phase ends with working, tested software; no phase
-jumps ahead (real integrations only arrive in Phase 10, after the mock pipeline is proven end to end).
-Design references point to `docs/architecture.md`.
+The system is built in 11 incremental phases. Each phase ends with working, tested software. Real
+integrations arrive only in Phase 10, after the mock pipeline has been proven end to end. Design
+references point to `docs/architecture.md`.
+
+**Delivery order.** Phases 1–4 were delivered in order. On 2026-10-02 the user chose the fastest
+route to real applications for the rest:
+
+**5 → 6 → 10 → 7 → 8 → 9 → 11**
+
+So the ATS engine and CV documents come first, then real job sources, then answers, browser
+automation and approval. Phase numbers stay as they are, since they are referenced everywhere.
 
 ## Process for every phase
 
@@ -153,25 +161,92 @@ shows the jobs with date-status badges. ✔ Verified natively and on the Docker 
 
 ---
 
-## Phase 4 — LLM provider, job analysis, visa classification, matching
+## Phase 4 — LLM provider, job analysis, visa classification, matching ✅
+
+**Goal**: for each queued job, decide whether visa sponsorship is available, how well the job matches
+the confirmed master CV, and whether to APPLY, REVIEW or SKIP. Every claim carries evidence.
 
 Deliverables
-- `LLMProvider` protocol; `ClaudeProvider` (official `anthropic` SDK, structured outputs validated
-  against Pydantic models, adaptive thinking, refusal/stop-reason handling, timeouts/retries, token usage
-  recorded, no prompt/secret logging); `MockLLMProvider` for tests/offline mock mode.
-- Versioned prompts in `prompts/`; migration `0004`: `job_analyses`.
-- Visa engine: phrase rules + LLM with verbatim evidence quotes; the four `SPONSORSHIP_*` statuses;
-  relocation never implies sponsorship; explicit negatives win.
-- Relevance engine returning the spec JSON; explicit qualification rules (`APPLY`/`REVIEW`/`SKIP`).
-- Analysis stage in runs; job detail page shows "why it matches", skills, gaps, concerns, visa evidence.
+- **`app/llm/`**:
+  - the `LLMProvider` protocol;
+  - `ClaudeProvider`, built on the official `anthropic` SDK. It sends structured output through
+    `output_config.format` and validates it with Pydantic after checking `stop_reason`. It sets
+    `output_config.effort` and no `thinking` or sampling parameters. The server-side refusal fallback
+    is on by default. The candidate facts are prompt-cached. SDK errors are mapped to clear, redacted
+    failures. Usage, served model and request id are recorded; prompts and answers are never logged.
+  - `MockLLMProvider` (deterministic, offline);
+  - a versioned prompt registry;
+  - a provider factory. It fails fast without a key in live mode and falls back to the mock without a
+    key in mock mode.
+- **`prompts/job_analysis.v1.md`**: truthfulness rules; the posting is untrusted data, quotes must be
+  verbatim, and the model answers "unknown" instead of guessing.
+- **`app/analysis/`** (pure, unit-tested):
+  - deterministic candidate facts (data minimisation: no contact data, employer or school names);
+  - EN/FR/DE visa phrase rules merged with the model's claim. Only verbatim quotes count, negatives
+    win, and relocation is never sponsorship.
+  - sponsorship need from the profile (EU/EEA/CH free movement);
+  - CV-backed skill verification and coverage;
+  - language checks;
+  - the qualification rules table;
+  - assembly of the stored result.
+- **Migration `0004`**: `job_analyses` (status, provenance, usage, visa and relevance JSON, decision
+  and reasons, redacted errors) and `applications.recommendation`.
+- **Analysis run** (`ANALYSIS`, task `jobs.run_analysis`, `POST /runs/analysis` with optional
+  `job_ids` and `force`):
+  - requires a confirmed master CV and is capped by `ANALYSIS_MAX_JOBS_PER_RUN`;
+  - idempotent by input hash;
+  - REFUSED and FAILED analyses are isolated per job;
+  - stops after 3 consecutive failures or a configuration error;
+  - status transitions DISCOVERED → ANALYZED → QUALIFIED for APPLY or REVIEW, all audited.
+- **API**:
+  - `JobRead.recommendation` and `visa_status`;
+  - `JobDetail.analysis`;
+  - `GET /jobs?recommendation=&visa_status=`;
+  - analysis stats (`analysed`, `qualified`, `by_recommendation`, `awaiting_analysis`, `last_analysis`);
+  - the effective LLM provider in system info;
+  - settings `LLM_EFFORT`, `LLM_MAX_TOKENS`, `LLM_REFUSAL_FALLBACK` and `ANALYSIS_MAX_JOBS_PER_RUN`, and
+    the default `CLAUDE_MODEL=claude-opus-5-5`.
+- **UI**:
+  - an analysis panel on `/jobs/[id]`: decision and reasons, the model's suggestion, skills backed and
+    missing, removed claims, languages, concerns, visa quotes highlighted in the posting, provenance,
+    and an "Analyse this job" / "Re-analyse" button that waits for its run;
+  - an Analysis column and filters on `/jobs`;
+  - a dashboard Job analysis card with "Analyse new jobs";
+  - a Language model card in Settings.
 
-Tests first: provider contract, Claude provider with mocked HTTP (success, schema mismatch, refusal,
-rate limit, timeout), visa corpus (confirmed / likely / unknown / not available, relocation-only,
-contradictory statements), relevance schema validation, qualification rules, prompt version recorded,
-redaction of provider errors.
+Tests first:
+- **Prompt registry**: version, hash, unknown or unsafe names.
+- **Mock provider**: determinism and validation.
+- **Provider factory**: selection and fail-fast.
+- **Claude provider against a fake Messages API** (the SDK's HTTP transport):
+  - request shape: schema, effort, `cache_control`, fallback beta and body, none of
+    `thinking`/`temperature`/`top_p`/`top_k`/`tool_choice`;
+  - outcomes: structured output and usage, fallback served model, schema mismatch, refusal with
+    category, `max_tokens` truncation;
+  - failures: 429 retried then reported, 5xx retried, timeout, network error, 400/401/403/404 mapping;
+  - nothing private in the logs at DEBUG;
+  - health check without and with an API call.
+- **Visa corpus**: confirmed, likely, unknown, not available, relocation-only, contradictory, FR/DE
+  phrases, grounding of the model's quotes.
+- **Rules**: sponsorship need matrix, skill verification and coverage, languages, the qualification
+  table (16 cases), and facts determinism and data minimisation.
+- **Integration**:
+  - a mock analysis run over the discovered fixtures: expected recommendations, transitions, counters,
+    events and summary;
+  - re-runs: idempotent skip and `force`;
+  - edge cases: no confirmed CV gives a WARNING; refusal isolated; failures isolated with the stop
+    after 3; configuration error stops the run;
+  - claims without evidence removed and invented quotes discarded.
+- **API**: run start, detail, filters, stats, auth, audit.
+- **Worker task** end to end.
+- **Frontend helpers**: labels, provenance, quote highlighting, filters.
+- **E2E**: read-only checks, plus the analysis workflow behind `E2E_ALLOW_MUTATIONS`.
 
-Acceptance: mock jobs analysed offline with the mock provider; with an API key, Claude produces valid
-structured analyses with evidence.
+Acceptance:
+- Mock jobs are analysed offline with the mock provider. ✔ Verified natively and on the Docker stack.
+- With an API key, Claude produces valid structured analyses with evidence. This uses the same code
+  path as the tests (request shape and parsing verified against a fake API). **The live run awaits an
+  `ANTHROPIC_API_KEY`.**
 
 ---
 

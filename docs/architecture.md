@@ -87,11 +87,13 @@ backend/                 FastAPI app + all domain code (Python package `app`)
                          profile, master CV, skills, …)
   app/cv/                master CV: file validation, DOCX/PDF readers, deterministic parser,
                          dates, section headings, skill evidence — Phase 2
-  app/agents/            LLM-driven analysers (job analysis, visa, relevance, tailoring) — Phase 4+
+  app/analysis/          job analysis: candidate facts, visa phrase rules, sponsorship need,
+                         CV-backed skill matching, languages, qualification rules — Phase 4
   app/crawlers/          JobSource implementations — Phase 3/10
   app/ats/               ATS engine (Phase 5) and ATS form adapters (Phase 8)
   app/browser/           ApplicationBrowser / BrowserProvider (Playwright) — Phase 8
-  app/llm/               LLMProvider interface + Claude/mock providers — Phase 4
+  app/llm/               LLMProvider protocol, Claude (official SDK) and mock providers, prompt
+                         registry, provider factory — Phase 4
   app/applications/      application preparation, approval, submission guard — Phase 7/9
   app/notifications/     NotificationProvider + email/telegram — Phase 11
   tests/                 unit/ and integration/
@@ -154,14 +156,16 @@ a timeline of **RunEvents**. A failure of one job never aborts the run: it is re
 All interfaces are `typing.Protocol`s; implementations are selected by configuration.
 
 ```python
-class LLMProvider(Protocol):                       # app/llm — Phase 4
+class LLMProvider(Protocol):                       # app/llm — Phase 4 (implemented)
     name: str
-    def generate_structured(self, request: LLMRequest, schema: type[T]) -> LLMResult[T]: ...
+    model: str
+    def generate_structured(self, request: LLMRequest, output_type: type[T]) -> LLMResult[T]: ...
     def generate_text(self, request: LLMRequest) -> LLMResult[str]: ...
-    def health_check(self) -> ProviderHealth: ...
-# Implementations: ClaudeProvider (official `anthropic` SDK, structured outputs validated with
-# Pydantic, refusal/stop-reason handling, usage recorded), MockLLMProvider (deterministic fixtures,
-# used in tests and offline mock mode). Later: OpenAIProvider, OllamaProvider, LocalModelProvider.
+    def health_check(self, *, live: bool = False) -> ProviderHealth: ...
+# Implementations: ClaudeProvider (official `anthropic` SDK: JSON-schema structured output validated
+# with Pydantic after checking `stop_reason`, effort, refusal fallback, prompt caching, usage and
+# served model recorded) and MockLLMProvider (deterministic responders, used in tests and offline mock
+# mode). Later: OpenAIProvider, OllamaProvider, LocalModelProvider.
 
 class JobSource(Protocol):                          # app/crawlers — Phase 3/10
     key: str
@@ -241,8 +245,8 @@ erDiagram
 | `job_sources` | key, kind (ATS_API/FEED/CAREER_PAGE/BOARD), enabled, config, rate limit, compliance notes, last status | 3 |
 | `jobs` | spec fields (source, source_job_id, company, title, description, location, country, remote_status, employment_type, seniority, salary_*, posted_at, discovered_at, application_url, company_url, ats_type, visa_information, relocation_information, required/preferred skills, languages, education/experience requirements, responsibilities, raw_content, content_hash) + `posting_date_status`, `canonical_url`, `duplicate_of_id`, visa fields | 3 |
 | `job_skills` | name, normalized_name, category, importance (REQUIRED/PREFERRED), evidence_quote | 3–5 |
-| `job_analyses` *(addition)* | relevance JSON, recommendation, model, prompt version | 4 |
-| `applications` | spec §18 fields + candidate_id, approval metadata, blocked/manual reason | 3+ |
+| `job_analyses` | application, candidate, job, CV version, run; status (`SUCCEEDED`/`REFUSED`/`FAILED`); provider, requested and served model, fallback flag; prompt name, version and sha256; input hash; request id; input/output/cache-read/cache-write tokens, duration; `visa` and `relevance` JSONB (validated), visa status, recommendation, the model's recommendation, rule reasons; redacted error code and message | **4** |
+| `applications` | spec §18 fields + candidate_id, `recommendation` (`APPLY`/`REVIEW`/`SKIP`) and `visa_status` from the latest analysis, approval metadata, blocked/manual reason | **3**, **4**, 9 |
 | `cv_versions` | kind (`MASTER`/`TAILORED`), version (unique per candidate + kind), status (`PARSED`/`CONFIRMED`/`SUPERSEDED`; one active master via partial unique index), original filename, content type, size, sha256, storage key, extracted text, `structure` JSONB, parse warnings, parser version, revised_from_id, confirmed_at — generated files and templates in Phases 5–6 | **2**, 5, 6 |
 | `ats_analyses` | overall + component scores, matched/missing/unsupported keywords, recommendations, iteration, scoring_version | 5 |
 | `application_answers` | question, normalized key, answer, status (`DRAFT`/`NEEDS_USER_INPUT`/`APPROVED`), sources | 7 |
@@ -365,19 +369,105 @@ the review queue. Every transition is validated by a transition table
   stored as `manual_import` jobs — **never fetched** in Phase 3 — and always queued. Fields the user does
   not provide stay empty.
 
-## 10. Analysis engines (Phase 4)
+## 10. Job analysis (Phase 4 — implemented)
 
-- **Visa/sponsorship engine**: deterministic phrase rules + LLM extraction, both producing evidence.
-  Output: `visa_status` ∈ `SPONSORSHIP_CONFIRMED | SPONSORSHIP_LIKELY | SPONSORSHIP_UNKNOWN |
-  SPONSORSHIP_NOT_AVAILABLE`, `visa_evidence`, verbatim `visa_evidence_quote`, `visa_country`,
-  `relocation_available`. Relocation support alone never implies sponsorship. Explicit negative statements
-  ("must already have work authorization", "no visa sponsorship") win over positive heuristics.
-- **Relevance engine**: structured JSON (`role_relevance`, `seniority_fit`, `skill_matches`,
-  `skill_gaps`, `required_skill_matches`, `preferred_skill_matches`, `visa_status`, `relocation_status`,
-  `language_requirements`, `concerns`, `recommendation: APPLY|REVIEW|SKIP`, `reasoning`), validated by
-  Pydantic. Qualification rules combine these fields explicitly (no single opaque score).
-- Default model `CLAUDE_MODEL=claude-opus-5`, configurable; prompts are versioned files in `prompts/`;
-  every stored analysis records provider, model and prompt version.
+An **analysis run** (`ANALYSIS`, worker task `jobs.run_analysis`) decides what to do with each queued
+job: is visa sponsorship available, how well does the job match the confirmed master CV, and should the
+candidate **APPLY**, **REVIEW** or **SKIP**. It is started with `POST /runs/analysis` ("Analyse new
+jobs" on the dashboard and `/jobs`) or for one job from its page ("Analyse this job" / "Re-analyse",
+which sends `{"job_ids": [id], "force": true}`).
+
+```mermaid
+flowchart TD
+    r[ANALYSIS run] --> c{Confirmed master CV?}
+    c -- no --> w[WARNING event, nothing analysed]
+    c -- yes --> f[Candidate facts: deterministic JSON from the profile + confirmed CV]
+    f --> s[Select DISCOVERED primary jobs, oldest posting first, max ANALYSIS_MAX_JOBS_PER_RUN]
+    s --> h{Input hash unchanged?}
+    h -- yes, not forced --> u[Skip: unchanged]
+    h -- no --> l[LLM: instructions + cached facts + job posting as untrusted data]
+    l -- refusal --> rf[REFUSED analysis, run continues]
+    l -- error --> fl[FAILED analysis, run continues]
+    l --> g[Deterministic guards: visa quotes, CV-backed skills, languages]
+    g --> q[Qualification rules: APPLY / REVIEW / SKIP + reasons]
+    q --> st[job_analyses row; application recommendation + visa status]
+    st --> t[DISCOVERED → ANALYZED → QUALIFIED for APPLY/REVIEW; SKIP stays ANALYZED]
+```
+
+- **Input.**
+  - The system prompt holds the versioned instructions (`prompts/job_analysis.v1.md`) and the
+    **candidate facts**, a sorted JSON document built from the profile and the confirmed CV. The facts
+    are marked `cache_control: ephemeral`, so every job in a run reuses the cached prefix.
+  - The facts contain: targets, work authorization, relocation, languages, CV-backed skills (and the
+    declared ones listed as unproven), experience and project titles with periods, bullets and
+    technologies, degrees, certifications, and experience in whole years.
+  - Never sent: the name, contact details, employer names or school names.
+  - The posting goes in the user turn inside `<job_posting>` tags. It is untrusted data: tags embedded
+    in it are neutralised, the prompt says it is never a source of instructions, and no tools are
+    offered.
+- **Model output** (`JobAnalysisOutput`, JSON schema enforced by the API, validated with Pydantic):
+  - role relevance and seniority fit, each with a reason;
+  - one assessment per job skill, citing a candidate skill or none;
+  - language requirements;
+  - a visa claim with a verbatim quote, plus a relocation quote;
+  - concerns, a recommendation, and an explanation.
+- **Deterministic guards** (`app/analysis/`, unit-tested): the stored result can only contain what they
+  accept.
+  - *Visa*:
+    - EN/FR/DE phrase rules run first. Explicit negatives win ("unable to offer visa sponsorship",
+      "must already have the right to work"), and relocation support alone is never sponsorship.
+    - The model's claim counts only if its quote is found in the posting (normalised comparison).
+      Invented quotes are discarded and reported.
+    - Output: `SPONSORSHIP_CONFIRMED | SPONSORSHIP_LIKELY | SPONSORSHIP_UNKNOWN |
+      SPONSORSHIP_NOT_AVAILABLE`, with the evidence (quote, signal, rule or model) and
+      `relocation_available`.
+  - *Sponsorship need* comes from the profile, never from the posting. It is not needed in a country
+    where the candidate is authorised (EU/EEA/CH free movement included) or under the `never` policy,
+    and it is unknown when the job's country is.
+  - *Skills*:
+    - A match counts only if it cites a candidate skill with `DEMONSTRATED` or `LISTED` evidence.
+      Synonyms resolve through the skill taxonomy.
+    - Matches the model claims without evidence are removed and reported. Requirements the model reads
+      in the free text must appear in the posting.
+    - Coverage = backed required skills / required skills.
+  - *Languages*:
+    - The candidate's languages come from the profile, falling back to the CV.
+    - Listed languages count as required, and a nice-to-have language never blocks.
+    - Unknown stays unknown.
+- **Qualification rules** (`app/analysis/qualification.py`): the rules decide; the model's own
+  recommendation is stored next to them for transparency.
+
+  | Recommendation | When |
+  |---|---|
+  | **SKIP** | sponsorship needed and ruled out by the posting, **or** low role relevance, **or** a required language the candidate verifiably lacks |
+  | **APPLY** | high relevance, seniority matching (or not stated), ≥ 60 % of required skills backed by the CV, sponsorship not needed / confirmed / likely, languages met |
+  | **REVIEW** | everything else, with the reasons that kept it from APPLY |
+
+- **Provider.**
+  - `ClaudeProvider` uses the default model `claude-opus-5-5` with `LLM_EFFORT=medium`. No `thinking`
+    or sampling parameters are sent: current models think adaptively and reject them.
+  - The server-side refusal fallback is on by default (`LLM_REFUSAL_FALLBACK=true`). The analysis
+    records the model that answered and whether a fallback ran.
+  - Without `ANTHROPIC_API_KEY`:
+    - with `MOCK_MODE=true`, the deterministic `MockLLMProvider` runs offline, and its analyses are
+      labelled "Mock analysis";
+    - in live mode, the run fails fast with a clear message.
+- **Run behaviour.**
+  - Idempotent: an input hash (posting content, candidate facts, prompt, provider, model, effort)
+    skips unchanged analyses unless `force` is set.
+  - Refusals and failures are isolated per job. The run ends `PARTIAL_SUCCESS` when some jobs failed,
+    and `FAILED` only when every attempted job failed.
+  - The run stops after 3 consecutive failures or on a configuration error (bad key, unknown model).
+    The jobs left over stay queued.
+  - Counters: `jobs_processed` = analysed, `jobs_qualified` = APPLY + REVIEW. The summary holds
+    per-recommendation and visa counts, token usage (including cache reads) and the provider.
+  - Only metadata is logged (model, tokens, duration, request id), never prompts or answers.
+- **UI.**
+  - `/jobs/[id]` shows the decision and its reasons, the backed and missing skills, language checks,
+    the visa quotes (also highlighted in the description) and the provenance (provider, model, prompt,
+    tokens).
+  - `/jobs` filters by recommendation and visa status.
+  - The dashboard counts APPLY / REVIEW / SKIP and the jobs waiting for analysis.
 
 ## 11. ATS engine, tailoring and truthfulness (Phase 5)
 
@@ -461,7 +551,9 @@ token server-side. API types are generated from the backend OpenAPI schema (`ope
 Navigation shows later-phase pages as disabled with their phase number — no placeholder pages. A
 header badge always shows `MOCK MODE` and the `AUTO-SUBMIT` state. `/candidate` edits the profile
 (fields needing input are highlighted, YAML import/export, skill evidence) and `/cv` uploads, reviews,
-confirms and revises master CV versions; the proxy's body limit follows `MAX_UPLOAD_MB`.
+confirms and revises master CV versions; the proxy's body limit follows `MAX_UPLOAD_MB`. `/jobs` and
+`/jobs/[id]` show discovery results and their analysis (§10); `/settings` shows the language model in
+use and whether a key is configured, never the key.
 
 ## 16. Configuration
 
@@ -475,7 +567,10 @@ one validated `Settings` object. Important switches:
 | `JOB_LOOKBACK_HOURS` | `24` | Posting window |
 | `ATS_TARGET_SCORE` / `ATS_MAX_ITERATIONS` | `95` / `3` | ATS optimisation loop |
 | `DAILY_RUN_TIME` / `TIMEZONE` | `08:00` / `Africa/Tunis` | Scheduler |
-| `LLM_PROVIDER` / `CLAUDE_MODEL` | `claude` / `claude-opus-5` | LLM selection |
+| `LLM_PROVIDER` / `CLAUDE_MODEL` | `claude` / `claude-opus-5-5` | LLM selection (mock offline without a key in mock mode) |
+| `LLM_EFFORT` / `LLM_MAX_TOKENS` | `medium` / `16000` | Depth (and cost) of each analysis; answer size limit |
+| `LLM_REFUSAL_FALLBACK` | `true` | Re-run a declined request on Anthropic's fallback model |
+| `ANALYSIS_MAX_JOBS_PER_RUN` | `25` | Jobs analysed per run (the rest wait for the next run) |
 | `API_AUTH_TOKEN` | generated | Bearer token for the API (required in production) |
 | `ENCRYPTION_KEY` | generated | Fernet key for secrets at rest (required in production) |
 
@@ -489,7 +584,9 @@ JSON logs.
   API through FastAPI's test client; worker tasks executed directly or through an eager queue.
 - **Browser**: Python Playwright against the mock ATS sites (Phase 8); Node Playwright E2E for the
   dashboard (Phase 1+).
-- **LLM**: `MockLLMProvider` fixtures in CI; live-model evaluation suites are opt-in.
+- **LLM**: `MockLLMProvider` in integration tests and CI; `ClaudeProvider` is tested against a fake
+  Messages API plugged into the SDK's HTTP transport (request shape, refusals, truncation, retries,
+  error mapping, no prompt or key in the logs). Live-model evaluation suites are opt-in.
 - **Tracking**: each test declares a `feature`; `scripts/update_tests_json.py` regenerates
   `tests.json` from real results and keeps the hand-maintained list of planned tests.
 - Integration tests skip with an explicit reason when PostgreSQL/Redis are unreachable locally, and
@@ -547,7 +644,7 @@ implemented natively, so stopping n8n loses only the optional extras.
 | 10 | Python Playwright for automation, Node Playwright for dashboard E2E | Automation shares domain code in Python; UI tests use the standard Next.js tooling. |
 | 11 | LibreOffice headless for DOCX → PDF (Phase 6) | Open source, reliable, server-side. |
 | 12 | `MOCK_MODE=true`, `AUTO_SUBMIT=false` defaults | Safe by default; real submissions require deliberate configuration and approval. |
-| 13 | Default LLM `claude-opus-5`, configurable | Most capable default for analysis/tailoring; cost trade-offs are the user's decision via config. |
+| 13 | Default LLM `claude-opus-5-5` (`claude-opus-5` until Phase 4), configurable | Most capable Opus for analysis/tailoring; Opus 5.5 is newer and cheaper than Opus 5 ($4 / $20 instead of $5 / $25 per million input / output tokens). Cost trade-offs stay the user's decision via `CLAUDE_MODEL` and `LLM_EFFORT`. |
 | 14 | Application row created at discovery; user "skip" maps to `WITHDRAWN` with a reason | Uses exactly the requested status list while keeping one lifecycle per job. |
 | 15 | Python 3.11 in containers and CI | Matches the verified development environment; upgrade is a one-line change. |
 | 16 | n8n Community Edition (self-hosted, free) as an optional integration layer, pinned `n8nio/n8n:2.40.7` | Easy, user-editable notifications/email ingestion/extras at no cost; core logic stays in tested code, so the core never depends on n8n (requested by the user and by the spec). |
@@ -572,3 +669,14 @@ implemented natively, so stopping n8n loses only the optional extras.
 | 35 | Imports store a validated URL and the user's metadata, never fetch the page in Phase 3, and leave missing fields empty | The permitted LinkedIn path needs no scraping; SSRF protection is in place before any fetcher exists; nothing is invented about a job. |
 | 36 | Job-alert email parsing (link extraction, tracking removal) runs in the core; the n8n workflow only forwards the email | The parsing is tested Python shared by every mailbox; n8n stays an optional transport (ADR-16). |
 | 37 | Discovery records failures per source, company board and posting and continues; `PARTIAL_SUCCESS` unless every source failed | One broken board must not cost the whole daily run; the run timeline and `job_sources.last_status` show exactly what failed. |
+| 38 | Official `anthropic` SDK (≥ 1.11); structured output through `output_config.format` (JSON schema from the Pydantic model), validated with Pydantic only after checking `stop_reason` | `messages.parse()` validates before the stop reason can be read, so a refusal or a truncated answer would look like a schema error. Checking first keeps the three failures distinct; validation errors never echo the model's text. |
+| 39 | No `thinking`, sampling or forced `tool_choice` parameters; depth is set with `output_config.effort` (`LLM_EFFORT`, default `medium`, always sent) | Current Claude models think adaptively and reject these parameters with HTTP 400. Sending the effort explicitly means a model change cannot silently change the cost per analysis. |
+| 40 | Server-side refusal fallback enabled by default (`LLM_REFUSAL_FALLBACK=true`: beta `server-side-fallback-2026-07-01`, `fallbacks="default"`); the served model and the fallback flag are stored | A declined request is re-run, in the same call, on the model Anthropic routes that refusal category to, so a false-positive refusal does not cost the job. Every analysis stays attributable to the model that wrote it. A refusal that remains marks only that job `REFUSED`. The Batch API rejects `fallbacks`, so Phase 11's batch work must choose between them. |
+| 41 | The cached system prompt is the versioned instructions plus deterministic candidate facts (sorted JSON, experience in whole years); the posting is the user turn | Every job in a run reuses the cached prefix (cache reads cost a tenth of normal input). The same determinism keeps the input hash stable, so unchanged jobs are never re-billed. |
+| 42 | The posting is untrusted data: wrapped in `<job_posting>` tags (embedded tags neutralised), never a source of instructions; no tools are offered | Postings are written by third parties. The worst a prompt injection can do is distort one structured answer, which the deterministic guards (ADR-43) then filter. |
+| 43 | Grounding guards are code, not prompt promises: visa claims need a verbatim quote found in the posting (phrase rules first, negatives win, relocation is never sponsorship); skill matches need a `DEMONSTRATED`/`LISTED` CV skill; extracted requirements must appear in the posting | A model can still invent a sentence or a skill; the stored analysis cannot. Discarded quotes and removed claims are kept and shown, so the filtering is visible. |
+| 44 | Explicit qualification rules decide APPLY / REVIEW / SKIP; the model's recommendation is stored alongside, with the reasons | Decisions are explainable and unit-tested (a rules table), not an opaque score. SKIP is reserved for verified blockers, so uncertainty lands in REVIEW, never in SKIP. |
+| 45 | Sponsorship need is computed from the profile (current authorizations, EU/EEA/CH free movement, `sponsorship_required_when`) and is unknown when the job's country is | Whether "no sponsorship" blocks a job depends on facts about the candidate, which are never guessed from a posting or by a model. |
+| 46 | Data minimisation: only facts that change the analysis are sent — never the name, contact details, employer or school names; prompts and answers are never logged and the SDK's DEBUG logger is pinned at WARNING | Personal data leaves the machine only when it serves the analysis. Logs stay free of CV content and postings even at `LOG_LEVEL=DEBUG` (the SDK logs whole requests at DEBUG; tested). |
+| 47 | `LLM_PROVIDER=claude` requires `ANTHROPIC_API_KEY` and fails fast without one; with `MOCK_MODE=true` and no key, the deterministic `MockLLMProvider` runs and every analysis is labelled mock | The application is fully usable offline, and a mock result is never mistaken for Claude's. |
+| 48 | Analysis is its own recorded run: it needs a confirmed master CV, is capped by `ANALYSIS_MAX_JOBS_PER_RUN`, is idempotent by input hash (`force` to redo), isolates refusals and failures per job, and stops after 3 consecutive failures or a configuration error | Cost per run is bounded, re-runs are free when nothing changed, one bad posting never costs the whole run, and a bad key or model stops the run immediately instead of failing every job. |

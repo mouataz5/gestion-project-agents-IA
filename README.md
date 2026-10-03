@@ -4,9 +4,11 @@ A self-hosted platform that discovers newly posted AI/ML/GenAI jobs, analyses th
 sponsorship, relevance), builds a **truthful**, ATS-optimised CV for each qualifying job, prepares
 the application in the company's own ATS — and **stops before submitting** until you approve.
 
-> **Status: Phase 3 of 11 — Job discovery** (Phases 1–2, the foundation and the candidate
-> profile & master CV, are complete).
-> See [`progress.md`](progress.md) and the [implementation plan](docs/implementation-plan.md).
+> **Status: Phases 1–4 complete** — foundation, candidate profile & master CV, job discovery and
+> **job analysis** (visa sponsorship, CV match, APPLY / REVIEW / SKIP). Next: Phase 5, the ATS
+> engine. The remaining phases are delivered in the order 5 → 6 → 10 → 7 → 8 → 9 → 11, the fastest
+> route to real applications. See [`progress.md`](progress.md) and the
+> [implementation plan](docs/implementation-plan.md).
 
 **Safe by default:** `MOCK_MODE=true` (fake jobs and mock ATS pages only) and `AUTO_SUBMIT=false`
 (every application needs your explicit approval). The system never bypasses CAPTCHA, MFA or
@@ -47,8 +49,13 @@ make env            # creates .env from .env.example with generated secrets (nev
 ```
 
 `.env` is git-ignored. It contains a random `API_AUTH_TOKEN`, a Fernet `ENCRYPTION_KEY` and a
-database password. Every variable is documented in [`.env.example`](.env.example). Optional now:
-`ANTHROPIC_API_KEY` (used from Phase 4).
+database password. Every variable is documented in [`.env.example`](.env.example).
+
+To analyse jobs with Claude, add your key: `ANTHROPIC_API_KEY=sk-ant-…` (from
+[console.anthropic.com](https://console.anthropic.com)). Without it, mock mode runs a deterministic
+offline analysis instead, clearly labelled **Mock analysis**. `CLAUDE_MODEL` defaults to
+`claude-opus-5-5` and `LLM_EFFORT` to `medium`. A `.env` created before Phase 4 keeps the
+`CLAUDE_MODEL` it was created with: change it there if you want the new default.
 
 ## 3. Start (Docker — recommended)
 
@@ -127,8 +134,8 @@ make worker         # Celery worker (second terminal)
 
 The daily 08:00 (Africa/Tunis) pipeline scheduler — Celery beat — is delivered in **Phase 11**.
 `make scheduler` is reserved for it and currently explains that. Until then, runs are started on
-demand from the dashboard ("Run job discovery", "Run system diagnostic") or the API
-(`POST /api/v1/runs/discovery`, `POST /api/v1/runs/diagnostic`).
+demand from the dashboard ("Run job discovery", "Analyse new jobs", "Run system diagnostic") or the
+API (`POST /api/v1/runs/discovery`, `POST /api/v1/runs/analysis`, `POST /api/v1/runs/diagnostic`).
 
 ## Optional: n8n (free, self-hosted)
 
@@ -175,9 +182,48 @@ http://localhost:8000/docs).
    see. Nothing is fetched or scraped. Job-alert emails can be imported automatically with the n8n
    workflow in [`n8n/workflows/`](n8n/workflows/job-alert-email-import.json).
 
-Matching jobs (AI/ML title, target country, posted in the window) are queued as `DISCOVERED`;
-analysis and visa classification come in Phase 4. Source policy and compliance rules:
-[`crawler/README.md`](crawler/README.md).
+Matching jobs (AI/ML title, target country, posted in the window) are queued as `DISCOVERED`, ready
+for the analysis below. Source policy and compliance rules: [`crawler/README.md`](crawler/README.md).
+
+## Analyse jobs (Phase 4)
+
+1. **Confirm your master CV first** (Phase 2 above). The analysis reads only the confirmed version.
+2. Click **Analyse new jobs** on the dashboard or the Jobs page. Each queued job is analysed (up to
+   `ANALYSIS_MAX_JOBS_PER_RUN` per run, 25 by default), and the run timeline shows each decision.
+3. Open a job to see its analysis:
+   - **Apply / Review / Skip** and the reasons. Explicit rules decide; Claude's own suggestion is
+     shown when it differs.
+   - **Visa sponsorship**: confirmed, likely, not mentioned, or ruled out, always with the sentences
+     quoted from the posting (highlighted in the description). The page also says whether *you* need
+     sponsorship there, based on your profile.
+   - **Match**: the required and preferred skills your CV backs, the ones it does not, languages,
+     seniority, and concerns.
+   - **Provenance**: model, prompt version, tokens.
+
+   **Re-analyse** runs it again, for example after you change your CV.
+4. Filter the Jobs list by recommendation or visa status. The dashboard counts the jobs to apply to,
+   review, skip, and those still waiting.
+
+Nothing is invented. A visa statement counts only if it is quoted verbatim from the posting. A skill
+match counts only if your confirmed CV demonstrates or lists the skill. Unknown stays unknown, and
+uncertain cases go to **Review**, never to **Skip**. Only the facts needed for the match are sent to
+Claude, never your name, contact details or employer names
+([security](docs/security.md#72-job-analysis-phase-4)). The server-side **refusal fallback** is
+enabled by default (`LLM_REFUSAL_FALLBACK=true`): if Claude declines a posting, the request is retried
+on the fallback model Anthropic designates, and the analysis records which model answered.
+
+## What Phase 4 delivers
+
+- **LLM layer**: provider interface with Claude (official SDK, structured JSON output, effort, refusal
+  fallback, prompt caching of your facts, clear errors for keys, limits and outages) and an offline
+  mock. Prompts are versioned files ([`prompts/`](prompts/README.md)).
+- **Analysis**: visa classification (EN/FR/DE phrase rules plus Claude, verbatim quotes only),
+  sponsorship need from your profile, CV-backed skill matching, language checks and an explicit
+  APPLY / REVIEW / SKIP rules table. Stored with model, prompt and token usage.
+- **Runs**: an analysis run per click (or per job), with a confirmed-CV check, a per-run cap and
+  idempotence. Failures and refusals are isolated per job.
+- **UI**: analysis panel on each job, recommendation and visa filters, a dashboard analysis card, and
+  a Language model card in Settings.
 
 ## What Phase 3 delivers
 
@@ -225,7 +271,7 @@ workers/     Celery worker package (`job_agent_workers`)
 frontend/    Next.js dashboard
 playwright/  browser E2E tests (mock ATS sites from Phase 8)
 crawler/     source policy, watchlist seed and mock job fixtures
-prompts/     versioned LLM prompts (Phase 4+)
+prompts/     versioned LLM prompts
 candidate/   profile.yaml and the (git-ignored) master CV
 storage/     runtime files for native runs (git-ignored; Docker uses the `appstorage` volume)
 n8n/         optional n8n integration layer
