@@ -17,7 +17,7 @@ from app.ats.requirements import (
     posting_of,
     years_from_text,
 )
-from app.ats.sources import build_sources, master_text, may_cite
+from app.ats.sources import build_sources, master_text, master_texts, may_cite
 from app.ats.taxonomy import Category, mentions
 from app.ats.types import EducationLevel, Importance, KeywordSource
 from app.cv.models import ParsedCV
@@ -244,8 +244,12 @@ def test_citations_are_scoped_to_their_entry(sample_master_cv: ParsedCV) -> None
     sources = build_sources(sample_master_cv)
 
     assert may_cite("E1", sources["E1.B2"])
+    assert may_cite("P1", sources["P1.D1"])
     assert not may_cite("E1", sources["E2.B1"])  # no moving facts between roles
     assert not may_cite("P1", sources["E1.B1"])
+    assert not may_cite("E1", sources["E1.T"])  # a title is not something the candidate did
+    assert not may_cite("P1", sources["P1.N"])
+    assert not may_cite("E2", sources["E2.T"])
     assert all(may_cite("S", source) for source in sources.values())
 
 
@@ -253,6 +257,7 @@ def test_master_text_leaves_out_contact_data_and_employers(sample_master_cv: Par
     text = master_text(sample_master_cv)
 
     assert "LangGraph" in text
+    assert "ML" in master_texts(sample_master_cv)  # a skills-section label is the candidate's claim
     assert "alex.example@example.com" not in text
     assert "Acme Analytics" not in text
     assert "Université de Tunis" not in text

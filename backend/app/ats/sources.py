@@ -10,8 +10,9 @@ rebuilt on every confirmation):
     P1.N     name of project 1       ED1.B1  bullet 1 of education 1
     P1.B1    bullet 1 of project 1   P1.D1   detail line 1 of project 1
 
-Citations are scoped to their entry: a bullet of experience 1 may cite only ``E1.*`` sources,
-so a metric or a technology can never move from one role to another. The summary may cite any.
+Citations are scoped to their entry: a bullet of experience 1 may cite only the bullets and
+detail lines of experience 1 (``E1.B*``, ``E1.D*``), so a metric or a technology can never move
+from one role to another. The summary may cite any fact.
 """
 
 from __future__ import annotations
@@ -112,8 +113,14 @@ def build_sources(cv: ParsedCV) -> dict[str, Source]:
 
 
 def may_cite(entry: str, source: Source) -> bool:
-    """Whether text written for ``entry`` ("S", "E1", "P2") may cite ``source``."""
-    return entry == "S" or source.entry == entry
+    """Whether text written for ``entry`` ("S", "E1", "P2") may cite ``source``.
+
+    The summary may cite any fact. A bullet may cite only the bullets and detail lines of its own
+    entry - never another role, and never a title or a project name (a title is not something
+    the candidate did: "Engineer" in a title does not support "mentored engineers")."""
+    if entry == "S":
+        return True
+    return source.entry == entry and (".B" in source.id or ".D" in source.id)
 
 
 _CONTACT_SHAPE = re.compile(r"@|https?://|www\.|linkedin|github|\+?\d[\d .()-]{7,}\d", re.I)
@@ -132,9 +139,15 @@ def headline_lines(cv: ParsedCV) -> list[str]:
     ]
 
 
-def master_text(cv: ParsedCV) -> str:
-    """Every fact of the master CV a keyword can be supported by: no name, contact data,
-    employers, schools or locations."""
+def master_texts(cv: ParsedCV) -> list[str]:
+    """Every fact of the master CV a keyword can be supported by: the source texts, the headline
+    lines and the skills-section labels ("ML: PyTorch" claims machine learning). No name, contact
+    data, employers, schools or locations."""
     parts = [source.text for source in build_sources(cv).values()]
     parts.extend(headline_lines(cv))
-    return "\n".join(part for part in parts if part)
+    parts.extend(dict.fromkeys(skill.category for skill in cv.skills if skill.category))
+    return [part for part in parts if part]
+
+
+def master_text(cv: ParsedCV) -> str:
+    return "\n".join(master_texts(cv))

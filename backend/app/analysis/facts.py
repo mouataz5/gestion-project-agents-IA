@@ -11,7 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import date
 from typing import Any, Protocol
@@ -65,13 +65,18 @@ def _month(value: date | None) -> str:
     return value.strftime("%Y-%m") if value else UNKNOWN
 
 
-def _experience_years(experiences: Sequence[_Experience], today: date) -> int | None:
-    """Whole years since the first dated role: stable from day to day, so the facts (and the
-    analyses cached on their hash) only change when the CV, the profile or the year changes."""
-    starts = [item.start_date for item in experiences if item.start_date is not None]
-    if not starts:
+def years_since(starts: Iterable[date | None], today: date) -> int | None:
+    """Whole years since the earliest start: stable from day to day, so the facts (and the
+    analyses and ATS scores cached on their hash) only change when the CV, the profile or the year
+    changes. ``None`` when no start is known (never guessed)."""
+    known = [start for start in starts if start is not None]
+    if not known:
         return None
-    return int((today - min(starts)).days // 365.25)
+    return int((today - min(known)).days // 365.25)
+
+
+def _experience_years(experiences: Sequence[_Experience], today: date) -> int | None:
+    return years_since((item.start_date for item in experiences), today)
 
 
 def build_candidate_facts(

@@ -13,13 +13,14 @@ Stemming is English-only but applied identically to both sides of every comparis
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass
 from decimal import Decimal
 from functools import lru_cache
 
 import snowballstemmer
 
-from app.ats.taxonomy import TERMS, fold, normalize_skill, skill_regex
+from app.ats.taxonomy import TERMS, canonical_name, fold, normalize_skill, skill_regex
 
 _STEMMER = snowballstemmer.stemmer("english")
 
@@ -225,7 +226,8 @@ STOPWORDS: frozenset[str] = frozenset(
     )
 )
 
-# Generic verbs and nouns a rewording may introduce without making a claim. Stems.
+# Generic verbs and nouns a rewording may introduce without making a claim ("design" is
+# deliberately absent: "Designed" is a claim). Stems.
 NEUTRAL_TERMS: frozenset[str] = frozenset(
     _STEMMER.stemWord(word)
     for word in (
@@ -253,7 +255,6 @@ NEUTRAL_TERMS: frozenset[str] = frozenset(
         "run",
         "apply",
         "prepare",
-        "design",
         "team",
         "product",
         "feature",
@@ -324,6 +325,31 @@ def content_terms(text: str) -> frozenset[str]:
             continue
         found.add(stem(word))
     return frozenset(found)
+
+
+_TOKEN = re.compile(r"[^\W\d_][\w+#]*")
+
+
+def term_words(text: str, terms: Iterable[str]) -> list[str]:
+    """How ``text`` writes each of ``terms`` (content terms of ``text``), in order of appearance:
+    "pipelin" -> "pipelines", "term:llm" -> "LLM". Terms ``text`` lacks are kept as they are."""
+    wanted = set(terms)
+    positions: dict[str, tuple[int, str]] = {}
+    folded = fold(text)
+    same_length = len(folded) == len(text)  # then a span of ``folded`` is a span of ``text``
+    for term in wanted:
+        if term.startswith("term:"):
+            name = canonical_name(term.removeprefix("term:"))
+            match = skill_regex(name).search(folded)
+            if match:
+                written = text[match.start() : match.end()] if same_length else name
+                positions[term] = (match.start(), written)
+    for match in _TOKEN.finditer(text):
+        key = stem(match.group(0))
+        if key in wanted and key not in positions:
+            positions[key] = (match.start(), match.group(0))
+    found = sorted(positions.values())
+    return [word for _, word in found] + sorted(wanted - positions.keys())
 
 
 # ---------------------------------------------------------------------------------------------
