@@ -13,11 +13,16 @@ common synonyms ("k8s" -> Kubernetes, "large language models" -> LLMs).
 from __future__ import annotations
 
 import re
-import unicodedata
-from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass, field
-from functools import lru_cache
 
+# Matching lives in the skills taxonomy (app/ats/taxonomy.py); re-exported for existing imports.
+from app.ats.taxonomy import canonical_key as canonical_key
+from app.ats.taxonomy import fold as _fold
+from app.ats.taxonomy import mentions as mentions
+from app.ats.taxonomy import normalize_skill as normalize_skill
+from app.ats.taxonomy import skill_regex as _skill_regex
+from app.ats.taxonomy import technologies_in as technologies_in
 from app.cv.models import (
     EvidenceItem,
     ParsedCV,
@@ -29,123 +34,8 @@ from app.cv.models import (
 MAX_EVIDENCE_PER_SKILL = 5
 _EXCERPT_CHARS = 220
 
-# The first spelling is the canonical display name of the group.
-_SYNONYM_GROUPS: tuple[tuple[str, ...], ...] = (
-    ("Kubernetes", "k8s"),
-    ("LLMs", "LLM", "large language model", "grand modèle de langage", "grands modèles de langage"),
-    ("RAG", "retrieval augmented generation"),
-    ("Machine Learning", "ML", "apprentissage automatique"),
-    ("Deep Learning", "neural network", "apprentissage profond", "réseaux de neurones"),
-    ("NLP", "natural language processing", "traitement automatique du langage", "TALN"),
-    ("Computer Vision", "vision par ordinateur"),
-    (
-        "Agentic AI",
-        "agentic",
-        "AI agent",
-        "LLM agent",
-        "autonomous agent",
-        "agents IA",
-        "agent IA",
-        "agents LLM",
-        "agent LLM",
-        "IA agentique",
-    ),
-    ("Multi-agent systems", "multi-agent", "multi agents", "systèmes multi-agents"),
-    ("MCP", "Model Context Protocol"),
-    (
-        "Vector databases",
-        "vector database",
-        "vector DB",
-        "vector store",
-        "vector search",
-        "base de données vectorielle",
-        "bases de données vectorielles",
-    ),
-    ("Time-series analysis", "time series", "séries temporelles", "série temporelle"),
-    ("MLOps", "ML Ops"),
-    ("Generative AI", "GenAI", "Gen AI", "IA générative"),
-    ("GCP", "Google Cloud", "Google Cloud Platform"),
-    ("AWS", "Amazon Web Services"),
-    ("Azure", "Microsoft Azure"),
-    ("Spark", "Apache Spark", "PySpark"),
-    ("Scikit-learn", "sklearn"),
-    ("PostgreSQL", "Postgres"),
-    ("JavaScript", "JS"),
-    ("TypeScript", "TS"),
-    ("Node.js", "NodeJS"),
-    ("Go", "Golang"),
-    ("Hugging Face", "HuggingFace"),
-    ("CI/CD", "CICD", "continuous integration"),
-)
-
 # Where a skill was found -> does it demonstrate practical use?
 _DEMONSTRATING_SECTIONS = frozenset({"experience", "projects"})
-
-
-def _fold(text: str) -> str:
-    """Accent-insensitive form that keeps the string length stable for ASCII input."""
-    decomposed = unicodedata.normalize("NFKD", text)
-    return "".join(ch for ch in decomposed if not unicodedata.combining(ch))
-
-
-def normalize_skill(name: str) -> str:
-    """Comparison key: case, accents, hyphens/underscores/slashes and a final plural ignored."""
-    text = _fold(name).casefold()
-    text = re.sub(r"\([^)]*\)", " ", text)
-    text = re.sub(r"[\s\-_/]+", " ", text).strip()
-    words = text.split(" ")
-    last = words[-1]
-    if len(last) > 3 and last.endswith("s") and not last.endswith(("ss", "us", "is")):
-        words[-1] = last[:-1]
-    return " ".join(words)
-
-
-_GROUP_BY_KEY: dict[str, tuple[str, ...]] = {
-    normalize_skill(spelling): group for group in _SYNONYM_GROUPS for spelling in group
-}
-
-
-def canonical_key(name: str) -> str:
-    key = normalize_skill(name)
-    group = _GROUP_BY_KEY.get(key)
-    return normalize_skill(group[0]) if group else key
-
-
-def _spellings(name: str) -> tuple[str, ...]:
-    group = _GROUP_BY_KEY.get(normalize_skill(name), ())
-    return tuple(dict.fromkeys((name, *group)))
-
-
-def _spelling_pattern(spelling: str) -> str:
-    tokens = [token for token in re.split(r"[\s\-_]+", _fold(spelling).strip()) if token]
-    last = tokens[-1]
-    plural = ""
-    if last.isalpha() and len(last) >= 3:
-        if (
-            len(last) > 3
-            and last.lower().endswith("s")
-            and not last.lower().endswith(("ss", "us", "is"))
-        ):
-            tokens[-1] = last[:-1]
-        plural = "(?:e?s)?"
-    body = r"[\s\-]*".join(re.escape(token) for token in tokens) + plural
-    flags = "-i" if len(spelling.strip()) <= 2 else "i"
-    return f"(?{flags}:{body})"
-
-
-@lru_cache(maxsize=1024)
-def _skill_regex(name: str) -> re.Pattern[str]:
-    alternatives = "|".join(_spelling_pattern(spelling) for spelling in _spellings(name))
-    return re.compile(rf"(?<![\w+#])(?:{alternatives})(?![\w+#])")
-
-
-def mentions(text: str, skill: str) -> bool:
-    return _skill_regex(skill).search(_fold(text)) is not None
-
-
-def technologies_in(text: str, skills: Iterable[str]) -> list[str]:
-    """The skills (as given, in order) that ``text`` mentions."""
-    return [skill for skill in skills if mentions(text, skill)]
 
 
 # ---------------------------------------------------------------------------------------------

@@ -76,6 +76,11 @@ plugins = ["pydantic.mypy"]
 warn_unreachable = true
 show_error_codes = true
 
+[[tool.mypy.overrides]]
+# Pure-Python Snowball stemmers without type information (wrapped in app/ats/text.py).
+module = ["snowballstemmer"]
+ignore_missing_imports = true
+
 [tool.pydantic-mypy]
 init_forbid_extra = true
 init_typed = true
