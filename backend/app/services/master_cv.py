@@ -79,6 +79,8 @@ class MasterCvService:
         return find_active_master(self._session, candidate)
 
     def read_file(self, version: CvVersion) -> bytes:
+        if version.storage_key is None:  # a tailored version: generated, never uploaded
+            raise NotFoundError("This CV version has no uploaded file")
         try:
             return self._storage.get_bytes(version.storage_key)
         except StorageObjectNotFoundError as exc:

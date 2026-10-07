@@ -68,3 +68,11 @@ class IterationStatus(StrEnum):
 class DocumentKind(StrEnum):
     MASTER = "MASTER"  # iteration 0: the master CV itself
     TAILORED = "TAILORED"
+
+
+class CallStatus(StrEnum):
+    """Outcome of a model task (requirement extraction, tailoring)."""
+
+    SUCCEEDED = "SUCCEEDED"
+    REFUSED = "REFUSED"  # the model declined (and the fallback, if enabled)
+    FAILED = "FAILED"  # provider error, invalid answer, timeout...

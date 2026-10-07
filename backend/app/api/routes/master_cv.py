@@ -118,7 +118,7 @@ def download_master_cv(
         content=service.read_file(version),
         media_type=version.content_type,
         headers={
-            "Content-Disposition": content_disposition(version.original_filename),
+            "Content-Disposition": content_disposition(version.original_filename or "cv"),
             "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff",
         },

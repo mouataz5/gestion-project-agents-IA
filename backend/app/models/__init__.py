@@ -2,6 +2,7 @@
 
 from app.models.analysis import JobAnalysis
 from app.models.application import Application
+from app.models.ats import AtsAnalysis, CvTailoring, RequirementsExtraction
 from app.models.audit_log import AuditLog
 from app.models.automation_run import (
     RUN_COUNTERS,
@@ -29,6 +30,7 @@ __all__ = [
     "DEFAULT_CANDIDATE_SLUG",
     "RUN_COUNTERS",
     "Application",
+    "AtsAnalysis",
     "AuditLog",
     "AutomationRun",
     "Candidate",
@@ -36,6 +38,7 @@ __all__ = [
     "Company",
     "CvKind",
     "CvStatus",
+    "CvTailoring",
     "CvVersion",
     "DatePrecision",
     "Education",
@@ -46,6 +49,7 @@ __all__ = [
     "JobSkill",
     "JobSource",
     "Project",
+    "RequirementsExtraction",
     "RunEvent",
     "RunStatus",
     "RunTrigger",
