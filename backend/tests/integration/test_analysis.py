@@ -198,6 +198,22 @@ def test_unchanged_jobs_are_not_analysed_twice(
         assert count == 2
 
 
+def test_a_changed_skill_list_is_analysed_again(
+    ready: None, analyse: Callable[..., Any], jobs_db: sessionmaker[Session]
+) -> None:
+    analyse()
+    nova = _by_source_id(jobs_db)["nova-1001"][0]
+    with jobs_db() as session:
+        job = session.get(Job, nova.id)
+        assert job is not None
+        job.required_skills = [*job.required_skills, "Rust"]  # the content hash does not change
+        session.commit()
+
+    rerun = analyse(job_ids=[nova.id])
+
+    assert (rerun.summary["totals"]["analysed"], rerun.summary["totals"]["unchanged"]) == (1, 0)
+
+
 def test_without_a_confirmed_cv_nothing_is_analysed(
     discover: Callable[..., Any],
     import_companies: Callable[[], None],

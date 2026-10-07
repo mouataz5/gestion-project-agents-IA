@@ -23,7 +23,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.analysis.assemble import assemble_analysis
 from app.analysis.facts import CandidateFacts, build_candidate_facts
-from app.analysis.job_text import job_context, render_job_posting
+from app.analysis.job_text import job_context, posting_digest, render_job_posting
 from app.analysis.mock_responder import mock_job_analysis
 from app.analysis.schemas import JobAnalysisOutput
 from app.analysis.types import AnalysisStatus, Recommendation
@@ -315,7 +315,7 @@ class AnalysisService:
     ) -> str:
         material = "|".join(
             (
-                job.content_hash,
+                posting_digest(job),
                 facts.sha256,
                 prompt.sha256,
                 provider.name,

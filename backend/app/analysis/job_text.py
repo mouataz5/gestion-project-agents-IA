@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import re
 from typing import Any
 
@@ -67,6 +68,12 @@ def render_job_posting(job: Job) -> str:
     lines.append(_clean(job.description) or "(no description stored)")
     lines.append("</job_posting>")
     return "\n".join(lines)
+
+
+def posting_digest(job: Job) -> str:
+    """SHA-256 of the posting as the model reads it. It changes whenever anything the analysis
+    uses changes (``Job.content_hash`` covers only company, title, location and description)."""
+    return hashlib.sha256(render_job_posting(job).encode("utf-8")).hexdigest()
 
 
 def job_context(job: Job) -> dict[str, Any]:

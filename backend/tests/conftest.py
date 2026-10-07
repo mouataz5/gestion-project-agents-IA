@@ -8,11 +8,12 @@ committed.
 from __future__ import annotations
 
 import io
+import json
 import shutil
 import uuid
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -25,10 +26,15 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import REPO_ROOT, Settings
 from app.core.storage import LocalStorageProvider
+from app.crawlers.base import CompanyTarget, JobQuery
+from app.crawlers.mock import MockAtsSource
+from app.cv.files import CvFileKind
+from app.cv.models import ParsedCV
+from app.cv.parser import parse_cv
 from app.db.session import create_db_engine, create_session_factory
 from app.llm.base import LLMProvider
 from app.main import create_app
-from app.models import RunTrigger, RunType
+from app.models import Job, RunTrigger, RunType
 from app.services.analysis import AnalysisService
 from app.services.candidate_profile import CandidateService
 from app.services.companies import CompanyService
@@ -150,6 +156,75 @@ def sample_cv_en() -> CvLines:
 @pytest.fixture
 def sample_cv_fr() -> CvLines:
     return SAMPLE_CV_FR
+
+
+@pytest.fixture
+def sample_master_cv() -> ParsedCV:
+    """``SAMPLE_CV_EN`` as the real parser reads it (the structure a confirmed master CV holds)."""
+    cv, _text = parse_cv(build_docx(SAMPLE_CV_EN), CvFileKind.DOCX)
+    return cv
+
+
+MOCK_JOBS_DIR = REPO_ROOT / "crawler" / "fixtures" / "mock_jobs"
+JOB_FIELDS = (
+    "company",
+    "title",
+    "description",
+    "location",
+    "country",
+    "country_code",
+    "remote_status",
+    "employment_type",
+    "seniority",
+    "application_url",
+    "ats_type",
+    "visa_information",
+    "relocation_information",
+    "required_skills",
+    "preferred_skills",
+    "languages",
+    "education_requirements",
+    "experience_requirements",
+    "responsibilities",
+    "content_hash",
+)
+
+
+@pytest.fixture
+def mock_board_ids() -> list[tuple[str, str]]:
+    """Every (board token, job id) of the mock ATS boards."""
+    pairs: list[tuple[str, str]] = []
+    for path in sorted((MOCK_JOBS_DIR / "boards").glob("*.json")):
+        board = json.loads(path.read_text(encoding="utf-8"))
+        pairs.extend((path.stem, str(job["id"])) for job in board.get("jobs", []))
+    return pairs
+
+
+@pytest.fixture
+def board_job() -> Callable[[str, str], Job]:
+    """A posting of a mock ATS board, normalized exactly as discovery stores it (not persisted)."""
+
+    def _job(board: str, source_job_id: str) -> Job:
+        source = MockAtsSource(MOCK_JOBS_DIR)
+        company = CompanyTarget(
+            id=uuid.uuid4(), name=board, ats_type="GREENHOUSE", board_token=board, career_url=None
+        )
+        now = datetime(2026, 10, 6, 8, 0, tzinfo=UTC)
+        query = JobQuery(
+            posted_after=now - timedelta(days=30),
+            posted_before=now,
+            now=now,
+            companies=(company,),
+        )
+        raw = next(item for item in source.search(query) if item.source_job_id == source_job_id)
+        posting = source.normalize(raw)
+        return Job(
+            source=posting.source,
+            source_job_id=posting.source_job_id,
+            **{name: getattr(posting, name) for name in JOB_FIELDS},
+        )
+
+    return _job
 
 
 @pytest.fixture
