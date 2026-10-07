@@ -55,3 +55,16 @@ class StopReason(StrEnum):
     MAX_ITERATIONS = "MAX_ITERATIONS"
     GUARD_REJECTED = "GUARD_REJECTED"
     PROVIDER_ERROR = "PROVIDER_ERROR"
+
+
+class IterationStatus(StrEnum):
+    SCORED = "SCORED"  # a valid version, scored
+    REPAIRED = "REPAIRED"  # a valid version after the guard reverted some of its texts
+    REJECTED = "REJECTED"  # the final gate rejected the version: not scored
+    FAILED = "FAILED"  # the tailoring call failed
+    REFUSED = "REFUSED"  # the model declined to answer
+
+
+class DocumentKind(StrEnum):
+    MASTER = "MASTER"  # iteration 0: the master CV itself
+    TAILORED = "TAILORED"

@@ -363,6 +363,17 @@ def test_a_bullet_made_of_keywords_is_stuffing(
     assert _codes(report) == [StuffingCode.DENSE_BULLET]
 
 
+def test_stuffing_the_master_cv_already_shows_is_not_the_tailoring(
+    sample_master_cv: ParsedCV, nova: JobRequirements
+) -> None:
+    dense = _with(sample_master_cv, summary="Python, LLMs, RAG, LangGraph, FastAPI and MCP.")
+    master = master_evidence(dense, TODAY)
+
+    assert score_document(dense, master, nova).stuffing == []  # kept verbatim
+    other = _with(dense, summary="LLMs, RAG, LangGraph, FastAPI, MCP and Python.")
+    assert _codes(score_document(other, master, nova)) == [StuffingCode.DENSE_SUMMARY]
+
+
 def test_the_penalty_is_5_points_per_signal_and_at_most_15(
     sample_master_cv: ParsedCV, master: MasterEvidence, nova: JobRequirements
 ) -> None:

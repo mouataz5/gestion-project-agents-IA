@@ -552,49 +552,68 @@ def _covered_share(text: str, terms: Sequence[str]) -> Fraction:
 def stuffing_signals(
     document: ParsedCV, zones: Zones, master: MasterEvidence, requirements: JobRequirements
 ) -> list[StuffingSignal]:
+    """Signals of keyword stuffing that the master CV's own text does not already show (a dense
+    master summary kept verbatim is the candidate's writing, not stuffing by the tailoring)."""
+    own = {key for key, _ in _stuffing(master.cv, master.zones, master, requirements)}
+    return [
+        signal for key, signal in _stuffing(document, zones, master, requirements) if key not in own
+    ]
+
+
+def _stuffing(
+    document: ParsedCV, zones: Zones, master: MasterEvidence, requirements: JobRequirements
+) -> list[tuple[tuple[str, str], StuffingSignal]]:
+    """(key, signal) pairs; the key names what the signal is about (a term, the summary text, a
+    bullet), so a signal the master CV shows too is recognised."""
     terms = [keyword.term for keyword in requirements.keywords]
-    signals: list[StuffingSignal] = []
+    signals: list[tuple[tuple[str, str], StuffingSignal]] = []
+
+    def add(code: StuffingCode, subject: str, detail: str) -> None:
+        signals.append(((code.value, subject), StuffingSignal(code=code, detail=detail)))
+
     for term in terms:  # T1
         count = _count(zones.outside_skills, term)
         if (
             count >= REPEAT_MIN
             and count > _count(master.zones.outside_skills, term) + REPEAT_MARGIN
         ):
-            signals.append(
-                StuffingSignal(
-                    code=StuffingCode.REPEATED_KEYWORD,
-                    detail=f"{term} appears {count} times outside the skills section",
-                )
+            add(
+                StuffingCode.REPEATED_KEYWORD,
+                term,
+                f"{term} appears {count} times outside the skills section",
             )
     keys = [canonical_key(skill.name) for skill in document.skills]  # T2
     duplicates = sorted({key for key in keys if keys.count(key) > 1})
-    if duplicates or len(keys) > SKILLS_RANGE[1]:
-        detail = (
-            f"duplicate skills: {', '.join(duplicates)}"
-            if duplicates
-            else f"{len(keys)} skills (at most {SKILLS_RANGE[1]})"
+    if duplicates:
+        add(
+            StuffingCode.SKILL_LIST,
+            ",".join(duplicates),
+            f"duplicate skills: {', '.join(duplicates)}",
         )
-        signals.append(StuffingSignal(code=StuffingCode.SKILL_LIST, detail=detail))
+    elif len(keys) > SKILLS_RANGE[1]:
+        add(
+            StuffingCode.SKILL_LIST,
+            str(len(keys)),
+            f"{len(keys)} skills (at most {SKILLS_RANGE[1]})",
+        )
     if document.summary:  # T3
         summary_mentions = sum(_count([document.summary], term) for term in terms)
         words = word_count(document.summary)
         if summary_mentions > SUMMARY_MAX_MENTIONS or (
             words and Fraction(summary_mentions, words) > SUMMARY_MAX_DENSITY
         ):
-            signals.append(
-                StuffingSignal(
-                    code=StuffingCode.DENSE_SUMMARY,
-                    detail=f"{summary_mentions} keyword mentions in a {words}-word summary",
-                )
+            add(
+                StuffingCode.DENSE_SUMMARY,
+                document.summary.strip(),
+                f"{summary_mentions} keyword mentions in a {words}-word summary",
             )
     for bullet in work_bullets(document):  # T4
         found = [term for term in terms if mentioned([bullet], term)]
         if len(found) >= BULLET_MIN_KEYWORDS and _covered_share(bullet, found) >= BULLET_MAX_SHARE:
-            signals.append(
-                StuffingSignal(
-                    code=StuffingCode.DENSE_BULLET,
-                    detail=f"{len(found)} keywords make up most of: {bullet}",
-                )
+            add(
+                StuffingCode.DENSE_BULLET,
+                bullet.strip(),
+                f"{len(found)} keywords make up most of: {bullet}",
             )
     return signals
 
