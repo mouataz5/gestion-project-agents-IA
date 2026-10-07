@@ -3,6 +3,7 @@
 import pytest
 
 from app.ats.taxonomy import (
+    CATEGORY_LABELS,
     TECH_CATEGORIES,
     TERMS,
     Category,
@@ -209,6 +210,11 @@ def test_a_spelling_can_belong_to_one_term_only() -> None:
                 Term("K8s Platform", Category.DEVOPS, ("K8s",)),
             )
         )
+
+
+def test_skills_section_labels_never_name_a_term() -> None:
+    for label in CATEGORY_LABELS.values():
+        assert [term.name for term in TERMS if mentions(label, term.name)] == [], label
 
 
 def test_the_vocabulary_lists_every_spelling() -> None:

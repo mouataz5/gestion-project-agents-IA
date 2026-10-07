@@ -13,7 +13,7 @@ Stemming is English-only but applied identically to both sides of every comparis
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from decimal import Decimal
 from functools import lru_cache
@@ -232,6 +232,7 @@ NEUTRAL_TERMS: frozenset[str] = frozenset(
     _STEMMER.stemWord(word)
     for word in (
         "build",
+        "built",
         "develop",
         "create",
         "implement",
@@ -250,8 +251,11 @@ NEUTRAL_TERMS: frozenset[str] = frozenset(
         "enable",
         "handle",
         "make",
+        "made",
         "set",
         "write",
+        "wrote",
+        "written",
         "run",
         "apply",
         "prepare",
@@ -576,7 +580,7 @@ def proper_noun_tokens(text: str) -> list[str]:
     return list(dict.fromkeys(tokens))
 
 
-def token_in(token: str, texts: list[str]) -> bool:
+def token_in(token: str, texts: Sequence[str]) -> bool:
     """``token`` appears as a whole word (case- and accent-insensitive) in one of ``texts``."""
     pattern = re.compile(rf"(?<![\w+#.]){re.escape(fold(token))}(?![\w+#])", re.IGNORECASE)
     return any(pattern.search(fold(text)) for text in texts)

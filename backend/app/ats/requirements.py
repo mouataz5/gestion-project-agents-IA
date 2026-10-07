@@ -41,7 +41,7 @@ REQUIREMENTS_VERSION = "job-requirements.v1"
 # "5+ years", "3 yrs", "5 ans", "4 Jahre"
 YEARS_PATTERN = re.compile(r"(\d{1,2})\s*\+?\s*(?:years|yrs|ans|jahre)", re.IGNORECASE)
 
-_SENIORITY_WORDS = frozenset(
+SENIORITY_WORDS = frozenset(
     stem(word)
     for word in (
         "senior",
@@ -212,7 +212,7 @@ def sentence_mentioning(text: str, term: str) -> str | None:
 
 def title_terms(title: str) -> list[str]:
     """Content terms of a job title without seniority words ("Senior AI Engineer" -> ai, engin)."""
-    return sorted(term for term in content_terms(title) if term not in _SENIORITY_WORDS)
+    return sorted(term for term in content_terms(title) if term not in SENIORITY_WORDS)
 
 
 def years_from_text(*texts: str | None) -> tuple[int | None, str | None]:

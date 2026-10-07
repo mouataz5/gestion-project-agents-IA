@@ -55,15 +55,16 @@ TECH_CATEGORIES: frozenset[Category] = frozenset(
     }
 )
 
-# Skills-section labels a tailored CV may use (besides the labels of the master CV).
+# Skills-section labels a tailored CV may use (besides the labels of the master CV). A label never
+# names a term ("AI & machine learning" would make a tailored CV claim machine learning).
 CATEGORY_LABELS: dict[Category, str] = {
     Category.PROGRAMMING_LANGUAGE: "Programming languages",
     Category.FRAMEWORK: "Frameworks & libraries",
-    Category.AI_ML: "AI & machine learning",
+    Category.AI_ML: "Artificial intelligence",
     Category.DATA: "Data",
     Category.DATABASE: "Databases",
     Category.CLOUD: "Cloud",
-    Category.DEVOPS: "DevOps & MLOps",
+    Category.DEVOPS: "Infrastructure & operations",
     Category.TOOL: "Tools",
     Category.METHODOLOGY: "Methods",
     Category.SPOKEN_LANGUAGE: "Languages",
