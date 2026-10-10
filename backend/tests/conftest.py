@@ -41,6 +41,7 @@ from app.services.companies import CompanyService
 from app.services.discovery import DiscoveryService
 from app.services.master_cv import MasterCvService
 from app.services.runs import RunService
+from app.services.tailoring import CvTailoringService
 
 # (style, text) — styles: title, heading (Word heading style), caps (plain bold paragraph used
 # as a heading), bold, bullet, text.
@@ -270,6 +271,7 @@ class RunSnapshot:
     summary: dict[str, Any]
     events: list[tuple[str, str, str]]  # (stage, level, message)
     jobs_qualified: int = 0
+    cv_generated: int = 0
 
 
 def snapshot_run(session_factory: sessionmaker[Session], run_id: uuid.UUID) -> RunSnapshot:
@@ -284,6 +286,7 @@ def snapshot_run(session_factory: sessionmaker[Session], run_id: uuid.UUID) -> R
             summary=dict(run.summary),
             events=[(e.stage, e.level.value, e.message) for e in run.events],
             jobs_qualified=run.jobs_qualified,
+            cv_generated=run.cv_generated,
         )
 
 
@@ -380,6 +383,42 @@ def analyse(jobs_settings: Settings, jobs_db: sessionmaker[Session]) -> Callable
         AnalysisService(settings=settings, session_factory=jobs_db, provider=provider).execute(
             run_id
         )
+        return snapshot_run(jobs_db, run_id)
+
+    return _run
+
+
+# The tailoring clock: the sample CV's years of experience are counted on this day.
+TAILORING_NOW = datetime(2026, 10, 6, 8, 0, tzinfo=UTC)
+
+
+@pytest.fixture
+def tailor(jobs_settings: Settings, jobs_db: sessionmaker[Session]) -> Callable[..., RunSnapshot]:
+    """Run a CV generation synchronously (as the worker does) and return a snapshot of the run."""
+
+    def _run(
+        *,
+        provider: LLMProvider | None = None,
+        job_ids: Sequence[uuid.UUID] | None = None,
+        force: bool = False,
+        **overrides: Any,
+    ) -> RunSnapshot:
+        settings = jobs_settings.model_copy(update=overrides) if overrides else jobs_settings
+        parameters: dict[str, Any] = {"force": force}
+        if job_ids is not None:
+            parameters["job_ids"] = [str(job_id) for job_id in job_ids]
+        with jobs_db() as session:
+            run = RunService(session).create_run(
+                run_type=RunType.CV_GENERATION, trigger=RunTrigger.MANUAL, parameters=parameters
+            )
+            session.commit()
+            run_id = run.id
+        CvTailoringService(
+            settings=settings,
+            session_factory=jobs_db,
+            provider=provider,
+            clock=lambda: TAILORING_NOW,
+        ).execute(run_id)
         return snapshot_run(jobs_db, run_id)
 
     return _run

@@ -11,6 +11,7 @@ class TaskName(StrEnum):
     RUN_DIAGNOSTIC = "system.run_diagnostic"
     RUN_DISCOVERY = "jobs.run_discovery"
     RUN_ANALYSIS = "jobs.run_analysis"
+    RUN_CV_GENERATION = "jobs.run_cv_generation"
 
 
 class QueueName(StrEnum):

@@ -40,7 +40,13 @@ from app.ats.guard import (
 from app.ats.keywords import MasterEvidence
 from app.ats.ledger import Ledger, LedgerItem, Origin, Repair, Violation, ViolationCode
 from app.ats.requirements import JobRequirements
-from app.ats.scoring import BULLET_CHARS, BULLETS_PER_ROLE, SKILLS_RANGE, SUMMARY_MAX_WORDS
+from app.ats.scoring import (
+    BULLET_CHARS,
+    BULLETS_PER_ROLE,
+    SKILLS_RANGE,
+    SUMMARY_MAX_WORDS,
+    Feedback,
+)
 from app.ats.taxonomy import (
     CATEGORY_LABELS,
     canonical_key,
@@ -531,6 +537,31 @@ def requirements_brief(requirements: JobRequirements) -> dict[str, Any]:
             "fields": list(requirements.education.fields),
         },
     }
+
+
+def _json_block(tag: str, data: Any) -> str:
+    body = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=1)
+    return f"<{tag}>\n{body}\n</{tag}>"
+
+
+def tailoring_user_turn(
+    requirements: JobRequirements,
+    current: TailoringOutput,
+    hints: Feedback,
+    *,
+    iteration: int,
+    max_iterations: int,
+) -> str:
+    """The user turn of a tailoring request: the grounded requirements (never the raw posting),
+    the best version so far with its source ids, and the deterministic feedback."""
+    return "\n\n".join(
+        (
+            _json_block("job_requirements", requirements_brief(requirements)),
+            _json_block("current_version", current.model_dump(mode="json")),
+            _json_block("feedback", hints.model_dump(mode="json")),
+            f"Iteration {iteration} of {max_iterations}: return the improved version.",
+        )
+    )
 
 
 # --- plain text ----------------------------------------------------------------------------------

@@ -20,6 +20,8 @@ from cryptography.fernet import Fernet
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
+from app.ats.weights import DEFAULT_WEIGHTS, validate_weights
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 DEFAULT_DATABASE_URL = "postgresql+psycopg://jobagent:jobagent@localhost:5432/jobagent"
@@ -97,8 +99,15 @@ class Settings(BaseSettings):
     # --- Pipeline ------------------------------------------------------------------
     job_lookback_hours: int = Field(default=24, ge=1, le=24 * 30)
     discovery_max_jobs_per_source: int = Field(default=500, ge=1, le=10_000)
+    # A target for the tailoring loop, never a promise: gaps that need untrue content stay gaps.
     ats_target_score: int = Field(default=95, ge=0, le=100)
     ats_max_iterations: int = Field(default=3, ge=1, le=10)
+    # JSON object of the 7 ATS score components (whole numbers summing to 100).
+    ats_score_weights: dict[str, int] = Field(default_factory=lambda: dict(DEFAULT_WEIGHTS))
+    # Up to 1 + ATS_MAX_ITERATIONS model calls per job: keep a run within the worker time limit.
+    cv_generation_max_jobs_per_run: int = Field(default=10, ge=1, le=100)
+    # Tailor REVIEW jobs too in the default run (a job passed explicitly is always tailored).
+    cv_generation_include_review: bool = False
     scheduler_enabled: bool = True
     daily_run_time: str = "08:00"
     timezone: str = "Africa/Tunis"
@@ -147,6 +156,11 @@ class Settings(BaseSettings):
                 return json.loads(text)
             return [item.strip() for item in text.split(",") if item.strip()]
         return value
+
+    @field_validator("ats_score_weights")
+    @classmethod
+    def _validate_ats_weights(cls, value: dict[str, int]) -> dict[str, int]:
+        return validate_weights(value)
 
     @field_validator("api_prefix")
     @classmethod
@@ -286,6 +300,9 @@ class Settings(BaseSettings):
             "job_lookback_hours": self.job_lookback_hours,
             "ats_target_score": self.ats_target_score,
             "ats_max_iterations": self.ats_max_iterations,
+            "ats_score_weights": dict(self.ats_score_weights),
+            "cv_generation_max_jobs_per_run": self.cv_generation_max_jobs_per_run,
+            "cv_generation_include_review": self.cv_generation_include_review,
             "scheduler_enabled": self.scheduler_enabled,
             "daily_run_time": self.daily_run_time,
             "timezone": self.timezone,

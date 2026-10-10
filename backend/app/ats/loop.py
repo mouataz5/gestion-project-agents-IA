@@ -27,7 +27,6 @@ from typing import Any
 from app.ats.guard import GuardContext, validate_tailored
 from app.ats.ledger import Violation
 from app.ats.scoring import (
-    DEFAULT_WEIGHTS,
     CeilingReport,
     Feedback,
     Recommendation,
@@ -39,6 +38,7 @@ from app.ats.scoring import (
 )
 from app.ats.tailoring import Assembly, TailoringOutput, as_output, assemble, master_output
 from app.ats.types import DocumentKind, IterationStatus, StopReason
+from app.ats.weights import DEFAULT_WEIGHTS
 
 EPS = 0.5
 
@@ -87,6 +87,8 @@ class Iteration:
     violations: tuple[Violation, ...] = ()
     usage: Mapping[str, Any] = field(default_factory=dict)
     error: str | None = None
+    error_code: str | None = None
+    feedback: Feedback | None = None  # what the tailoring call was told (iterations 1..N)
 
     @property
     def score(self) -> float | None:
@@ -165,7 +167,15 @@ def optimise(
         except TailoringCallError as exc:
             status = IterationStatus.REFUSED if exc.refused else IterationStatus.FAILED
             iterations.append(
-                Iteration(number, DocumentKind.TAILORED, status, usage=exc.usage, error=exc.message)
+                Iteration(
+                    number,
+                    DocumentKind.TAILORED,
+                    status,
+                    usage=exc.usage,
+                    error=exc.message,
+                    error_code=exc.code,
+                    feedback=hints,
+                )
             )
             return finish(StopReason.PROVIDER_ERROR, best if scored else None)
 
@@ -180,6 +190,7 @@ def optimise(
                     assembly,
                     violations=tuple(violations),
                     usage=reply.usage,
+                    feedback=hints,
                 )
             )
             rejections += 1
@@ -193,7 +204,13 @@ def optimise(
         report = score_document(assembly.document, master, requirements, weights=weights)
         status = IterationStatus.REPAIRED if assembly.ledger.repairs else IterationStatus.SCORED
         current = Iteration(
-            number, DocumentKind.TAILORED, status, assembly, report, usage=reply.usage
+            number,
+            DocumentKind.TAILORED,
+            status,
+            assembly,
+            report,
+            usage=reply.usage,
+            feedback=hints,
         )
         iterations.append(current)
         scored = True

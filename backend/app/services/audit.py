@@ -36,6 +36,10 @@ class AuditAction(StrEnum):
     ANALYSIS_COMPLETED = "analysis.completed"
     ANALYSIS_REFUSED = "analysis.refused"
     ANALYSIS_FAILED = "analysis.failed"
+    REQUIREMENTS_EXTRACTED = "job.requirements_extracted"
+    CV_TAILORED = "cv.tailored"
+    CV_TAILORING_REFUSED = "cv.tailoring_refused"
+    CV_TAILORING_FAILED = "cv.tailoring_failed"
 
 
 class Actor(StrEnum):

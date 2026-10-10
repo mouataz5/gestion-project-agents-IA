@@ -51,3 +51,21 @@ def test_the_shipped_job_analysis_prompt_states_the_rules() -> None:
     for rule in ("untrusted", "verbatim", "relocation", "never invent", "candidate_skill"):
         assert rule in text, rule
     assert not re.search(r"sk-ant-|api[_ -]?key|password", text)
+
+
+@pytest.mark.parametrize(
+    ("name", "rules"),
+    [
+        ("job_requirements", ("untrusted", "verbatim", "never invent", "generic words")),
+        (
+            "cv_tailoring",
+            ("never invent", "cite your sources", "forbidden", "own bullets", "stuffing"),
+        ),
+    ],
+)
+def test_the_shipped_ats_prompts_state_the_rules(name: str, rules: tuple[str, ...]) -> None:
+    prompt = PromptRegistry(REPO_ROOT / "prompts").get(name)
+
+    assert prompt.version == 1
+    for rule in rules:
+        assert rule in prompt.text.lower(), rule
