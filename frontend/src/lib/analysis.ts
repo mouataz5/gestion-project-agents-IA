@@ -147,8 +147,9 @@ export function providerLabel(
     JobAnalysis,
     "is_mock" | "provider" | "requested_model" | "served_model" | "fallback_used"
   >,
+  noun = "analysis",
 ): string {
-  if (analysis.is_mock) return "Offline mock analysis (no language model)";
+  if (analysis.is_mock) return `Offline mock ${noun} (no language model)`;
   const name = PROVIDER_NAMES[analysis.provider] ?? analysis.provider;
   const model = analysis.served_model ?? analysis.requested_model;
   const fallback =
@@ -188,14 +189,15 @@ export function analysisProblem(
   return null;
 }
 
-/** What to tell the user when an analysis run they started from a job page has finished. */
+/** What to tell the user when a run they started from a job page has finished. */
 export function runOutcomeMessage(
   run: Pick<RunDetail, "status"> & {
     events: ReadonlyArray<Pick<RunDetail["events"][number], "level" | "message">>;
   },
+  noun = "analysis",
 ): string | null {
   if (run.status === "FAILED" || run.status === "CANCELLED")
-    return `The analysis run ${run.status === "FAILED" ? "failed" : "was cancelled"}: open the run for details.`;
+    return `The ${noun} run ${run.status === "FAILED" ? "failed" : "was cancelled"}: open the run for details.`;
   const warning = run.events.find((event) => event.level === "WARNING");
   return warning ? warning.message : null;
 }

@@ -17,6 +17,8 @@ const TONES: Record<string, Tone> = {
   parsed: "warning",
   confirmed: "success",
   superseded: "neutral",
+  // Tailored CVs: the current version of an application.
+  generated: "success",
   // Skill evidence strength.
   demonstrated: "success",
   listed: "info",

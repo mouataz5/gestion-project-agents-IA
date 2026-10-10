@@ -4,12 +4,19 @@ import Link from "next/link";
 import { CvDraftEditor } from "@/components/cv-editor";
 import { CvReviseButton } from "@/components/cv-revise-button";
 import { CvUpload } from "@/components/cv-upload";
+import { AtsScoreBadge } from "@/components/ats-score";
 import { CvStructureView } from "@/components/cv-view";
 import { buttonClass } from "@/components/form";
 import { BackendError, Card, EmptyState, PageHeader, StatusBadge } from "@/components/ui";
-import type { CvVersionDetail, CvVersionSummary, SystemInfo } from "@/lib/api/types";
+import type {
+  CvVersionDetail,
+  CvVersionSummary,
+  SystemInfo,
+  TailoredCvSummary,
+} from "@/lib/api/types";
 import { DEFAULT_MAX_UPLOAD_MB, formatBytes } from "@/lib/cv";
 import { formatDateTime } from "@/lib/format";
+import { displayCompany, displayTitle } from "@/lib/jobs";
 import { backendGet } from "@/lib/server/backend";
 
 export const metadata: Metadata = { title: "Master CV" };
@@ -33,9 +40,10 @@ export default async function CvPage(props: PageProps<"/cv">) {
   const searchParams = await props.searchParams;
   const requested = first(searchParams.version);
 
-  const [versionsResult, infoResult] = await Promise.all([
+  const [versionsResult, infoResult, tailoredResult] = await Promise.all([
     backendGet<CvVersionSummary[]>("/candidate/master-cv"),
     backendGet<SystemInfo>("/system/info"),
+    backendGet<TailoredCvSummary[]>("/candidate/tailored-cvs"),
   ]);
   if (!versionsResult.ok) {
     return (
@@ -47,6 +55,10 @@ export default async function CvPage(props: PageProps<"/cv">) {
   }
   const versions = versionsResult.data;
   const timeZone = infoResult.ok ? infoResult.data.config.timezone : "UTC";
+  const target = infoResult.ok ? infoResult.data.config.ats_target_score : 95;
+  const tailored = tailoredResult.ok
+    ? tailoredResult.data.filter((cv) => cv.status === "GENERATED")
+    : [];
   const maxBytes =
     (infoResult.ok ? infoResult.data.config.max_upload_mb : DEFAULT_MAX_UPLOAD_MB) * 1024 * 1024;
 
@@ -97,6 +109,38 @@ export default async function CvPage(props: PageProps<"/cv">) {
           )}
         </Card>
       </div>
+
+      <Card title={`Tailored CVs (${tailored.length})`} className="mt-6">
+        {!tailoredResult.ok ? (
+          <BackendError message={tailoredResult.message} />
+        ) : tailored.length === 0 ? (
+          <EmptyState>
+            No tailored CV yet. Qualified jobs get one from “Tailor CVs” on the dashboard or from
+            the job page.
+          </EmptyState>
+        ) : (
+          <ul
+            className="divide-y divide-slate-100 text-sm dark:divide-slate-800"
+            data-testid="tailored-cvs"
+          >
+            {tailored.map((cv) => (
+              <li key={cv.id} className="flex flex-wrap items-center justify-between gap-3 py-2">
+                <Link href={`/cv/tailored/${cv.id}`} className="min-w-0 flex-1">
+                  <span className="block truncate font-medium">
+                    {displayTitle(cv.job_title ?? "Untitled job")}
+                  </span>
+                  <span className="block text-xs text-slate-500">
+                    {displayCompany(cv.company ?? "")} · v{cv.version} ·{" "}
+                    {formatDateTime(cv.created_at, timeZone)}
+                    {cv.stale ? " · built from an earlier master CV" : ""}
+                  </span>
+                </Link>
+                {cv.ats_score !== null && <AtsScoreBadge score={cv.ats_score} target={target} />}
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
 
       {detailResult && !detailResult.ok && (
         <div className="mt-6">

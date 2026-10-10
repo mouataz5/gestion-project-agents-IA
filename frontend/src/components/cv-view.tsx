@@ -4,15 +4,34 @@ import { Card, EmptyState } from "@/components/ui";
 import type { ParsedCV } from "@/lib/api/types";
 import { dateRangeLabel } from "@/lib/cv";
 
-function Bullets({ items }: { items: readonly string[] }) {
+/** Renders something under a text of the structure, by its path ("experiences.0.bullets.1"). */
+export type Annotate = (path: string) => ReactNode;
+
+interface Line {
+  text: string;
+  path: string;
+}
+
+function lines(base: string, field: "details" | "bullets", items: readonly string[]): Line[] {
+  return items.map((text, index) => ({ text, path: `${base}.${field}.${index}` }));
+}
+
+function Bullets({ items, annotate }: { items: readonly Line[]; annotate?: Annotate }) {
   if (items.length === 0) return null;
   return (
     <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700 dark:text-slate-300">
-      {items.map((item, index) => (
-        <li key={index}>{item}</li>
+      {items.map((item) => (
+        <li key={item.path} data-path={item.path}>
+          {item.text}
+          {annotate?.(item.path)}
+        </li>
       ))}
     </ul>
   );
+}
+
+function entryLines(base: string, item: { details: string[]; bullets: string[] }): Line[] {
+  return [...lines(base, "details", item.details), ...lines(base, "bullets", item.bullets)];
 }
 
 function Entry({
@@ -40,8 +59,15 @@ function Entry({
   );
 }
 
-/** Read-only rendering of a confirmed (or superseded) master CV structure. */
-export function CvStructureView({ structure }: { structure: ParsedCV }) {
+/** Read-only rendering of a CV structure: a master CV, or a tailored version with ``annotate``
+ * showing where each text comes from. */
+export function CvStructureView({
+  structure,
+  annotate,
+}: {
+  structure: ParsedCV;
+  annotate?: Annotate;
+}) {
   const categories = new Map<string, string[]>();
   for (const skill of structure.skills) {
     const key = skill.category ?? "Skills";
@@ -53,6 +79,7 @@ export function CvStructureView({ structure }: { structure: ParsedCV }) {
       {structure.summary && (
         <Card title="Summary">
           <p className="text-sm whitespace-pre-line">{structure.summary}</p>
+          {annotate?.("summary")}
         </Card>
       )}
       <Card title={`Experience (${structure.experiences.length})`}>
@@ -67,7 +94,8 @@ export function CvStructureView({ structure }: { structure: ParsedCV }) {
                 subtitle={[item.employer, item.location].filter(Boolean).join(", ")}
                 dates={dateRangeLabel(item.dates)}
               >
-                <Bullets items={[...item.details, ...item.bullets]} />
+                {annotate?.(`experiences.${index}.title`)}
+                <Bullets items={entryLines(`experiences.${index}`, item)} annotate={annotate} />
               </Entry>
             ))}
           </ol>
@@ -83,7 +111,7 @@ export function CvStructureView({ structure }: { structure: ParsedCV }) {
                 subtitle={[item.institution, item.location].filter(Boolean).join(", ")}
                 dates={dateRangeLabel(item.dates)}
               >
-                <Bullets items={[...item.details, ...item.bullets]} />
+                <Bullets items={entryLines(`education.${index}`, item)} />
               </Entry>
             ))}
           </ol>
@@ -92,7 +120,7 @@ export function CvStructureView({ structure }: { structure: ParsedCV }) {
           <ol className="divide-y divide-slate-100 dark:divide-slate-800">
             {structure.projects.map((item, index) => (
               <Entry key={index} title={item.name} subtitle="" dates={dateRangeLabel(item.dates)}>
-                <Bullets items={[...item.details, ...item.bullets]} />
+                <Bullets items={entryLines(`projects.${index}`, item)} annotate={annotate} />
               </Entry>
             ))}
           </ol>
@@ -108,7 +136,7 @@ export function CvStructureView({ structure }: { structure: ParsedCV }) {
           </dl>
         </Card>
         <Card title="Certifications & languages">
-          <Bullets items={structure.certifications} />
+          <Bullets items={lines("certifications", "details", structure.certifications)} />
           {structure.languages.length > 0 && (
             <p className="mt-3 text-sm">
               <span className="text-slate-500">Languages: </span>
@@ -119,7 +147,7 @@ export function CvStructureView({ structure }: { structure: ParsedCV }) {
       </div>
       {structure.other_sections.map((section, index) => (
         <Card key={index} title={section.heading}>
-          <Bullets items={section.lines} />
+          <Bullets items={lines(`other_sections.${index}`, "details", section.lines)} />
         </Card>
       ))}
     </div>

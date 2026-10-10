@@ -148,6 +148,9 @@ describe("provenance", () => {
         served_model: "mock-deterministic-1",
       }),
     ).toBe("Offline mock analysis (no language model)");
+    expect(providerLabel({ ...claude, is_mock: true }, "tailoring")).toBe(
+      "Offline mock tailoring (no language model)",
+    );
   });
 
   it("formats token usage, including the prompt cache", () => {

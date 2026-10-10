@@ -1,8 +1,10 @@
 import type { RunSummary } from "@/lib/api/types";
 
-/** The jobs a run worked on: found by a discovery, analysed by an analysis. */
+/** The jobs a run worked on: found by a discovery, analysed by an analysis, CVs tailored. */
 export function runJobCount(
-  run: Pick<RunSummary, "run_type" | "jobs_discovered" | "jobs_processed">,
+  run: Pick<RunSummary, "run_type" | "jobs_discovered" | "jobs_processed" | "cv_generated">,
 ): number {
-  return run.run_type === "ANALYSIS" ? run.jobs_processed : run.jobs_discovered;
+  if (run.run_type === "ANALYSIS") return run.jobs_processed;
+  if (run.run_type === "CV_GENERATION") return run.cv_generated;
+  return run.jobs_discovered;
 }

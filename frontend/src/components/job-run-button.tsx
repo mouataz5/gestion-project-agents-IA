@@ -14,14 +14,40 @@ import {
   type RunDetail,
 } from "@/lib/api/types";
 
+const KINDS = {
+  analysis: {
+    path: "/api/backend/runs/analysis",
+    noun: "analysis",
+    first: "Analyse this job",
+    again: "Re-analyse",
+    busy: "Analysing…",
+  },
+  tailoring: {
+    path: "/api/backend/runs/cv-generation",
+    noun: "CV generation",
+    first: "Tailor CV",
+    again: "Re-tailor",
+    busy: "Tailoring…",
+  },
+} as const;
+
 const POLL_MS = 1500;
 const MAX_WAIT_MS = 5 * 60_000;
 
 /**
- * Analyses one job now (``force`` re-analyses an unchanged job), waits for the run on the worker,
- * then refreshes the page so the new analysis is shown.
+ * Runs one job through a pipeline step now (``force`` redoes it when it was already done), waits
+ * for the run on the worker, then refreshes the page so the new result is shown.
  */
-export function AnalyseJobButton({ jobId, analysed }: { jobId: string; analysed: boolean }) {
+export function JobRunButton({
+  jobId,
+  kind,
+  done,
+}: {
+  jobId: string;
+  kind: keyof typeof KINDS;
+  done: boolean;
+}) {
+  const labels = KINDS[kind];
   const router = useRouter();
   const [runId, setRunId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -47,13 +73,14 @@ export function AnalyseJobButton({ jobId, analysed }: { jobId: string; analysed:
     return null;
   }
 
-  async function analyse() {
+  async function start() {
     setBusy(true);
     setMessage(null);
     setRunId(null);
     try {
-      const body: AnalysisRunRequest = { job_ids: [jobId], force: analysed };
-      const response = await fetch("/api/backend/runs/analysis", {
+      // The analysis and CV generation requests have the same shape.
+      const body: AnalysisRunRequest = { job_ids: [jobId], force: done };
+      const response = await fetch(labels.path, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
@@ -71,10 +98,10 @@ export function AnalyseJobButton({ jobId, analysed }: { jobId: string; analysed:
       const run = await waitFor(created.run_id);
       if (!mounted.current) return;
       if (run === null) {
-        setMessage({ tone: "warning", text: "The analysis is still running." });
+        setMessage({ tone: "warning", text: `The ${labels.noun} is still running.` });
         return;
       }
-      const outcome = runOutcomeMessage(run);
+      const outcome = runOutcomeMessage(run, labels.noun);
       if (outcome)
         setMessage({ tone: run.status === "FAILED" ? "error" : "warning", text: outcome });
       router.refresh();
@@ -88,12 +115,12 @@ export function AnalyseJobButton({ jobId, analysed }: { jobId: string; analysed:
   return (
     <span className="inline-flex max-w-sm flex-col items-end gap-1 text-right">
       <Button
-        variant={analysed ? "secondary" : "primary"}
-        onClick={() => void analyse()}
+        variant={done ? "secondary" : "primary"}
+        onClick={() => void start()}
         disabled={busy}
         className="disabled:cursor-wait"
       >
-        {busy ? "Analysing…" : analysed ? "Re-analyse" : "Analyse this job"}
+        {busy ? labels.busy : done ? labels.again : labels.first}
       </Button>
       {busy && runId && (
         <span className="text-xs text-slate-500 dark:text-slate-400" aria-live="polite">
@@ -121,4 +148,12 @@ export function AnalyseJobButton({ jobId, analysed }: { jobId: string; analysed:
       )}
     </span>
   );
+}
+
+export function AnalyseJobButton({ jobId, analysed }: { jobId: string; analysed: boolean }) {
+  return <JobRunButton jobId={jobId} kind="analysis" done={analysed} />;
+}
+
+export function TailorCvButton({ jobId, tailored }: { jobId: string; tailored: boolean }) {
+  return <JobRunButton jobId={jobId} kind="tailoring" done={tailored} />;
 }

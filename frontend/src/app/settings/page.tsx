@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { BackendError, Badge, Card, DefinitionList, PageHeader } from "@/components/ui";
 import type { SystemInfo } from "@/lib/api/types";
+import { componentLabel } from "@/lib/ats";
 import { backendGet } from "@/lib/server/backend";
 
 export const metadata: Metadata = { title: "Settings" };
@@ -46,8 +47,6 @@ export default async function SettingsPage() {
           <DefinitionList
             items={[
               ["JOB_LOOKBACK_HOURS", String(config.job_lookback_hours)],
-              ["ATS_TARGET_SCORE", String(config.ats_target_score)],
-              ["ATS_MAX_ITERATIONS", String(config.ats_max_iterations)],
               ["DAILY_RUN_TIME", config.daily_run_time],
               ["TIMEZONE", config.timezone],
               ["SCHEDULER_ENABLED", config.scheduler_enabled ? "true" : "false"],
@@ -59,6 +58,38 @@ export default async function SettingsPage() {
               ],
             ]}
           />
+        </Card>
+
+        <Card title="ATS engine">
+          <DefinitionList
+            items={[
+              ["ATS_TARGET_SCORE", `${config.ats_target_score} (a target, not a promise)`],
+              ["ATS_MAX_ITERATIONS", String(config.ats_max_iterations)],
+              ["Scoring", config.ats_scoring_version],
+              ["CV_GENERATION_MAX_JOBS_PER_RUN", String(config.cv_generation_max_jobs_per_run)],
+              [
+                "CV_GENERATION_INCLUDE_REVIEW",
+                config.cv_generation_include_review ? "true" : "false (APPLY jobs only)",
+              ],
+            ]}
+          />
+          <div className="mt-4 text-sm">
+            <div className="mb-1 text-slate-500 dark:text-slate-400">ATS_SCORE_WEIGHTS</div>
+            <ul className="flex flex-wrap gap-1.5" data-testid="ats-weights">
+              {Object.entries(config.ats_score_weights).map(([name, weight]) => (
+                <li key={name}>
+                  <Badge tone="neutral">
+                    {componentLabel(name)} {weight}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+            Tailored CVs only reorder, select and reword the facts of your confirmed master CV. The
+            tailoring call sees those facts and the job&apos;s grounded requirements, never your
+            name, contact details, employers or schools.
+          </p>
         </Card>
 
         <Card title="Language model">

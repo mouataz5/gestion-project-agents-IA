@@ -10,6 +10,7 @@ import {
   windowLabel,
 } from "@/lib/jobs";
 
+import { AtsScoreBadge } from "./ats-score";
 import { RecommendationBadge, VisaBadge } from "./job-analysis";
 import { Badge, EmptyState, StatusBadge } from "./ui";
 
@@ -35,11 +36,14 @@ export function JobsTable({
   hours,
   timeZone,
   empty,
+  target = 95,
 }: {
   jobs: JobRead[];
   hours: number;
   timeZone: string;
   empty: string;
+  /** ATS_TARGET_SCORE, to colour the ATS scores. */
+  target?: number;
 }) {
   if (jobs.length === 0) return <EmptyState>{empty}</EmptyState>;
   return (
@@ -52,6 +56,7 @@ export function JobsTable({
             <th className="py-2 pr-4 font-medium">Posted</th>
             <th className="py-2 pr-4 font-medium">Source</th>
             <th className="py-2 pr-4 font-medium">Analysis</th>
+            <th className="py-2 pr-4 font-medium">ATS</th>
             <th className="py-2 font-medium">Pipeline</th>
           </tr>
         </thead>
@@ -99,6 +104,17 @@ export function JobsTable({
                     )}
                     {job.visa_status && <VisaBadge status={job.visa_status} />}
                   </div>
+                ) : (
+                  <span className="text-xs text-slate-400">—</span>
+                )}
+              </td>
+              <td className="py-2.5 pr-4 whitespace-nowrap">
+                {job.ats_score !== null && job.tailored_cv_id ? (
+                  <AtsScoreBadge
+                    score={job.ats_score}
+                    target={target}
+                    href={`/cv/tailored/${job.tailored_cv_id}`}
+                  />
                 ) : (
                   <span className="text-xs text-slate-400">—</span>
                 )}

@@ -79,6 +79,24 @@ export const VISA_STATUSES: readonly VisaStatus[] = [
   "SPONSORSHIP_NOT_AVAILABLE",
 ];
 
+// ATS engine and tailored CVs (Phase 5).
+export type TailoringRead = Schemas["TailoringRead"];
+export type AtsIteration = Schemas["AtsIterationRead"];
+export type ComponentScore = Schemas["ComponentScore"];
+export type KeywordResult = Schemas["KeywordResult"];
+export type KeywordClass = Schemas["KeywordClass"];
+export type Gap = Schemas["Gap"];
+export type GapKind = Schemas["GapKind"];
+export type StopReason = Schemas["StopReason"];
+export type IterationStatus = Schemas["IterationStatus"];
+export type TailoredCvSummary = Schemas["TailoredCvSummary"];
+export type TailoredCvDetail = Schemas["TailoredCvDetail"];
+export type LedgerEntry = Schemas["LedgerEntry"];
+export type LedgerSource = Schemas["LedgerSource"];
+export type LedgerOrigin = Schemas["Origin"];
+export type LedgerRepair = Schemas["Repair"];
+export type CvGenerationRunRequest = Schemas["CvGenerationRunRequest"];
+
 // Company watchlist (Phase 3).
 export type CompanyRead = Schemas["CompanyRead"];
 export type CompanyCreate = Schemas["CompanyCreate"];

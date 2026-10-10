@@ -3,10 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
-import { AnalyseJobButton } from "@/components/analyse-job-button";
+import { AnalyseJobButton, TailorCvButton } from "@/components/job-run-button";
 import { Notice } from "@/components/form";
 import { HighlightedText, JobAnalysisPanel } from "@/components/job-analysis";
 import { PostingDateBadge } from "@/components/jobs-table";
+import { TailoringPanel } from "@/components/tailored-cv-panel";
 import { TrackJobButton } from "@/components/track-job-button";
 import {
   BackendError,
@@ -94,6 +95,10 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
   const quotes = analysis?.visa?.evidence.map((evidence) => evidence.quote) ?? [];
   const llm = infoResult.ok ? infoResult.data.config : null;
   const analysable = !job.duplicate_of_id && llm?.llm_effective_provider !== "unavailable";
+  const tailorable =
+    analysable &&
+    (job.application_status === "QUALIFIED" || job.application_status === "CV_GENERATED");
+  const tailoring = job.tailoring;
 
   return (
     <>
@@ -173,6 +178,37 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
                   Analysis is unavailable: {llm.llm_effective_reason ?? "check the LLM settings"}.
                 </Notice>
               )}
+            </div>
+          )}
+        </Card>
+
+        <Card
+          title="Tailored CV & ATS"
+          className="lg:col-span-3"
+          action={
+            tailorable ? (
+              <TailorCvButton jobId={job.id} tailored={Boolean(job.tailored_cv_id)} />
+            ) : null
+          }
+        >
+          {tailoring ? (
+            <TailoringPanel
+              tailoring={tailoring}
+              tailoredCvId={job.tailored_cv_id}
+              timeZone={timeZone}
+            />
+          ) : (
+            <div className="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+              <p>
+                {tailorable
+                  ? "No tailored CV yet."
+                  : job.recommendation === "SKIP"
+                    ? "Jobs recommended SKIP are never tailored."
+                    : "A tailored CV is made once the analysis qualifies this job (APPLY or REVIEW)."}{" "}
+                Tailoring reorders, selects and rewords the facts of your confirmed master CV for
+                this job, scores the result like an applicant tracking system, and never adds a
+                skill, employer, date or number your CV does not state.
+              </p>
             </div>
           )}
         </Card>

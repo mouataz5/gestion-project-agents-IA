@@ -10,6 +10,7 @@ const RUNS = {
   diagnostic: { path: "/api/backend/runs/diagnostic", label: "Run system diagnostic" },
   discovery: { path: "/api/backend/runs/discovery", label: "Run job discovery" },
   analysis: { path: "/api/backend/runs/analysis", label: "Analyse new jobs" },
+  cvGeneration: { path: "/api/backend/runs/cv-generation", label: "Tailor CVs" },
 } as const;
 
 /** Starts a recorded automation run on a worker, then opens the run's live timeline. */
@@ -73,4 +74,8 @@ export function RunDiscoveryButton({ variant }: { variant?: "primary" | "seconda
 
 export function RunAnalysisButton({ variant }: { variant?: "primary" | "secondary" }) {
   return <StartRunButton run="analysis" variant={variant} />;
+}
+
+export function RunCvGenerationButton({ variant }: { variant?: "primary" | "secondary" }) {
+  return <StartRunButton run="cvGeneration" variant={variant} />;
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { HealthGrid } from "@/components/health-grid";
 import {
   RunAnalysisButton,
+  RunCvGenerationButton,
   RunDiagnosticButton,
   RunDiscoveryButton,
 } from "@/components/start-run-button";
@@ -151,6 +152,61 @@ function AnalysisSummary({
   );
 }
 
+function CvGenerationSummary({
+  stats,
+  config,
+  timeZone,
+}: {
+  stats: JobStats;
+  config: SystemInfo["config"];
+  timeZone: string;
+}) {
+  const last = stats.last_cv_generation;
+  const tiles: Array<[string, number, string]> = [
+    ["Tailored CVs", stats.cv_generated, "/cv"],
+    ["APPLY jobs waiting", stats.awaiting_cv, "/jobs?tab=all&recommendation=APPLY"],
+    [
+      config.cv_generation_include_review ? "REVIEW jobs waiting" : "REVIEW jobs (on request)",
+      stats.awaiting_cv_review,
+      "/jobs?tab=all&recommendation=REVIEW",
+    ],
+  ];
+  return (
+    <div className="flex flex-col gap-4" data-testid="cv-generation-summary">
+      <dl className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        {tiles.map(([label, value, href]) => (
+          <div key={label} className="rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800/50">
+            <dt className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</dt>
+            <dd className="mt-1 text-2xl font-semibold tabular-nums">
+              <Link href={href} className="hover:text-indigo-600 dark:hover:text-indigo-400">
+                {value}
+              </Link>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        {last ? (
+          <>
+            Last CV generation:{" "}
+            <Link href={`/runs/${last.id}`} className="inline-flex items-center gap-2">
+              <StatusBadge status={last.status} />
+            </Link>{" "}
+            {formatDateTime(last.finished_at ?? last.created_at, timeZone)} · {last.cv_generated}{" "}
+            CV(s) tailored
+          </>
+        ) : (
+          "No CV tailored yet. Analyse the jobs first: qualified APPLY jobs get a tailored CV."
+        )}
+      </p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">
+        Target ATS score {config.ats_target_score} (a target, not a promise) · scoring{" "}
+        {config.ats_scoring_version} · nothing is added that your master CV does not state.
+      </p>
+    </div>
+  );
+}
+
 export default async function DashboardPage() {
   const [infoResult, statusResult, runsResult, jobStatsResult] = await Promise.all([
     backendGet<SystemInfo>("/system/info"),
@@ -242,6 +298,22 @@ export default async function DashboardPage() {
         >
           {jobStatsResult.ok ? (
             <AnalysisSummary stats={jobStatsResult.data} config={info.config} timeZone={timeZone} />
+          ) : (
+            <BackendError message={jobStatsResult.message} />
+          )}
+        </Card>
+
+        <Card
+          title="CV generation"
+          className="lg:col-span-3"
+          action={<RunCvGenerationButton variant="secondary" />}
+        >
+          {jobStatsResult.ok ? (
+            <CvGenerationSummary
+              stats={jobStatsResult.data}
+              config={info.config}
+              timeZone={timeZone}
+            />
           ) : (
             <BackendError message={jobStatsResult.message} />
           )}

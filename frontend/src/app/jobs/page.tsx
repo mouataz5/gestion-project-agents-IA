@@ -212,6 +212,7 @@ export default async function JobsPage(props: PageProps<"/jobs">) {
               jobs={jobsResult.data.items}
               hours={hours}
               timeZone={timeZone}
+              target={infoResult.ok ? infoResult.data.config.ats_target_score : undefined}
               empty={
                 filters.tab === "recent" && !hasActiveFilters(filters)
                   ? `No job posted in the last ${hours} hours yet. Run a discovery or import a job URL.`

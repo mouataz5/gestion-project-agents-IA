@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import { humanize, statusTone, type Tone } from "@/lib/format";
 
@@ -104,12 +104,28 @@ export function PageHeader({
   );
 }
 
+/** A setting name such as ``CV_GENERATION_MAX_JOBS_PER_RUN`` wraps after its underscores. */
+function breakAtUnderscores(term: string): ReactNode {
+  return term.split("_").map((part, index) => (
+    <Fragment key={index}>
+      {index > 0 && (
+        <>
+          _<wbr />
+        </>
+      )}
+      {part}
+    </Fragment>
+  ));
+}
+
 export function DefinitionList({ items }: { items: Array<[string, ReactNode]> }) {
   return (
     <dl className="grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
       {items.map(([term, value]) => (
-        <div key={term} className="flex flex-col">
-          <dt className="text-slate-500 dark:text-slate-400">{term}</dt>
+        <div key={term} className="flex min-w-0 flex-col">
+          <dt className="break-words text-slate-500 dark:text-slate-400">
+            {breakAtUnderscores(term)}
+          </dt>
           <dd className="font-medium break-words">{value}</dd>
         </div>
       ))}
