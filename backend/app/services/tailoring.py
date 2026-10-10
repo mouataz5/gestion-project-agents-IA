@@ -787,7 +787,7 @@ class CvTailoringService:
             iterations_used=result.calls,
             best_iteration=best.number if best is not None else None,
             requirements=requirements.model_dump(mode="json"),
-            gaps=[item.model_dump(mode="json") for item in result.recommendations],
+            gaps=[item.model_dump(mode="json") for item in result.gaps],
             provider=provider.name,
             requested_model=provider.model,
             served_model=last_call.served_model if last_call else None,

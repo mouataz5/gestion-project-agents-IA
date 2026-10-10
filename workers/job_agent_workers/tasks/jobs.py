@@ -1,4 +1,4 @@
-"""Job tasks: the recorded job discovery and job analysis runs."""
+"""Job tasks: the recorded job discovery, job analysis and CV generation runs."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from celery import Task
 from app.core.tasks import TaskName
 from app.services.analysis import AnalysisService
 from app.services.discovery import DiscoveryService
+from app.services.tailoring import CvTailoringService
 from job_agent_workers.celery_app import celery_app
 from job_agent_workers.runtime import get_runtime
 
@@ -25,4 +26,11 @@ def run_discovery(self: Task[[str], dict[str, Any]], run_id: str) -> dict[str, A
 def run_analysis(self: Task[[str], dict[str, Any]], run_id: str) -> dict[str, Any]:
     runtime = get_runtime()
     service = AnalysisService(settings=runtime.settings, session_factory=runtime.session_factory)
+    return service.execute(uuid.UUID(run_id), task_id=self.request.id)
+
+
+@celery_app.task(name=TaskName.RUN_CV_GENERATION.value, bind=True)
+def run_cv_generation(self: Task[[str], dict[str, Any]], run_id: str) -> dict[str, Any]:
+    runtime = get_runtime()
+    service = CvTailoringService(settings=runtime.settings, session_factory=runtime.session_factory)
     return service.execute(uuid.UUID(run_id), task_id=self.request.id)

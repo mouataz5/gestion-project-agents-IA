@@ -18,7 +18,7 @@ from app.ats.loop import (
 )
 from app.ats.mock_responder import mock_cv_tailoring
 from app.ats.requirements import Keyword, build_requirements, posting_of
-from app.ats.scoring import RecommendationKind
+from app.ats.scoring import GapKind
 from app.ats.tailoring import (
     SkillChoice,
     SourcedText,
@@ -132,8 +132,8 @@ def test_the_mock_tailoring_stops_at_the_nova_ceiling(nova: GuardContext) -> Non
     assert result.best.report is not None
     assert result.best.report.keywords_with(KeywordClass.UNSUPPORTED) == []
     assert result.best.usage == {"request_id": "req_1"}
-    kinds = {item.kind for item in result.recommendations}
-    assert kinds == {RecommendationKind.NOT_DEMONSTRATED, RecommendationKind.RESPONSIBILITY}
+    kinds = {item.kind for item in result.gaps}
+    assert kinds == {GapKind.NOT_DEMONSTRATED, GapKind.RESPONSIBILITY}
 
 
 def test_no_call_when_the_master_cv_reaches_the_target(nova: GuardContext) -> None:
@@ -156,7 +156,7 @@ def test_no_call_when_only_unsupported_gains_remain(
 
     assert result.stop_reason is StopReason.ONLY_UNSUPPORTED_GAINS
     assert (result.calls, result.final_score, result.ceiling.score) == (0, 65.7, 65.7)
-    assert [item.subject for item in result.recommendations][:2] == ["Deep Learning", "Agentic AI"]
+    assert [item.subject for item in result.gaps][:2] == ["Deep Learning", "Agentic AI"]
 
 
 def test_the_target_is_reached_at_the_first_iteration(nova: GuardContext) -> None:

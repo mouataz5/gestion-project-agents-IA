@@ -41,6 +41,7 @@
         "type": "string"
       },
       "AnalysisUsage": {
+        "description": "Tokens of one model call (or the sum of several).",
         "properties": {
           "cache_creation_input_tokens": {
             "title": "Cache Creation Input Tokens",
@@ -243,6 +244,166 @@
         "title": "ApplicationStatus",
         "type": "string"
       },
+      "AtsIterationRead": {
+        "description": "One version a tailoring looked at: iteration 0 is the master CV.",
+        "properties": {
+          "assessed_weight": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Points of 100 the posting let the score assess",
+            "title": "Assessed Weight"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/ComponentScore"
+            },
+            "title": "Components",
+            "type": "array"
+          },
+          "document_kind": {
+            "$ref": "#/components/schemas/DocumentKind"
+          },
+          "duration_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Ms"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          },
+          "iteration": {
+            "title": "Iteration",
+            "type": "integer"
+          },
+          "keywords": {
+            "items": {
+              "$ref": "#/components/schemas/KeywordResult"
+            },
+            "title": "Keywords",
+            "type": "array"
+          },
+          "penalty": {
+            "title": "Penalty",
+            "type": "integer"
+          },
+          "repairs_count": {
+            "title": "Repairs Count",
+            "type": "integer"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "None for a version the guard rejected",
+            "title": "Score"
+          },
+          "selected": {
+            "description": "The version that was stored",
+            "title": "Selected",
+            "type": "boolean"
+          },
+          "served_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Served Model"
+          },
+          "status": {
+            "$ref": "#/components/schemas/IterationStatus"
+          },
+          "stuffing": {
+            "items": {
+              "$ref": "#/components/schemas/StuffingSignal"
+            },
+            "title": "Stuffing",
+            "type": "array"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/AnalysisUsage"
+          },
+          "violations": {
+            "items": {
+              "$ref": "#/components/schemas/Violation"
+            },
+            "title": "Violations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "iteration",
+          "document_kind",
+          "status",
+          "selected",
+          "score",
+          "assessed_weight",
+          "penalty",
+          "components",
+          "keywords",
+          "stuffing",
+          "violations",
+          "repairs_count",
+          "served_model",
+          "request_id",
+          "usage",
+          "duration_ms",
+          "error_code",
+          "error_message"
+        ],
+        "title": "AtsIterationRead",
+        "type": "object"
+      },
       "AtsType": {
         "enum": [
           "GREENHOUSE",
@@ -390,6 +551,16 @@
         ],
         "title": "Body_upload_master_cv_api_v1_candidate_master_cv_post",
         "type": "object"
+      },
+      "CallStatus": {
+        "description": "Outcome of a model task (requirement extraction, tailoring).",
+        "enum": [
+          "SUCCEEDED",
+          "REFUSED",
+          "FAILED"
+        ],
+        "title": "CallStatus",
+        "type": "string"
       },
       "CandidateProfile-Input": {
         "additionalProperties": false,
@@ -622,6 +793,24 @@
         ],
         "title": "CandidateUpdate",
         "type": "object"
+      },
+      "Category": {
+        "enum": [
+          "programming_language",
+          "framework",
+          "ai_ml",
+          "data",
+          "database",
+          "cloud",
+          "devops",
+          "tool",
+          "methodology",
+          "spoken_language",
+          "domain",
+          "soft_skill"
+        ],
+        "title": "Category",
+        "type": "string"
       },
       "CompanyCreate": {
         "additionalProperties": false,
@@ -1027,6 +1216,48 @@
         "title": "ComponentHealth",
         "type": "object"
       },
+      "ComponentScore": {
+        "properties": {
+          "applicable": {
+            "title": "Applicable",
+            "type": "boolean"
+          },
+          "details": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Details",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "weight",
+          "applicable",
+          "score",
+          "details"
+        ],
+        "title": "ComponentScore",
+        "type": "object"
+      },
       "ComponentStatus": {
         "enum": [
           "ok",
@@ -1267,6 +1498,36 @@
         "title": "ContactInfo",
         "type": "object"
       },
+      "CvGenerationRunRequest": {
+        "additionalProperties": false,
+        "description": "Which jobs to tailor a CV for: the qualified APPLY jobs by default (REVIEW too with\nCV_GENERATION_INCLUDE_REVIEW), or the given jobs (re-tailoring).",
+        "properties": {
+          "force": {
+            "default": false,
+            "description": "Tailor again even if nothing changed",
+            "title": "Force",
+            "type": "boolean"
+          },
+          "job_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "maxItems": 200,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Ids"
+          }
+        },
+        "title": "CvGenerationRunRequest",
+        "type": "object"
+      },
       "CvKind": {
         "enum": [
           "MASTER",
@@ -1306,7 +1567,8 @@
         "enum": [
           "PARSED",
           "CONFIRMED",
-          "SUPERSEDED"
+          "SUPERSEDED",
+          "GENERATED"
         ],
         "title": "CvStatus",
         "type": "string"
@@ -1598,6 +1860,14 @@
         "title": "DateRange",
         "type": "object"
       },
+      "DocumentKind": {
+        "enum": [
+          "MASTER",
+          "TAILORED"
+        ],
+        "title": "DocumentKind",
+        "type": "string"
+      },
       "EducationEntry-Input": {
         "additionalProperties": false,
         "properties": {
@@ -1727,6 +1997,56 @@
           "details"
         ],
         "title": "EducationEntry",
+        "type": "object"
+      },
+      "EducationLevel": {
+        "enum": [
+          "NONE_STATED",
+          "BACHELOR",
+          "MASTER",
+          "PHD"
+        ],
+        "title": "EducationLevel",
+        "type": "string"
+      },
+      "EducationRequirement": {
+        "properties": {
+          "equivalent_experience_accepted": {
+            "default": false,
+            "title": "Equivalent Experience Accepted",
+            "type": "boolean"
+          },
+          "fields": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "level": {
+            "$ref": "#/components/schemas/EducationLevel",
+            "default": "NONE_STATED"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote"
+          }
+        },
+        "required": [
+          "level",
+          "fields",
+          "equivalent_experience_accepted",
+          "quote"
+        ],
+        "title": "EducationRequirement",
         "type": "object"
       },
       "EmailImportRequest": {
@@ -2019,6 +2339,59 @@
         "title": "ExperienceEntry",
         "type": "object"
       },
+      "Gap": {
+        "description": "A gap only the candidate can close, in the master CV, and only if it is true.",
+        "properties": {
+          "importance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Importance"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "$ref": "#/components/schemas/GapKind"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "terms": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Terms",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "subject",
+          "importance",
+          "terms",
+          "message"
+        ],
+        "title": "Gap",
+        "type": "object"
+      },
+      "GapKind": {
+        "enum": [
+          "MISSING_KEYWORD",
+          "NOT_DEMONSTRATED",
+          "RESPONSIBILITY",
+          "TITLE_TERMS"
+        ],
+        "title": "GapKind",
+        "type": "string"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -2124,6 +2497,25 @@
         ],
         "title": "Identity",
         "type": "object"
+      },
+      "Importance": {
+        "enum": [
+          "REQUIRED",
+          "PREFERRED"
+        ],
+        "title": "Importance",
+        "type": "string"
+      },
+      "IterationStatus": {
+        "enum": [
+          "SCORED",
+          "REPAIRED",
+          "REJECTED",
+          "FAILED",
+          "REFUSED"
+        ],
+        "title": "IterationStatus",
+        "type": "string"
       },
       "JobAnalysisRead": {
         "description": "One analysis: provenance, cost, the verified result and the decision with its reasons.",
@@ -2370,6 +2762,18 @@
             },
             "title": "Applications",
             "type": "array"
+          },
+          "ats_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ATS score of the current tailored CV (Phase 5)",
+            "title": "Ats Score"
           },
           "ats_type": {
             "$ref": "#/components/schemas/AtsType"
@@ -2682,6 +3086,30 @@
             ],
             "title": "Source Job Id"
           },
+          "tailored_cv_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The current tailored CV for this job",
+            "title": "Tailored Cv Id"
+          },
+          "tailoring": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TailoringRead"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The latest CV tailoring attempt for this job"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -2743,6 +3171,8 @@
           "application_status",
           "recommendation",
           "visa_status",
+          "ats_score",
+          "tailored_cv_id",
           "description",
           "company_url",
           "visa_information",
@@ -2758,7 +3188,8 @@
           "primary",
           "duplicates",
           "applications",
-          "analysis"
+          "analysis",
+          "tailoring"
         ],
         "title": "JobDetail",
         "type": "object"
@@ -3004,6 +3435,18 @@
             ],
             "title": "Application Url"
           },
+          "ats_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ATS score of the current tailored CV (Phase 5)",
+            "title": "Ats Score"
+          },
           "ats_type": {
             "$ref": "#/components/schemas/AtsType"
           },
@@ -3204,6 +3647,19 @@
             ],
             "title": "Source Job Id"
           },
+          "tailored_cv_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The current tailored CV for this job",
+            "title": "Tailored Cv Id"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -3253,9 +3709,103 @@
           "duplicate_count",
           "application_status",
           "recommendation",
-          "visa_status"
+          "visa_status",
+          "ats_score",
+          "tailored_cv_id"
         ],
         "title": "JobRead",
+        "type": "object"
+      },
+      "JobRequirements": {
+        "properties": {
+          "discarded": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Discarded",
+            "type": "array"
+          },
+          "education": {
+            "$ref": "#/components/schemas/EducationRequirement",
+            "default": {
+              "equivalent_experience_accepted": false,
+              "fields": [],
+              "level": "NONE_STATED"
+            }
+          },
+          "keywords": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Keyword"
+            },
+            "title": "Keywords",
+            "type": "array"
+          },
+          "min_years": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Years"
+          },
+          "responsibilities": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Responsibilities",
+            "type": "array"
+          },
+          "seniority": {
+            "title": "Seniority",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "title_terms": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Title Terms",
+            "type": "array"
+          },
+          "version": {
+            "default": "job-requirements.v1",
+            "title": "Version",
+            "type": "string"
+          },
+          "years_quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Years Quote"
+          }
+        },
+        "required": [
+          "version",
+          "title",
+          "title_terms",
+          "seniority",
+          "min_years",
+          "years_quote",
+          "education",
+          "keywords",
+          "responsibilities",
+          "discarded"
+        ],
+        "title": "JobRequirements",
         "type": "object"
       },
       "JobSourceRead": {
@@ -3400,6 +3950,16 @@
             "title": "Awaiting Analysis",
             "type": "integer"
           },
+          "awaiting_cv": {
+            "description": "Qualified APPLY jobs without a tailored CV yet",
+            "title": "Awaiting Cv",
+            "type": "integer"
+          },
+          "awaiting_cv_review": {
+            "description": "Qualified REVIEW jobs without a tailored CV yet",
+            "title": "Awaiting Cv Review",
+            "type": "integer"
+          },
           "by_recommendation": {
             "additionalProperties": {
               "type": "integer"
@@ -3413,6 +3973,11 @@
             },
             "title": "By Source",
             "type": "object"
+          },
+          "cv_generated": {
+            "description": "Jobs with a current tailored CV",
+            "title": "Cv Generated",
+            "type": "integer"
           },
           "duplicates": {
             "description": "Duplicate listings linked to a primary record",
@@ -3430,6 +3995,16 @@
             "type": "integer"
           },
           "last_analysis": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LastRun"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_cv_generation": {
             "anyOf": [
               {
                 "$ref": "#/components/schemas/LastRun"
@@ -3480,10 +4055,167 @@
           "qualified",
           "by_recommendation",
           "last_analysis",
-          "awaiting_analysis"
+          "awaiting_analysis",
+          "cv_generated",
+          "awaiting_cv",
+          "awaiting_cv_review",
+          "last_cv_generation"
         ],
         "title": "JobStats",
         "type": "object"
+      },
+      "Keyword": {
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Category"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "importance": {
+            "$ref": "#/components/schemas/Importance"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/KeywordSource"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "term": {
+            "title": "Term",
+            "type": "string"
+          }
+        },
+        "required": [
+          "term",
+          "key",
+          "category",
+          "importance",
+          "sources",
+          "quote"
+        ],
+        "title": "Keyword",
+        "type": "object"
+      },
+      "KeywordClass": {
+        "enum": [
+          "MATCHED",
+          "AVAILABLE",
+          "MISSING",
+          "UNSUPPORTED"
+        ],
+        "title": "KeywordClass",
+        "type": "string"
+      },
+      "KeywordResult": {
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Category"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "demonstrated": {
+            "title": "Demonstrated",
+            "type": "boolean"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "importance": {
+            "$ref": "#/components/schemas/Importance"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "listed": {
+            "title": "Listed",
+            "type": "boolean"
+          },
+          "present": {
+            "title": "Present",
+            "type": "boolean"
+          },
+          "prominent": {
+            "title": "Prominent",
+            "type": "boolean"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/components/schemas/KeywordClass"
+          },
+          "supported": {
+            "title": "Supported",
+            "type": "boolean"
+          },
+          "technical": {
+            "title": "Technical",
+            "type": "boolean"
+          },
+          "term": {
+            "title": "Term",
+            "type": "string"
+          }
+        },
+        "required": [
+          "term",
+          "key",
+          "category",
+          "importance",
+          "status",
+          "present",
+          "prominent",
+          "listed",
+          "demonstrated",
+          "supported",
+          "technical",
+          "score",
+          "evidence"
+        ],
+        "title": "KeywordResult",
+        "type": "object"
+      },
+      "KeywordSource": {
+        "enum": [
+          "LISTED",
+          "LANGUAGE",
+          "SCANNED",
+          "EXTRACTED"
+        ],
+        "title": "KeywordSource",
+        "type": "string"
       },
       "LanguageCheck": {
         "properties": {
@@ -3557,6 +4289,10 @@
             "title": "Created At",
             "type": "string"
           },
+          "cv_generated": {
+            "title": "Cv Generated",
+            "type": "integer"
+          },
           "finished_at": {
             "anyOf": [
               {
@@ -3597,9 +4333,81 @@
           "finished_at",
           "jobs_discovered",
           "jobs_processed",
-          "jobs_qualified"
+          "jobs_qualified",
+          "cv_generated"
         ],
         "title": "LastRun",
+        "type": "object"
+      },
+      "LedgerEntry": {
+        "properties": {
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Keywords",
+            "type": "array"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "path": {
+            "description": "In the tailored structure: \"experiences.0.bullets.0\"",
+            "title": "Path",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/LedgerSource"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "origin",
+          "sources",
+          "keywords"
+        ],
+        "title": "LedgerEntry",
+        "type": "object"
+      },
+      "LedgerSource": {
+        "description": "A fact of the base (master) CV, resolved from its source id.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "description": "For people: \"Experience 1 \u00b7 bullet 1\"",
+            "title": "Label",
+            "type": "string"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Path"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "text",
+          "path"
+        ],
+        "title": "LedgerSource",
         "type": "object"
       },
       "LivenessResponse": {
@@ -3727,6 +4535,18 @@
         ],
         "title": "Location",
         "type": "object"
+      },
+      "Origin": {
+        "enum": [
+          "VERBATIM",
+          "REWRITTEN",
+          "REVERTED",
+          "COPIED",
+          "SELECTED",
+          "RETITLED"
+        ],
+        "title": "Origin",
+        "type": "string"
       },
       "OtherSection-Input": {
         "additionalProperties": false,
@@ -4322,6 +5142,32 @@
         ],
         "title": "RemoteStatus",
         "type": "string"
+      },
+      "Repair": {
+        "properties": {
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "rejected_text": {
+            "title": "Rejected Text",
+            "type": "string"
+          },
+          "violations": {
+            "items": {
+              "$ref": "#/components/schemas/Violation"
+            },
+            "title": "Violations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "rejected_text",
+          "violations"
+        ],
+        "title": "Repair",
+        "type": "object"
       },
       "RunCreated": {
         "properties": {
@@ -5099,6 +5945,45 @@
         "title": "SpokenLanguage",
         "type": "object"
       },
+      "StopReason": {
+        "enum": [
+          "TARGET_REACHED",
+          "ONLY_UNSUPPORTED_GAINS",
+          "NO_IMPROVEMENT",
+          "MAX_ITERATIONS",
+          "GUARD_REJECTED",
+          "PROVIDER_ERROR"
+        ],
+        "title": "StopReason",
+        "type": "string"
+      },
+      "StuffingCode": {
+        "enum": [
+          "REPEATED_KEYWORD",
+          "SKILL_LIST",
+          "DENSE_SUMMARY",
+          "DENSE_BULLET"
+        ],
+        "title": "StuffingCode",
+        "type": "string"
+      },
+      "StuffingSignal": {
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/StuffingCode"
+          },
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "detail"
+        ],
+        "title": "StuffingSignal",
+        "type": "object"
+      },
       "SystemConfig": {
         "properties": {
           "analysis_max_jobs_per_run": {
@@ -5109,8 +5994,27 @@
             "title": "Ats Max Iterations",
             "type": "integer"
           },
+          "ats_score_weights": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Ats Score Weights",
+            "type": "object"
+          },
+          "ats_scoring_version": {
+            "title": "Ats Scoring Version",
+            "type": "string"
+          },
           "ats_target_score": {
             "title": "Ats Target Score",
+            "type": "integer"
+          },
+          "cv_generation_include_review": {
+            "title": "Cv Generation Include Review",
+            "type": "boolean"
+          },
+          "cv_generation_max_jobs_per_run": {
+            "title": "Cv Generation Max Jobs Per Run",
             "type": "integer"
           },
           "daily_run_time": {
@@ -5198,6 +6102,10 @@
           "llm_refusal_fallback",
           "llm_effective_provider",
           "analysis_max_jobs_per_run",
+          "ats_score_weights",
+          "ats_scoring_version",
+          "cv_generation_max_jobs_per_run",
+          "cv_generation_include_review",
           "notification_channels",
           "storage_backend",
           "max_upload_mb",
@@ -5298,6 +6206,527 @@
           "checked_at"
         ],
         "title": "SystemStatus",
+        "type": "object"
+      },
+      "TailoredCvDetail": {
+        "properties": {
+          "application_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Id"
+          },
+          "ats_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ats Score"
+          },
+          "base_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Version Id"
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "extracted_text": {
+            "title": "Extracted Text",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id"
+          },
+          "job_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Title"
+          },
+          "ledger": {
+            "items": {
+              "$ref": "#/components/schemas/LedgerEntry"
+            },
+            "title": "Ledger",
+            "type": "array"
+          },
+          "repairs": {
+            "items": {
+              "$ref": "#/components/schemas/Repair"
+            },
+            "title": "Repairs",
+            "type": "array"
+          },
+          "stale": {
+            "description": "Built from a master CV that is no longer the active one",
+            "title": "Stale",
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CvStatus"
+          },
+          "structure": {
+            "$ref": "#/components/schemas/ParsedCV-Output"
+          },
+          "tailoring": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TailoringRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unused_sources": {
+            "items": {
+              "$ref": "#/components/schemas/LedgerSource"
+            },
+            "title": "Unused Sources",
+            "type": "array"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "status",
+          "application_id",
+          "job_id",
+          "job_title",
+          "company",
+          "base_version_id",
+          "ats_score",
+          "stale",
+          "created_at",
+          "structure",
+          "extracted_text",
+          "ledger",
+          "unused_sources",
+          "repairs",
+          "tailoring"
+        ],
+        "title": "TailoredCvDetail",
+        "type": "object"
+      },
+      "TailoredCvSummary": {
+        "properties": {
+          "application_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Id"
+          },
+          "ats_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ats Score"
+          },
+          "base_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Version Id"
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id"
+          },
+          "job_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Title"
+          },
+          "stale": {
+            "description": "Built from a master CV that is no longer the active one",
+            "title": "Stale",
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CvStatus"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "status",
+          "application_id",
+          "job_id",
+          "job_title",
+          "company",
+          "base_version_id",
+          "ats_score",
+          "stale",
+          "created_at"
+        ],
+        "title": "TailoredCvSummary",
+        "type": "object"
+      },
+      "TailoringRead": {
+        "description": "One tailoring attempt: provenance, scores against the target and the supported ceiling,\nwhy it stopped, the gaps only the candidate can close, and every version it scored.",
+        "properties": {
+          "assessed_weight": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assessed Weight"
+          },
+          "baseline_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The master CV's score",
+            "title": "Baseline Score"
+          },
+          "best_iteration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Iteration"
+          },
+          "ceiling_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The best score a version built only from the master CV can reach",
+            "title": "Ceiling Score"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "cv_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cv Version Id"
+          },
+          "duration_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Ms"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          },
+          "fallback_used": {
+            "title": "Fallback Used",
+            "type": "boolean"
+          },
+          "final_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The stored version's score",
+            "title": "Final Score"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Gap"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_mock": {
+            "description": "Produced offline by the mock provider, not by a model",
+            "title": "Is Mock",
+            "type": "boolean"
+          },
+          "iterations": {
+            "items": {
+              "$ref": "#/components/schemas/AtsIterationRead"
+            },
+            "title": "Iterations",
+            "type": "array"
+          },
+          "iterations_used": {
+            "title": "Iterations Used",
+            "type": "integer"
+          },
+          "max_iterations": {
+            "title": "Max Iterations",
+            "type": "integer"
+          },
+          "prompt": {
+            "$ref": "#/components/schemas/PromptInfo"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "requested_model": {
+            "title": "Requested Model",
+            "type": "string"
+          },
+          "requirements": {
+            "$ref": "#/components/schemas/JobRequirements"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "scoring_version": {
+            "title": "Scoring Version",
+            "type": "string"
+          },
+          "served_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Served Model"
+          },
+          "stale": {
+            "description": "Built from a master CV that is no longer the active one",
+            "title": "Stale",
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CallStatus"
+          },
+          "stop_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StopReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_score": {
+            "description": "A target for the loop, never a promise",
+            "title": "Target Score",
+            "type": "number"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/AnalysisUsage"
+          },
+          "weights": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Weights",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "status",
+          "stop_reason",
+          "run_id",
+          "provider",
+          "is_mock",
+          "requested_model",
+          "served_model",
+          "fallback_used",
+          "prompt",
+          "usage",
+          "duration_ms",
+          "scoring_version",
+          "weights",
+          "target_score",
+          "max_iterations",
+          "baseline_score",
+          "final_score",
+          "ceiling_score",
+          "assessed_weight",
+          "iterations_used",
+          "best_iteration",
+          "requirements",
+          "gaps",
+          "cv_version_id",
+          "stale",
+          "error_code",
+          "error_message",
+          "iterations"
+        ],
+        "title": "TailoringRead",
         "type": "object"
       },
       "TargetCountries-Input": {
@@ -5480,6 +6909,67 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "Violation": {
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ViolationCode"
+          },
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Path"
+          }
+        },
+        "required": [
+          "code",
+          "detail",
+          "path"
+        ],
+        "title": "Violation",
+        "type": "object"
+      },
+      "ViolationCode": {
+        "enum": [
+          "SOURCE_INVALID",
+          "UNSUPPORTED_TECHNOLOGY",
+          "UNSUPPORTED_NUMBER",
+          "UNSUPPORTED_TERM",
+          "UNSUPPORTED_CLAIM",
+          "NEW_CONTENT",
+          "TEXT_TOO_LONG",
+          "EMPTY_TEXT",
+          "CONTACT_CHANGED",
+          "EXPERIENCE_MISSING",
+          "EXPERIENCE_ADDED",
+          "EMPLOYER_CHANGED",
+          "TITLE_CHANGED",
+          "DATES_CHANGED",
+          "LOCATION_CHANGED",
+          "DETAILS_CHANGED",
+          "EDUCATION_CHANGED",
+          "CERTIFICATIONS_CHANGED",
+          "LANGUAGES_CHANGED",
+          "SECTIONS_CHANGED",
+          "PROJECT_UNKNOWN",
+          "LEDGER_MISSING",
+          "UNSUPPORTED_SKILL",
+          "CATEGORY_INVALID",
+          "UNSUPPORTED_KEYWORD",
+          "STUFFING"
+        ],
+        "title": "ViolationCode",
+        "type": "string"
       },
       "VisaEvidence": {
         "properties": {
@@ -6602,6 +8092,123 @@
         ]
       }
     },
+    "/api/v1/candidate/tailored-cvs": {
+      "get": {
+        "operationId": "list_tailored_cvs_api_v1_candidate_tailored_cvs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "job_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TailoredCvSummary"
+                  },
+                  "title": "Response List Tailored Cvs Api V1 Candidate Tailored Cvs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Tailored CV versions, newest first (optionally for one job)",
+        "tags": [
+          "tailored-cvs"
+        ]
+      }
+    },
+    "/api/v1/candidate/tailored-cvs/{version_id}": {
+      "get": {
+        "operationId": "get_tailored_cv_api_v1_candidate_tailored_cvs__version_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Version Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TailoredCvDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "A tailored CV with the master CV facts behind every text and its ATS scores",
+        "tags": [
+          "tailored-cvs"
+        ]
+      }
+    },
     "/api/v1/companies": {
       "get": {
         "operationId": "list_companies_api_v1_companies_get",
@@ -7586,6 +9193,69 @@
           }
         ],
         "summary": "Start a job analysis run (all queued jobs, or the jobs given) on a worker",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/api/v1/runs/cv-generation": {
+      "post": {
+        "operationId": "start_cv_generation_api_v1_runs_cv_generation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/CvGenerationRunRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The task queue is unavailable"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start a CV generation run (tailored CVs and ATS scores) on a worker",
         "tags": [
           "runs"
         ]

@@ -127,6 +127,8 @@ class PipelineInfo:
     status: str
     recommendation: str | None
     visa_status: str | None
+    ats_score: float | None = None
+    tailored_cv_id: uuid.UUID | None = None
 
 
 def _is_empty(value: Any) -> bool:
@@ -428,6 +430,8 @@ class JobService:
                 Application.status,
                 Application.recommendation,
                 Application.visa_status,
+                Application.ats_score,
+                Application.cv_version_id,
             )
             .join(Candidate, Candidate.id == Application.candidate_id)
             .where(Application.job_id.in_(ids), Candidate.slug == DEFAULT_CANDIDATE_SLUG)
@@ -437,9 +441,19 @@ class JobService:
                 status=status.value,
                 recommendation=recommendation.value if recommendation else None,
                 visa_status=visa_status,
+                ats_score=ats_score,
+                tailored_cv_id=cv_version_id,
             )
-            for job_id, status, recommendation, visa_status in rows
+            for job_id, status, recommendation, visa_status, ats_score, cv_version_id in rows
         }
+
+    def default_application(self, job: Job) -> Application | None:
+        """The default candidate's application for ``job``."""
+        return self._session.scalar(
+            select(Application)
+            .join(Candidate, Candidate.id == Application.candidate_id)
+            .where(Application.job_id == job.id, Candidate.slug == DEFAULT_CANDIDATE_SLUG)
+        )
 
     def latest_analysis(self, job: Job) -> JobAnalysis | None:
         """The default candidate's most recent analysis of ``job``."""
@@ -491,18 +505,22 @@ class JobService:
             )
             if recommendation is not None
         }
-        awaiting = self._session.scalar(
-            self._visible(
+
+        def applications(*conditions: Any) -> int:
+            query = self._visible(
                 select(func.count())
                 .select_from(Application)
                 .join(Job, Job.id == Application.job_id)
                 .join(Candidate, Candidate.id == Application.candidate_id)
             ).where(
                 Candidate.slug == DEFAULT_CANDIDATE_SLUG,
-                Application.status == ApplicationStatus.DISCOVERED,
                 Job.duplicate_of_id.is_(None),
+                *conditions,
             )
-        )
+            return self._session.scalar(query) or 0
+
+        awaiting = applications(Application.status == ApplicationStatus.DISCOVERED)
+        qualified = Application.status == ApplicationStatus.QUALIFIED
         return {
             "total": count(),
             "found_today": count(primary.c.discovered_at >= today_start),
@@ -517,7 +535,15 @@ class JobService:
                 key: by_recommendation.get(key, 0) for key in ("APPLY", "REVIEW", "SKIP")
             },
             "last_analysis": self._last_run(RunType.ANALYSIS),
-            "awaiting_analysis": awaiting or 0,
+            "awaiting_analysis": awaiting,
+            "cv_generated": applications(Application.cv_version_id.is_not(None)),
+            "awaiting_cv": applications(
+                qualified, Application.recommendation == Recommendation.APPLY
+            ),
+            "awaiting_cv_review": applications(
+                qualified, Application.recommendation == Recommendation.REVIEW
+            ),
+            "last_cv_generation": self._last_run(RunType.CV_GENERATION),
         }
 
     def _last_run(self, run_type: RunType) -> AutomationRun | None:

@@ -29,11 +29,11 @@ from app.ats.ledger import Violation
 from app.ats.scoring import (
     CeilingReport,
     Feedback,
-    Recommendation,
+    Gap,
     ScoreReport,
     ceiling,
     feedback,
-    recommendations,
+    gaps,
     score_document,
 )
 from app.ats.tailoring import Assembly, TailoringOutput, as_output, assemble, master_output
@@ -102,7 +102,7 @@ class OptimisationResult:
     ceiling: CeilingReport
     iterations: tuple[Iteration, ...]
     best: Iteration | None  # None: nothing to store (a failed first call)
-    recommendations: tuple[Recommendation, ...]
+    gaps: tuple[Gap, ...]  # what only the candidate can close, in the master CV
 
     @property
     def calls(self) -> int:
@@ -136,7 +136,7 @@ def optimise(
     reachable = ceiling(master, requirements, weights=weights)
     start = Iteration(0, DocumentKind.MASTER, IterationStatus.SCORED, copy, baseline)
     iterations: list[Iteration] = [start]
-    advice = tuple(recommendations(master, requirements))
+    advice = tuple(gaps(master, requirements))
 
     def finish(reason: StopReason, best: Iteration | None) -> OptimisationResult:
         return OptimisationResult(
@@ -145,7 +145,7 @@ def optimise(
             ceiling=reachable,
             iterations=tuple(iterations),
             best=best,
-            recommendations=advice,
+            gaps=advice,
         )
 
     target_tenths, ceiling_tenths, eps_tenths = _tenths(target), _tenths(reachable.score), 5

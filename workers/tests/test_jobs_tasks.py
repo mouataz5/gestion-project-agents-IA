@@ -8,14 +8,22 @@ from sqlalchemy import func, select
 from app.core.config import REPO_ROOT, Settings
 from app.core.tasks import TaskName
 from app.main import create_app
-from app.models import AuditLog, Job, JobAnalysis, RunStatus, RunTrigger, RunType
+from app.models import (
+    AuditLog,
+    CvTailoring,
+    Job,
+    JobAnalysis,
+    RunStatus,
+    RunTrigger,
+    RunType,
+)
 from app.services.candidate_profile import CandidateService
 from app.services.companies import CompanyService
 from app.services.master_cv import MasterCvService
 from app.services.runs import RunService
 from job_agent_workers.celery_app import celery_app
 from job_agent_workers.runtime import WorkerRuntime
-from job_agent_workers.tasks.jobs import run_analysis, run_discovery
+from job_agent_workers.tasks.jobs import run_analysis, run_cv_generation, run_discovery
 
 SAMPLE_CV = REPO_ROOT / "playwright" / "fixtures" / "sample-cv.docx"
 
@@ -37,6 +45,11 @@ def test_the_discovery_task_is_registered() -> None:
 @pytest.mark.feature("job-analysis")
 def test_the_analysis_task_is_registered() -> None:
     assert TaskName.RUN_ANALYSIS.value in celery_app.tasks
+
+
+@pytest.mark.feature("cv-tailoring")
+def test_the_cv_generation_task_is_registered() -> None:
+    assert TaskName.RUN_CV_GENERATION.value in celery_app.tasks
 
 
 @pytest.mark.integration
@@ -108,3 +121,35 @@ def test_the_worker_runs_a_recorded_analysis(worker_runtime: WorkerRuntime) -> N
             select(AuditLog.action).where(AuditLog.entity_id == str(run_id))
         ).all()
         assert set(actions) == {"run.started", "run.finished"}
+
+
+@pytest.mark.integration
+@pytest.mark.feature("cv-tailoring")
+def test_the_worker_runs_a_recorded_cv_generation(worker_runtime: WorkerRuntime) -> None:
+    run_discovery.apply(args=[str(_pending_discovery(worker_runtime))]).get()
+    with worker_runtime.session_factory() as session:
+        candidate, _ = CandidateService(
+            session, candidate_dir=worker_runtime.settings.candidate_dir
+        ).get_or_import_default()
+        cvs = MasterCvService(session, worker_runtime.storage)
+        version = cvs.upload(candidate, filename="sample-cv.docx", data=SAMPLE_CV.read_bytes())
+        cvs.confirm(candidate, version.id)
+        analysis = RunService(session).create_run(run_type=RunType.ANALYSIS, trigger=RunTrigger.API)
+        session.commit()
+        analysis_id = analysis.id
+    run_analysis.apply(args=[str(analysis_id)]).get()
+    with worker_runtime.session_factory() as session:
+        run = RunService(session).create_run(run_type=RunType.CV_GENERATION, trigger=RunTrigger.API)
+        session.commit()
+        run_id = run.id
+
+    result = run_cv_generation.apply(args=[str(run_id)]).get()
+
+    assert result["status"] == "SUCCEEDED"
+    assert result["cv_generated"] == 2
+    with worker_runtime.session_factory() as session:
+        run = RunService(session).get_run(run_id)
+        assert run.status is RunStatus.SUCCEEDED
+        assert (run.cv_generated, run.jobs_processed) == (2, 2)
+        assert run.task_id
+        assert session.scalar(select(func.count()).select_from(CvTailoring)) == 2

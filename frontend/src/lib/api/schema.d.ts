@@ -193,6 +193,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/candidate/tailored-cvs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Tailored CV versions, newest first (optionally for one job) */
+    get: operations["list_tailored_cvs_api_v1_candidate_tailored_cvs_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/candidate/tailored-cvs/{version_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** A tailored CV with the master CV facts behind every text and its ATS scores */
+    get: operations["get_tailored_cv_api_v1_candidate_tailored_cvs__version_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/companies": {
     parameters: {
       query?: never;
@@ -442,6 +476,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/runs/cv-generation": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Start a CV generation run (tailored CVs and ATS scores) on a worker */
+    post: operations["start_cv_generation_api_v1_runs_cv_generation_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/runs/diagnostic": {
     parameters: {
       query?: never;
@@ -550,7 +601,10 @@ export interface components {
      * @enum {string}
      */
     AnalysisStatus: "SUCCEEDED" | "REFUSED" | "FAILED";
-    /** AnalysisUsage */
+    /**
+     * AnalysisUsage
+     * @description Tokens of one model call (or the sum of several).
+     */
     AnalysisUsage: {
       /** Cache Creation Input Tokens */
       cache_creation_input_tokens: number;
@@ -606,6 +660,54 @@ export interface components {
       | "WITHDRAWN"
       | "BLOCKED"
       | "MANUAL_ACTION_REQUIRED";
+    /**
+     * AtsIterationRead
+     * @description One version a tailoring looked at: iteration 0 is the master CV.
+     */
+    AtsIterationRead: {
+      /**
+       * Assessed Weight
+       * @description Points of 100 the posting let the score assess
+       */
+      assessed_weight: number | null;
+      /** Components */
+      components: components["schemas"]["ComponentScore"][];
+      document_kind: components["schemas"]["DocumentKind"];
+      /** Duration Ms */
+      duration_ms: number | null;
+      /** Error Code */
+      error_code: string | null;
+      /** Error Message */
+      error_message: string | null;
+      /** Iteration */
+      iteration: number;
+      /** Keywords */
+      keywords: components["schemas"]["KeywordResult"][];
+      /** Penalty */
+      penalty: number;
+      /** Repairs Count */
+      repairs_count: number;
+      /** Request Id */
+      request_id: string | null;
+      /**
+       * Score
+       * @description None for a version the guard rejected
+       */
+      score: number | null;
+      /**
+       * Selected
+       * @description The version that was stored
+       */
+      selected: boolean;
+      /** Served Model */
+      served_model: string | null;
+      status: components["schemas"]["IterationStatus"];
+      /** Stuffing */
+      stuffing: components["schemas"]["StuffingSignal"][];
+      usage: components["schemas"]["AnalysisUsage"];
+      /** Violations */
+      violations: components["schemas"]["Violation"][];
+    };
     /**
      * AtsType
      * @enum {string}
@@ -673,6 +775,12 @@ export interface components {
        */
       file: string;
     };
+    /**
+     * CallStatus
+     * @description Outcome of a model task (requirement extraction, tailoring).
+     * @enum {string}
+     */
+    CallStatus: "SUCCEEDED" | "REFUSED" | "FAILED";
     /** CandidateProfile */
     "CandidateProfile-Input": {
       application_defaults?: components["schemas"]["ApplicationDefaults-Input"];
@@ -761,6 +869,23 @@ export interface components {
        */
       profile_version: number;
     };
+    /**
+     * Category
+     * @enum {string}
+     */
+    Category:
+      | "programming_language"
+      | "framework"
+      | "ai_ml"
+      | "data"
+      | "database"
+      | "cloud"
+      | "devops"
+      | "tool"
+      | "methodology"
+      | "spoken_language"
+      | "domain"
+      | "soft_skill";
     /** CompanyCreate */
     CompanyCreate: {
       /**
@@ -878,6 +1003,24 @@ export interface components {
       name: string;
       status: components["schemas"]["ComponentStatus"];
     };
+    /** ComponentScore */
+    ComponentScore: {
+      /** Applicable */
+      applicable: boolean;
+      /**
+       * Details
+       * @default {}
+       */
+      details: {
+        [key: string]: unknown;
+      };
+      /** Name */
+      name: string;
+      /** Score */
+      score: number | null;
+      /** Weight */
+      weight: number;
+    };
     /**
      * ComponentStatus
      * @enum {string}
@@ -938,6 +1081,21 @@ export interface components {
       phones: string[];
     };
     /**
+     * CvGenerationRunRequest
+     * @description Which jobs to tailor a CV for: the qualified APPLY jobs by default (REVIEW too with
+     *     CV_GENERATION_INCLUDE_REVIEW), or the given jobs (re-tailoring).
+     */
+    CvGenerationRunRequest: {
+      /**
+       * Force
+       * @description Tailor again even if nothing changed
+       * @default false
+       */
+      force: boolean;
+      /** Job Ids */
+      job_ids?: string[] | null;
+    };
+    /**
      * CvKind
      * @enum {string}
      */
@@ -962,7 +1120,7 @@ export interface components {
      * CvStatus
      * @enum {string}
      */
-    CvStatus: "PARSED" | "CONFIRMED" | "SUPERSEDED";
+    CvStatus: "PARSED" | "CONFIRMED" | "SUPERSEDED" | "GENERATED";
     /** CvVersionDetail */
     CvVersionDetail: {
       /** Confirmed At */
@@ -1081,6 +1239,11 @@ export interface components {
        */
       text: string;
     };
+    /**
+     * DocumentKind
+     * @enum {string}
+     */
+    DocumentKind: "MASTER" | "TAILORED";
     /** EducationEntry */
     "EducationEntry-Input": {
       /** Bullets */
@@ -1108,6 +1271,28 @@ export interface components {
       institution: string | null;
       /** Location */
       location: string | null;
+    };
+    /**
+     * EducationLevel
+     * @enum {string}
+     */
+    EducationLevel: "NONE_STATED" | "BACHELOR" | "MASTER" | "PHD";
+    /** EducationRequirement */
+    EducationRequirement: {
+      /**
+       * Equivalent Experience Accepted
+       * @default false
+       */
+      equivalent_experience_accepted: boolean;
+      /**
+       * Fields
+       * @default []
+       */
+      fields: string[];
+      /** @default NONE_STATED */
+      level: components["schemas"]["EducationLevel"];
+      /** Quote */
+      quote: string | null;
     };
     /**
      * EmailImportRequest
@@ -1199,6 +1384,28 @@ export interface components {
       /** Title */
       title: string;
     };
+    /**
+     * Gap
+     * @description A gap only the candidate can close, in the master CV, and only if it is true.
+     */
+    Gap: {
+      importance: components["schemas"]["Importance"] | null;
+      kind: components["schemas"]["GapKind"];
+      /** Message */
+      message: string;
+      /** Subject */
+      subject: string;
+      /**
+       * Terms
+       * @default []
+       */
+      terms: string[];
+    };
+    /**
+     * GapKind
+     * @enum {string}
+     */
+    GapKind: "MISSING_KEYWORD" | "NOT_DEMONSTRATED" | "RESPONSIBILITY" | "TITLE_TERMS";
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -1224,6 +1431,16 @@ export interface components {
       /** Nationality */
       nationality: string | null;
     };
+    /**
+     * Importance
+     * @enum {string}
+     */
+    Importance: "REQUIRED" | "PREFERRED";
+    /**
+     * IterationStatus
+     * @enum {string}
+     */
+    IterationStatus: "SCORED" | "REPAIRED" | "REJECTED" | "FAILED" | "REFUSED";
     /**
      * JobAnalysisRead
      * @description One analysis: provenance, cost, the verified result and the decision with its reasons.
@@ -1305,6 +1522,11 @@ export interface components {
       application_url: string | null;
       /** Applications */
       applications: components["schemas"]["JobApplicationRead"][];
+      /**
+       * Ats Score
+       * @description ATS score of the current tailored CV (Phase 5)
+       */
+      ats_score: number | null;
       ats_type: components["schemas"]["AtsType"];
       /** Canonical Url */
       canonical_url: string | null;
@@ -1390,6 +1612,13 @@ export interface components {
       source: string;
       /** Source Job Id */
       source_job_id: string | null;
+      /**
+       * Tailored Cv Id
+       * @description The current tailored CV for this job
+       */
+      tailored_cv_id: string | null;
+      /** @description The latest CV tailoring attempt for this job */
+      tailoring: components["schemas"]["TailoringRead"] | null;
       /** Title */
       title: string;
       /** Visa Information */
@@ -1476,6 +1705,11 @@ export interface components {
       application_status: components["schemas"]["ApplicationStatus"] | null;
       /** Application Url */
       application_url: string | null;
+      /**
+       * Ats Score
+       * @description ATS score of the current tailored CV (Phase 5)
+       */
+      ats_score: number | null;
       ats_type: components["schemas"]["AtsType"];
       /** Canonical Url */
       canonical_url: string | null;
@@ -1533,11 +1767,57 @@ export interface components {
       source: string;
       /** Source Job Id */
       source_job_id: string | null;
+      /**
+       * Tailored Cv Id
+       * @description The current tailored CV for this job
+       */
+      tailored_cv_id: string | null;
       /** Title */
       title: string;
       /** @description Visa sponsorship status from the latest analysis */
       visa_status: components["schemas"]["VisaStatus"] | null;
       window_status: components["schemas"]["WindowStatus"];
+    };
+    /** JobRequirements */
+    JobRequirements: {
+      /**
+       * Discarded
+       * @default []
+       */
+      discarded: string[];
+      /**
+       * @default {
+       *       "equivalent_experience_accepted": false,
+       *       "fields": [],
+       *       "level": "NONE_STATED"
+       *     }
+       */
+      education: components["schemas"]["EducationRequirement"];
+      /**
+       * Keywords
+       * @default []
+       */
+      keywords: components["schemas"]["Keyword"][];
+      /** Min Years */
+      min_years: number | null;
+      /**
+       * Responsibilities
+       * @default []
+       */
+      responsibilities: string[];
+      /** Seniority */
+      seniority: string;
+      /** Title */
+      title: string;
+      /** Title Terms */
+      title_terms: string[];
+      /**
+       * Version
+       * @default job-requirements.v1
+       */
+      version: string;
+      /** Years Quote */
+      years_quote: string | null;
     };
     /** JobSourceRead */
     JobSourceRead: {
@@ -1586,6 +1866,16 @@ export interface components {
        * @description Queued jobs not analysed yet (DISCOVERED)
        */
       awaiting_analysis: number;
+      /**
+       * Awaiting Cv
+       * @description Qualified APPLY jobs without a tailored CV yet
+       */
+      awaiting_cv: number;
+      /**
+       * Awaiting Cv Review
+       * @description Qualified REVIEW jobs without a tailored CV yet
+       */
+      awaiting_cv_review: number;
       /** By Recommendation */
       by_recommendation: {
         [key: string]: number;
@@ -1594,6 +1884,11 @@ export interface components {
       by_source: {
         [key: string]: number;
       };
+      /**
+       * Cv Generated
+       * @description Jobs with a current tailored CV
+       */
+      cv_generated: number;
       /**
        * Duplicates
        * @description Duplicate listings linked to a primary record
@@ -1610,6 +1905,7 @@ export interface components {
        */
       in_window: number;
       last_analysis: components["schemas"]["LastRun"] | null;
+      last_cv_generation: components["schemas"]["LastRun"] | null;
       last_discovery: components["schemas"]["LastRun"] | null;
       /**
        * Qualified
@@ -1625,6 +1921,55 @@ export interface components {
       unknown_date: number;
       window: components["schemas"]["WindowRead"];
     };
+    /** Keyword */
+    Keyword: {
+      category: components["schemas"]["Category"] | null;
+      importance: components["schemas"]["Importance"];
+      /** Key */
+      key: string;
+      /** Quote */
+      quote: string | null;
+      /** Sources */
+      sources: components["schemas"]["KeywordSource"][];
+      /** Term */
+      term: string;
+    };
+    /**
+     * KeywordClass
+     * @enum {string}
+     */
+    KeywordClass: "MATCHED" | "AVAILABLE" | "MISSING" | "UNSUPPORTED";
+    /** KeywordResult */
+    KeywordResult: {
+      category: components["schemas"]["Category"] | null;
+      /** Demonstrated */
+      demonstrated: boolean;
+      /** Evidence */
+      evidence: string[];
+      importance: components["schemas"]["Importance"];
+      /** Key */
+      key: string;
+      /** Listed */
+      listed: boolean;
+      /** Present */
+      present: boolean;
+      /** Prominent */
+      prominent: boolean;
+      /** Score */
+      score: number;
+      status: components["schemas"]["KeywordClass"];
+      /** Supported */
+      supported: boolean;
+      /** Technical */
+      technical: boolean;
+      /** Term */
+      term: string;
+    };
+    /**
+     * KeywordSource
+     * @enum {string}
+     */
+    KeywordSource: "LISTED" | "LANGUAGE" | "SCANNED" | "EXTRACTED";
     /** LanguageCheck */
     LanguageCheck: {
       /** Candidate Level */
@@ -1650,6 +1995,8 @@ export interface components {
        * Format: date-time
        */
       created_at: string;
+      /** Cv Generated */
+      cv_generated: number;
       /** Finished At */
       finished_at: string | null;
       /**
@@ -1664,6 +2011,36 @@ export interface components {
       /** Jobs Qualified */
       jobs_qualified: number;
       status: components["schemas"]["RunStatus"];
+    };
+    /** LedgerEntry */
+    LedgerEntry: {
+      /** Keywords */
+      keywords: string[];
+      origin: components["schemas"]["Origin"];
+      /**
+       * Path
+       * @description In the tailored structure: "experiences.0.bullets.0"
+       */
+      path: string;
+      /** Sources */
+      sources: components["schemas"]["LedgerSource"][];
+    };
+    /**
+     * LedgerSource
+     * @description A fact of the base (master) CV, resolved from its source id.
+     */
+    LedgerSource: {
+      /** Id */
+      id: string;
+      /**
+       * Label
+       * @description For people: "Experience 1 · bullet 1"
+       */
+      label: string;
+      /** Path */
+      path: string | null;
+      /** Text */
+      text: string;
     };
     /** LivenessResponse */
     LivenessResponse: {
@@ -1696,6 +2073,11 @@ export interface components {
       /** Country Code */
       country_code: string | null;
     };
+    /**
+     * Origin
+     * @enum {string}
+     */
+    Origin: "VERBATIM" | "REWRITTEN" | "REVERTED" | "COPIED" | "SELECTED" | "RETITLED";
     /** OtherSection */
     "OtherSection-Input": {
       /** Heading */
@@ -1892,6 +2274,15 @@ export interface components {
      * @enum {string}
      */
     RemoteStatus: "REMOTE" | "HYBRID" | "ONSITE" | "UNKNOWN";
+    /** Repair */
+    Repair: {
+      /** Path */
+      path: string;
+      /** Rejected Text */
+      rejected_text: string;
+      /** Violations */
+      violations: components["schemas"]["Violation"][];
+    };
     /** RunCreated */
     RunCreated: {
       /**
@@ -2186,14 +2577,46 @@ export interface components {
       language: string;
       level: components["schemas"]["LanguageLevel"];
     };
+    /**
+     * StopReason
+     * @enum {string}
+     */
+    StopReason:
+      | "TARGET_REACHED"
+      | "ONLY_UNSUPPORTED_GAINS"
+      | "NO_IMPROVEMENT"
+      | "MAX_ITERATIONS"
+      | "GUARD_REJECTED"
+      | "PROVIDER_ERROR";
+    /**
+     * StuffingCode
+     * @enum {string}
+     */
+    StuffingCode: "REPEATED_KEYWORD" | "SKILL_LIST" | "DENSE_SUMMARY" | "DENSE_BULLET";
+    /** StuffingSignal */
+    StuffingSignal: {
+      code: components["schemas"]["StuffingCode"];
+      /** Detail */
+      detail: string;
+    };
     /** SystemConfig */
     SystemConfig: {
       /** Analysis Max Jobs Per Run */
       analysis_max_jobs_per_run: number;
       /** Ats Max Iterations */
       ats_max_iterations: number;
+      /** Ats Score Weights */
+      ats_score_weights: {
+        [key: string]: number;
+      };
+      /** Ats Scoring Version */
+      ats_scoring_version: string;
       /** Ats Target Score */
       ats_target_score: number;
+      /** Cv Generation Include Review */
+      cv_generation_include_review: boolean;
+      /** Cv Generation Max Jobs Per Run */
+      cv_generation_max_jobs_per_run: number;
       /** Daily Run Time */
       daily_run_time: string;
       /** Job Lookback Hours */
@@ -2262,6 +2685,170 @@ export interface components {
       components: components["schemas"]["ComponentHealth"][];
       status: components["schemas"]["ComponentStatus"];
     };
+    /** TailoredCvDetail */
+    TailoredCvDetail: {
+      /** Application Id */
+      application_id: string | null;
+      /** Ats Score */
+      ats_score: number | null;
+      /** Base Version Id */
+      base_version_id: string | null;
+      /** Company */
+      company: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Extracted Text */
+      extracted_text: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Job Id */
+      job_id: string | null;
+      /** Job Title */
+      job_title: string | null;
+      /** Ledger */
+      ledger: components["schemas"]["LedgerEntry"][];
+      /** Repairs */
+      repairs: components["schemas"]["Repair"][];
+      /**
+       * Stale
+       * @description Built from a master CV that is no longer the active one
+       */
+      stale: boolean;
+      status: components["schemas"]["CvStatus"];
+      structure: components["schemas"]["ParsedCV-Output"];
+      tailoring: components["schemas"]["TailoringRead"] | null;
+      /** Unused Sources */
+      unused_sources: components["schemas"]["LedgerSource"][];
+      /** Version */
+      version: number;
+    };
+    /** TailoredCvSummary */
+    TailoredCvSummary: {
+      /** Application Id */
+      application_id: string | null;
+      /** Ats Score */
+      ats_score: number | null;
+      /** Base Version Id */
+      base_version_id: string | null;
+      /** Company */
+      company: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Job Id */
+      job_id: string | null;
+      /** Job Title */
+      job_title: string | null;
+      /**
+       * Stale
+       * @description Built from a master CV that is no longer the active one
+       */
+      stale: boolean;
+      status: components["schemas"]["CvStatus"];
+      /** Version */
+      version: number;
+    };
+    /**
+     * TailoringRead
+     * @description One tailoring attempt: provenance, scores against the target and the supported ceiling,
+     *     why it stopped, the gaps only the candidate can close, and every version it scored.
+     */
+    TailoringRead: {
+      /** Assessed Weight */
+      assessed_weight: number | null;
+      /**
+       * Baseline Score
+       * @description The master CV's score
+       */
+      baseline_score: number | null;
+      /** Best Iteration */
+      best_iteration: number | null;
+      /**
+       * Ceiling Score
+       * @description The best score a version built only from the master CV can reach
+       */
+      ceiling_score: number | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Cv Version Id */
+      cv_version_id: string | null;
+      /** Duration Ms */
+      duration_ms: number | null;
+      /** Error Code */
+      error_code: string | null;
+      /** Error Message */
+      error_message: string | null;
+      /** Fallback Used */
+      fallback_used: boolean;
+      /**
+       * Final Score
+       * @description The stored version's score
+       */
+      final_score: number | null;
+      /** Gaps */
+      gaps: components["schemas"]["Gap"][];
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /**
+       * Is Mock
+       * @description Produced offline by the mock provider, not by a model
+       */
+      is_mock: boolean;
+      /** Iterations */
+      iterations: components["schemas"]["AtsIterationRead"][];
+      /** Iterations Used */
+      iterations_used: number;
+      /** Max Iterations */
+      max_iterations: number;
+      prompt: components["schemas"]["PromptInfo"];
+      /** Provider */
+      provider: string;
+      /** Requested Model */
+      requested_model: string;
+      requirements: components["schemas"]["JobRequirements"];
+      /** Run Id */
+      run_id: string | null;
+      /** Scoring Version */
+      scoring_version: string;
+      /** Served Model */
+      served_model: string | null;
+      /**
+       * Stale
+       * @description Built from a master CV that is no longer the active one
+       */
+      stale: boolean;
+      status: components["schemas"]["CallStatus"];
+      stop_reason: components["schemas"]["StopReason"] | null;
+      /**
+       * Target Score
+       * @description A target for the loop, never a promise
+       */
+      target_score: number;
+      usage: components["schemas"]["AnalysisUsage"];
+      /** Weights */
+      weights: {
+        [key: string]: number;
+      };
+    };
     /** TargetCountries */
     "TargetCountries-Input": {
       /** Primary */
@@ -2323,6 +2910,45 @@ export interface components {
       /** Error Type */
       type: string;
     };
+    /** Violation */
+    Violation: {
+      code: components["schemas"]["ViolationCode"];
+      /** Detail */
+      detail: string;
+      /** Path */
+      path: string | null;
+    };
+    /**
+     * ViolationCode
+     * @enum {string}
+     */
+    ViolationCode:
+      | "SOURCE_INVALID"
+      | "UNSUPPORTED_TECHNOLOGY"
+      | "UNSUPPORTED_NUMBER"
+      | "UNSUPPORTED_TERM"
+      | "UNSUPPORTED_CLAIM"
+      | "NEW_CONTENT"
+      | "TEXT_TOO_LONG"
+      | "EMPTY_TEXT"
+      | "CONTACT_CHANGED"
+      | "EXPERIENCE_MISSING"
+      | "EXPERIENCE_ADDED"
+      | "EMPLOYER_CHANGED"
+      | "TITLE_CHANGED"
+      | "DATES_CHANGED"
+      | "LOCATION_CHANGED"
+      | "DETAILS_CHANGED"
+      | "EDUCATION_CHANGED"
+      | "CERTIFICATIONS_CHANGED"
+      | "LANGUAGES_CHANGED"
+      | "SECTIONS_CHANGED"
+      | "PROJECT_UNKNOWN"
+      | "LEDGER_MISSING"
+      | "UNSUPPORTED_SKILL"
+      | "CATEGORY_INVALID"
+      | "UNSUPPORTED_KEYWORD"
+      | "STUFFING";
     /** VisaEvidence */
     VisaEvidence: {
       /** Quote */
@@ -2978,6 +3604,77 @@ export interface operations {
       };
     };
   };
+  list_tailored_cvs_api_v1_candidate_tailored_cvs_get: {
+    parameters: {
+      query?: {
+        job_id?: string | null;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TailoredCvSummary"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_tailored_cv_api_v1_candidate_tailored_cvs__version_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        version_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TailoredCvDetail"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_companies_api_v1_companies_get: {
     parameters: {
       query?: never;
@@ -3529,6 +4226,48 @@ export interface operations {
     requestBody?: {
       content: {
         "application/json": components["schemas"]["AnalysisRunRequest"] | null;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RunCreated"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+      /** @description The task queue is unavailable */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  start_cv_generation_api_v1_runs_cv_generation_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["CvGenerationRunRequest"] | null;
       };
     };
     responses: {

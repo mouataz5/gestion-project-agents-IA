@@ -1,5 +1,5 @@
 """ATS score ``ats-score.v1``: the formula, its golden values on the sample CV, keyword stuffing,
-the supported ceiling, the feedback for the next iteration and the candidate's recommendations."""
+the supported ceiling, the feedback for the next iteration and the candidate's gaps."""
 
 import random
 from collections.abc import Callable
@@ -17,12 +17,12 @@ from app.ats.requirements import (
 )
 from app.ats.scoring import (
     DEFAULT_WEIGHTS,
-    RecommendationKind,
+    GapKind,
     ScoreReport,
     StuffingCode,
     ceiling,
     feedback,
-    recommendations,
+    gaps,
     score_document,
     validate_weights,
 )
@@ -399,7 +399,7 @@ def test_the_penalty_is_5_points_per_signal_and_at_most_15(
     assert report.score == round(unpenalised.score - 15, 1)
 
 
-# --- ceiling, feedback and recommendations -----------------------------------------------------
+# --- ceiling, feedback and gaps -----------------------------------------------------------------
 
 
 def test_no_truthful_version_scores_above_the_ceiling(
@@ -471,28 +471,28 @@ def test_feedback_forbids_genuine_gaps(
     hints = feedback(document, report, master, sandstone)
 
     assert hints.forbidden == ["Deep Learning", "Agentic AI"]
-    assert hints.title_terms == []  # "Research" is not backed: it is a recommendation instead
+    assert hints.title_terms == []  # "Research" is not backed: it is a gap instead
     assert hints.formatting == ["A summary of at most 80 words"]
 
 
-def test_recommendations_for_nova(master: MasterEvidence, nova: JobRequirements) -> None:
-    items = recommendations(master, nova)
+def test_gaps_for_nova(master: MasterEvidence, nova: JobRequirements) -> None:
+    items = gaps(master, nova)
 
     assert [(item.kind, item.subject, item.terms) for item in items] == [
-        (RecommendationKind.NOT_DEMONSTRATED, "Python", []),
-        (RecommendationKind.RESPONSIBILITY, "Design RAG pipelines", ["pipelines"]),
-        (RecommendationKind.RESPONSIBILITY, "Evaluate LLM quality", ["Evaluate", "quality"]),
-        (RecommendationKind.RESPONSIBILITY, "Mentor engineers", ["Mentor", "engineers"]),
+        (GapKind.NOT_DEMONSTRATED, "Python", []),
+        (GapKind.RESPONSIBILITY, "Design RAG pipelines", ["pipelines"]),
+        (GapKind.RESPONSIBILITY, "Evaluate LLM quality", ["Evaluate", "quality"]),
+        (GapKind.RESPONSIBILITY, "Mentor engineers", ["Mentor", "engineers"]),
     ]
     assert all("master CV" in item.message for item in items)
 
 
-def test_recommendations_for_sandstone(master: MasterEvidence, sandstone: JobRequirements) -> None:
-    items = recommendations(master, sandstone)
+def test_gaps_for_sandstone(master: MasterEvidence, sandstone: JobRequirements) -> None:
+    items = gaps(master, sandstone)
 
     assert [(item.kind, item.subject, item.importance, item.terms) for item in items] == [
-        (RecommendationKind.MISSING_KEYWORD, "Deep Learning", Importance.REQUIRED, []),
-        (RecommendationKind.MISSING_KEYWORD, "Agentic AI", Importance.PREFERRED, []),
-        (RecommendationKind.NOT_DEMONSTRATED, "Python", Importance.REQUIRED, []),
-        (RecommendationKind.TITLE_TERMS, "AI Research Engineer", None, ["Research"]),
+        (GapKind.MISSING_KEYWORD, "Deep Learning", Importance.REQUIRED, []),
+        (GapKind.MISSING_KEYWORD, "Agentic AI", Importance.PREFERRED, []),
+        (GapKind.NOT_DEMONSTRATED, "Python", Importance.REQUIRED, []),
+        (GapKind.TITLE_TERMS, "AI Research Engineer", None, ["Research"]),
     ]

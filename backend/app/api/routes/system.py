@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends
 
 from app import __version__
 from app.api.deps import HealthServiceDep, SettingsDep, require_api_token
+from app.ats.scoring import SCORING_VERSION
 from app.core.clock import utcnow
 from app.core.phases import PHASES
 from app.llm.factory import effective_llm_provider
@@ -21,6 +22,7 @@ def system_info(settings: SettingsDep) -> SystemInfo:
     effective = effective_llm_provider(settings)
     summary["llm_effective_provider"] = effective.name
     summary["llm_effective_reason"] = effective.reason
+    summary["ats_scoring_version"] = SCORING_VERSION
     return SystemInfo(
         name=settings.app_name,
         version=__version__,

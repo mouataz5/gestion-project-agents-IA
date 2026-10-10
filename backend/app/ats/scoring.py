@@ -27,7 +27,7 @@ mistaken for a strong match.
 
 The *ceiling* is the best score any document built only from the master CV's evidence can reach
 (``score_document <= ceiling`` for every truthful tailoring): gaps that would need untrue content
-are reported as recommendations, never closed.
+are reported as gaps for the candidate, never closed.
 """
 
 from __future__ import annotations
@@ -162,17 +162,17 @@ class Feedback(_Result):
     violations: list[str] = []  # the previous iteration's guard violations
 
 
-class RecommendationKind(StrEnum):
+class GapKind(StrEnum):
     MISSING_KEYWORD = "MISSING_KEYWORD"
     NOT_DEMONSTRATED = "NOT_DEMONSTRATED"
     RESPONSIBILITY = "RESPONSIBILITY"
     TITLE_TERMS = "TITLE_TERMS"
 
 
-class Recommendation(_Result):
+class Gap(_Result):
     """A gap only the candidate can close, in the master CV, and only if it is true."""
 
-    kind: RecommendationKind
+    kind: GapKind
     subject: str
     importance: Importance | None = None
     terms: list[str] = []
@@ -735,15 +735,15 @@ def feedback(
     )
 
 
-def recommendations(master: MasterEvidence, requirements: JobRequirements) -> list[Recommendation]:
+def gaps(master: MasterEvidence, requirements: JobRequirements) -> list[Gap]:
     """Gaps a truthful tailoring cannot close: the candidate may close them in the master CV,
     if they are true. Never acted on automatically."""
-    items: list[Recommendation] = []
+    items: list[Gap] = []
     for keyword in requirements.keywords:
         if not master.supports(keyword.term):
             items.append(
-                Recommendation(
-                    kind=RecommendationKind.MISSING_KEYWORD,
+                Gap(
+                    kind=GapKind.MISSING_KEYWORD,
                     subject=keyword.term,
                     importance=keyword.importance,
                     message=(
@@ -759,8 +759,8 @@ def recommendations(master: MasterEvidence, requirements: JobRequirements) -> li
             and not master.demonstrates(keyword.term)
         ):
             items.append(
-                Recommendation(
-                    kind=RecommendationKind.NOT_DEMONSTRATED,
+                Gap(
+                    kind=GapKind.NOT_DEMONSTRATED,
                     subject=keyword.term,
                     importance=keyword.importance,
                     message=(
@@ -773,8 +773,8 @@ def recommendations(master: MasterEvidence, requirements: JobRequirements) -> li
         if coverage.value < 1:
             missing = coverage.missing
             items.append(
-                Recommendation(
-                    kind=RecommendationKind.RESPONSIBILITY,
+                Gap(
+                    kind=GapKind.RESPONSIBILITY,
                     subject=coverage.responsibility,
                     terms=missing,
                     message=(
@@ -789,8 +789,8 @@ def recommendations(master: MasterEvidence, requirements: JobRequirements) -> li
     if absent:
         words = term_words(requirements.title, absent)
         items.append(
-            Recommendation(
-                kind=RecommendationKind.TITLE_TERMS,
+            Gap(
+                kind=GapKind.TITLE_TERMS,
                 subject=requirements.title,
                 terms=words,
                 message=(

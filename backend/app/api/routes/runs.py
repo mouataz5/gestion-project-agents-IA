@@ -13,7 +13,14 @@ from app.core.logging import get_logger
 from app.core.tasks import TaskName
 from app.models import RunStatus, RunTrigger, RunType
 from app.schemas.common import ErrorResponse
-from app.schemas.runs import AnalysisRunRequest, RunCreated, RunDetail, RunPage, RunSummary
+from app.schemas.runs import (
+    AnalysisRunRequest,
+    CvGenerationRunRequest,
+    RunCreated,
+    RunDetail,
+    RunPage,
+    RunSummary,
+)
 from app.services.audit import Actor, AuditAction, AuditService
 from app.services.runs import RunService
 
@@ -133,3 +140,20 @@ def start_analysis(
     if request.job_ids is not None:
         parameters["job_ids"] = [str(job_id) for job_id in request.job_ids]
     return _start_run(db, queue, RunType.ANALYSIS, TaskName.RUN_ANALYSIS, parameters)
+
+
+@router.post(
+    "/cv-generation",
+    response_model=RunCreated,
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Start a CV generation run (tailored CVs and ATS scores) on a worker",
+    responses=_QUEUE_UNAVAILABLE,
+)
+def start_cv_generation(
+    db: DbSession, queue: TaskQueueDep, payload: CvGenerationRunRequest | None = None
+) -> RunCreated:
+    request = payload or CvGenerationRunRequest()
+    parameters: dict[str, Any] = {"force": request.force}
+    if request.job_ids is not None:
+        parameters["job_ids"] = [str(job_id) for job_id in request.job_ids]
+    return _start_run(db, queue, RunType.CV_GENERATION, TaskName.RUN_CV_GENERATION, parameters)

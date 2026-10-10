@@ -21,6 +21,8 @@ from app.jobs.types import (
     WindowStatus,
 )
 from app.models import RunStatus
+from app.schemas.ats import TailoringRead
+from app.schemas.common import AnalysisUsage, PromptInfo
 
 MAX_EMAIL_CHARS = 1_000_000
 
@@ -72,6 +74,12 @@ class JobRead(BaseModel):
     )
     visa_status: VisaStatus | None = Field(
         default=None, description="Visa sponsorship status from the latest analysis"
+    )
+    ats_score: float | None = Field(
+        default=None, description="ATS score of the current tailored CV (Phase 5)"
+    )
+    tailored_cv_id: uuid.UUID | None = Field(
+        default=None, description="The current tailored CV for this job"
     )
 
 
@@ -136,18 +144,9 @@ class JobDetail(JobRead):
     analysis: JobAnalysisRead | None = Field(
         default=None, description="The latest analysis of this job for the candidate"
     )
-
-
-class PromptInfo(BaseModel):
-    name: str
-    version: int
-
-
-class AnalysisUsage(BaseModel):
-    input_tokens: int
-    output_tokens: int
-    cache_read_input_tokens: int
-    cache_creation_input_tokens: int
+    tailoring: TailoringRead | None = Field(
+        default=None, description="The latest CV tailoring attempt for this job"
+    )
 
 
 class JobAnalysisRead(BaseModel):
@@ -188,6 +187,7 @@ class LastRun(BaseModel):
     jobs_discovered: int
     jobs_processed: int
     jobs_qualified: int
+    cv_generated: int
 
 
 class JobStats(BaseModel):
@@ -204,6 +204,10 @@ class JobStats(BaseModel):
     by_recommendation: dict[str, int]
     last_analysis: LastRun | None
     awaiting_analysis: int = Field(description="Queued jobs not analysed yet (DISCOVERED)")
+    cv_generated: int = Field(description="Jobs with a current tailored CV")
+    awaiting_cv: int = Field(description="Qualified APPLY jobs without a tailored CV yet")
+    awaiting_cv_review: int = Field(description="Qualified REVIEW jobs without a tailored CV yet")
+    last_cv_generation: LastRun | None
 
 
 class JobImportRequest(BaseModel):

@@ -20,9 +20,8 @@ from app.core.errors import ConflictError
 from app.jobs.types import PostingDateStatus
 from app.jobs.window import PostingWindow
 from app.models import Job, JobAnalysis
-from app.schemas.common import ErrorResponse
+from app.schemas.common import AnalysisUsage, ErrorResponse, PromptInfo
 from app.schemas.jobs import (
-    AnalysisUsage,
     EmailImportRequest,
     EmailImportResult,
     JobAnalysisRead,
@@ -35,7 +34,6 @@ from app.schemas.jobs import (
     JobRead,
     JobStats,
     LastRun,
-    PromptInfo,
     WindowRead,
 )
 from app.services.applications import ApplicationService
@@ -43,6 +41,7 @@ from app.services.audit import Actor, AuditAction, AuditService
 from app.services.job_imports import ImportResult, JobImportService
 from app.services.job_sources import JobSourceService
 from app.services.jobs import JobFilters, JobService, PipelineInfo, WindowFilter
+from app.services.tailored_cvs import TailoredCvService
 
 router = APIRouter(prefix="/jobs", tags=["jobs"], dependencies=[Depends(require_api_token)])
 
@@ -76,6 +75,8 @@ def _pipeline(info: PipelineInfo | None) -> dict[str, Any]:
         "application_status": info.status if info else None,
         "recommendation": info.recommendation if info else None,
         "visa_status": info.visa_status if info else None,
+        "ats_score": info.ats_score if info else None,
+        "tailored_cv_id": info.tailored_cv_id if info else None,
     }
 
 
@@ -190,11 +191,15 @@ def job_stats(db: DbSession, settings: SettingsDep) -> JobStats:
     stats = _service(db, settings).stats(window=posting_window, today_start=today_start)
     last_discovery = stats.pop("last_discovery")
     last_analysis = stats.pop("last_analysis")
+    last_cv_generation = stats.pop("last_cv_generation")
     return JobStats(
         **stats,
         window=_window_read(posting_window, settings),
         last_discovery=LastRun.model_validate(last_discovery) if last_discovery else None,
         last_analysis=LastRun.model_validate(last_analysis) if last_analysis else None,
+        last_cv_generation=(
+            LastRun.model_validate(last_cv_generation) if last_cv_generation else None
+        ),
     )
 
 
@@ -212,6 +217,12 @@ def get_job(job_id: uuid.UUID, db: DbSession, settings: SettingsDep) -> JobDetai
     duplicates = service.duplicates_of(job)
     applications = ApplicationService(db).for_job(job)
     statuses = service.pipeline_statuses([job.id])
+    application = service.default_application(job)
+    tailored = TailoredCvService(db)
+    tailoring = tailored.latest_tailoring(application) if application is not None else None
+    active_master = (
+        tailored.active_master_id(application.candidate_id) if application is not None else None
+    )
     return _model(
         JobDetail,
         job,
@@ -222,6 +233,9 @@ def get_job(job_id: uuid.UUID, db: DbSession, settings: SettingsDep) -> JobDetai
         duplicates=[JobListing.model_validate(item) for item in duplicates],
         applications=[JobApplicationRead.model_validate(item) for item in applications],
         analysis=_analysis_read(service.latest_analysis(job)),
+        tailoring=(
+            tailored.tailoring_read(tailoring, active_master) if tailoring is not None else None
+        ),
     )
 
 

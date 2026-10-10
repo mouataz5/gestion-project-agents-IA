@@ -69,6 +69,16 @@ class RunCreated(BaseModel):
     task_id: str | None
 
 
+class CvGenerationRunRequest(BaseModel):
+    """Which jobs to tailor a CV for: the qualified APPLY jobs by default (REVIEW too with
+    CV_GENERATION_INCLUDE_REVIEW), or the given jobs (re-tailoring)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    job_ids: list[uuid.UUID] | None = Field(default=None, max_length=200)
+    force: bool = Field(default=False, description="Tailor again even if nothing changed")
+
+
 class AnalysisRunRequest(BaseModel):
     """Which jobs to analyse: the queued ones by default, or the given jobs (re-analysis)."""
 

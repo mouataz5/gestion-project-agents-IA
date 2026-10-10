@@ -43,7 +43,13 @@ PHASES: tuple[Phase, ...] = (
         "Claude provider with structured outputs, visa classification with verbatim evidence, "
         "CV-backed matching and APPLY / REVIEW / SKIP rules",
     ),
-    Phase(5, "ATS engine", "planned", "Keyword extraction, ATS scoring, truthful tailoring loop"),
+    Phase(
+        5,
+        "ATS engine",
+        "in_progress",
+        "Grounded job requirements, deterministic ATS scoring with a supported ceiling, and a "
+        "truthful tailoring loop with an evidence ledger",
+    ),
     Phase(6, "CV documents", "planned", "ATS-friendly DOCX and PDF generation"),
     Phase(7, "Application answers", "planned", "Question extraction and grounded answers"),
     Phase(8, "Browser automation", "planned", "Playwright, mock ATS sites, ATS adapters"),

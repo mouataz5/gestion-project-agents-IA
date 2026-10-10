@@ -30,6 +30,10 @@ class SystemConfig(BaseModel):
     )
     llm_effective_reason: str | None = None
     analysis_max_jobs_per_run: int
+    ats_score_weights: dict[str, int]
+    ats_scoring_version: str
+    cv_generation_max_jobs_per_run: int
+    cv_generation_include_review: bool
     notification_channels: list[str]
     storage_backend: str
     max_upload_mb: int
