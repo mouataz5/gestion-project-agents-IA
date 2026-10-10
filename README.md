@@ -4,9 +4,10 @@ A self-hosted platform that discovers newly posted AI/ML/GenAI jobs, analyses th
 sponsorship, relevance), builds a **truthful**, ATS-optimised CV for each qualifying job, prepares
 the application in the company's own ATS — and **stops before submitting** until you approve.
 
-> **Status: Phases 1–4 complete** — foundation, candidate profile & master CV, job discovery and
-> **job analysis** (visa sponsorship, CV match, APPLY / REVIEW / SKIP). Next: Phase 5, the ATS
-> engine. The remaining phases are delivered in the order 5 → 6 → 10 → 7 → 8 → 9 → 11, the fastest
+> **Status: Phases 1–5 complete** — foundation, candidate profile & master CV, job discovery, job
+> analysis (visa sponsorship, CV match, APPLY / REVIEW / SKIP) and the **ATS engine** (a truthful
+> tailored CV per job, scored and improved towards a target). Next: Phase 6, the CV documents
+> (DOCX/PDF). The remaining phases are delivered in the order 6 → 10 → 7 → 8 → 9 → 11, the fastest
 > route to real applications. See [`progress.md`](progress.md) and the
 > [implementation plan](docs/implementation-plan.md).
 
@@ -211,6 +212,55 @@ Claude, never your name, contact details or employer names
 ([security](docs/security.md#72-job-analysis-phase-4)). The server-side **refusal fallback** is
 enabled by default (`LLM_REFUSAL_FALLBACK=true`): if Claude declines a posting, the request is retried
 on the fallback model Anthropic designates, and the analysis records which model answered.
+
+## Tailor your CV (Phase 5)
+
+1. **Analyse the jobs first** (Phase 4 above). Jobs recommended **Apply** are tailored by default;
+   a **Review** job is tailored when you click **Tailor CV** on its page (or with
+   `CV_GENERATION_INCLUDE_REVIEW=true`). **Skip** jobs never are.
+2. Click **Tailor CVs** on the dashboard. Each waiting job (up to `CV_GENERATION_MAX_JOBS_PER_RUN`
+   per run, 10 by default) gets its own CV version, and the run timeline shows each score.
+3. Open a job to see its **Tailored CV & ATS** card:
+   - the **ATS score** of your master CV and of the tailored version, the **target** (95 by default)
+     and the score **reachable** with what your CV actually says;
+   - **why it stopped**: target reached, only unsupported gains left, no further improvement, or the
+     iteration limit;
+   - the **score breakdown** (keywords, skills, experience, responsibilities, title, education,
+     structure) and the job's keywords: in this CV, in your master CV but unused, and **missing**;
+   - **gaps only you can close**: add them to your master CV *only if they are true*.
+
+   **Re-tailor** runs it again, for example after you confirm a new master CV (older tailored CVs
+   are then marked as built from an earlier master).
+4. **Open the tailored CV** to check it line by line. Every summary and bullet shows where it comes
+   from in your master CV ("Experience 1 · bullet 1"), with the original text one click away, and the
+   page lists the facts not used and any rewrite the guard reverted.
+
+Nothing is invented. Employers, titles, dates, education, certifications and languages are copied
+from your confirmed master CV by code, never written by the model. Every rewritten sentence must
+cite the master-CV lines it comes from, and a deterministic guard reverts any technology, number,
+claim or job term those lines do not contain. A keyword your CV does not support is reported as a
+gap, never added: **95 is a target, not a promise**. The scoring is deterministic and versioned
+(`ats-score.v1`), with weights you can change (`ATS_SCORE_WEIGHTS`). Claude never sees your name,
+contact details, employers or schools, and never the raw posting when it rewrites your CV
+([security](docs/security.md#73-cv-tailoring-and-ats-scoring-phase-5)). Without an API key, mock mode
+tailors offline and labels the result "Mock tailoring".
+
+## What Phase 5 delivers
+
+- **ATS engine**: a skills taxonomy shared with the analysis, job requirements grounded in the posting
+  (cached per posting), the deterministic `ats-score.v1` score with a supported ceiling, keyword
+  classes (matched / available / missing / unsupported, which must be 0), stuffing penalties, and
+  feedback and gaps.
+- **Truthful tailoring**: the model only selects, orders and rewords sourced bullets; immutable facts
+  are copied by code; a guard checks every sentence against the master-CV lines it cites, reverts
+  what it cannot back, and rejects any version that still breaks a rule. Every text carries an
+  evidence ledger.
+- **Optimisation loop**: up to `ATS_MAX_ITERATIONS` calls towards `ATS_TARGET_SCORE`, stopping as soon
+  as further gains would need unsupported claims; no call at all when none can help.
+- **Runs and storage**: a CV generation run per click (or per job), idempotent and capped, with each
+  attempt, iteration and tailored CV version stored and audited.
+- **UI**: the job page's ATS card, the tailored CV page with sources, the tailored CVs on `/cv`, an
+  ATS column on `/jobs`, a dashboard card and an ATS engine card in Settings.
 
 ## What Phase 4 delivers
 

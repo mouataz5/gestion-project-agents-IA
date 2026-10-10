@@ -21,7 +21,7 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      testIgnore: /analysis\.spec\.ts/,
+      testIgnore: /(analysis|tailoring)\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
     // The analysis needs what the other specs create (confirmed CV, discovered jobs): it runs
@@ -30,6 +30,13 @@ export default defineConfig({
       name: "analysis",
       testMatch: /analysis\.spec\.ts/,
       dependencies: ["chromium"],
+      use: { ...devices["Desktop Chrome"] },
+    },
+    // The tailoring needs analysed jobs (APPLY recommendations): it runs after the analysis.
+    {
+      name: "tailoring",
+      testMatch: /tailoring\.spec\.ts/,
+      dependencies: ["analysis"],
       use: { ...devices["Desktop Chrome"] },
     },
   ],

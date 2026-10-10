@@ -5,7 +5,7 @@ integrations arrive only in Phase 10, after the mock pipeline has been proven en
 references point to `docs/architecture.md`.
 
 **Delivery order.** Phases 1–4 were delivered in order. On 2026-10-02 the user chose the fastest
-route to real applications for the rest:
+route to real applications for the rest (Phase 5 delivered on 2026-10-10):
 
 **5 → 6 → 10 → 7 → 8 → 9 → 11**
 
@@ -250,25 +250,83 @@ Acceptance:
 
 ---
 
-## Phase 5 — ATS engine, tailoring, iterative optimisation
+## Phase 5 — ATS engine, tailoring, iterative optimisation ✅
+
+**Goal**: for each qualified job, a tailored CV version and an ATS report: a deterministic score
+improved towards `ATS_TARGET_SCORE`, without ever inventing experience, technologies, employers, dates,
+certifications or metrics. Gaps that would need untrue content are reported, never added.
 
 Deliverables
-- Requirement extraction (LLM → structured) + skills taxonomy normalization (synonyms, categories).
-- Deterministic, versioned scoring (keyword, skills, experience, responsibility, education, title
-  alignment, formatting) → `ats_analyses` (migration `0005`) with matched / missing / unsupported
-  keywords and recommendations.
-- Tailoring agent producing a structured CV where every bullet references master-CV evidence.
-- Truthfulness guard (employers, titles, dates, education, certifications unchanged; technologies and
-  metrics must exist in the master CV).
-- Iterative loop: `ATS_TARGET_SCORE=95`, `ATS_MAX_ITERATIONS=3`, stop on target, cap, or when only
-  unsupported gains remain; genuine gaps reported.
+- **`app/ats/`** (pure, unit-tested):
+  - `taxonomy` — one skills taxonomy (terms, categories, aliases, scan flag) shared with
+    `app/cv/evidence.py`; `text` — folding, stems, stop-words, number and proper-noun parsing;
+    `sources` — master-CV source ids and evidence zones;
+  - `requirements` — the job requirement set merged from listed skills, languages, a taxonomy scan and
+    the grounded extraction (`prompts/job_requirements.v1.md`);
+  - `keywords` and `scoring` — keyword classes, the `ats-score.v1` score with configurable weights and
+    renormalisation, the supported ceiling, stuffing signals, feedback and gaps;
+  - `guard`, `ledger` and `tailoring` — assembly from master facts, the per-sentence truthfulness
+    guard with repairs, the final gate `validate_tailored`, and the evidence ledger
+    (`prompts/cv_tailoring.v1.md`);
+  - `loop` — the optimisation loop and its six stop reasons; `mock_responder` — offline extraction
+    and tailoring.
+- **Migration `0005`**: `job_requirements`, `cv_tailorings`, `ats_analyses`; `cv_versions` gains
+  tailored versions (nullable file columns for them only, `GENERATED` status, application, job, base
+  version, run, `evidence` ledger, `ats_score`, one current version per application).
+- **CV generation run** (`CV_GENERATION`, task `jobs.run_cv_generation`, `POST /runs/cv-generation`
+  with optional `job_ids` and `force`):
+  - QUALIFIED + APPLY by default (REVIEW with `CV_GENERATION_INCLUDE_REVIEW` or by id), capped by
+    `CV_GENERATION_MAX_JOBS_PER_RUN`; requires a confirmed master CV;
+  - idempotent by input hash; extractions cached per posting version;
+  - model calls outside transactions, one write transaction per job; QUALIFIED → CV_GENERATED;
+    audited (`cv.tailored`, `cv.tailoring_refused`, `cv.tailoring_failed`,
+    `job.requirements_extracted`);
+  - refusals and failures isolated per job (no CV stored, the job stays QUALIFIED); stops after 3
+    consecutive failures or a configuration error.
+- **API**: `GET /candidate/tailored-cvs[?job_id]`, `GET /candidate/tailored-cvs/{id}` (resolved ledger),
+  `JobDetail.tailoring`, `JobRead.ats_score` and `tailored_cv_id`, CV generation stats, ATS settings
+  in system info; settings `ATS_SCORE_WEIGHTS`, `CV_GENERATION_MAX_JOBS_PER_RUN`,
+  `CV_GENERATION_INCLUDE_REVIEW`.
+- **UI**: the "Tailored CV & ATS" card on `/jobs/[id]` with "Tailor CV" / "Re-tailor"; the tailored CV
+  page `/cv/tailored/[id]` with origin and source badges, unused facts and guard repairs; tailored CVs
+  on `/cv`; an ATS column on `/jobs`; a dashboard CV generation card with "Tailor CVs"; an ATS engine
+  card in Settings.
+- **Phase 4 fix found on the way**: the analysis input hash now covers the whole rendered posting
+  (listed skills, visa text, responsibilities), not only company, title, location and description.
 
-Tests first: taxonomy, scoring determinism and weights, keyword classification, guard rejections (new
-employer, changed dates, new technology, invented metric, new certification, title change unless
-allowed), loop stop conditions, gap report, keyword-stuffing detection.
+Tests first:
+- **Taxonomy**: golden canonical keys for every pre-Phase-5 spelling, synonyms and categories, no
+  keyword from "Go beyond…" or "AI".
+- **Text**: number equivalences (2,000 = 2K = "two thousand"; 35% ≠ 35), stems, proper-noun shapes.
+- **Requirements**: the Nova AI set, importance merging, grounding, regex fallbacks, mock grounding for
+  every fixture.
+- **Scoring**: determinism across input orders, weights validation and renormalisation, the golden
+  values (Nova AI 82.3 → 88.3 with ceiling 88.3; Sandstone 65.7 = ceiling), stuffing T1–T4 and the
+  15-point cap, a property test that score ≤ ceiling.
+- **Guard**: new employer, title change (allowed or not, never added seniority), changed dates,
+  missing or added experience, changed education, new certification, unknown technology, technology
+  from another role, invented metric, "2K users" accepted and "2,000 teams" rejected, uncited job
+  terms and claims, cross-entry citations, unbacked skills and categories, repairs that pass.
+- **Tailoring**: immutable fields from the master, unknown ids ignored, facts without personal data and
+  deterministic, both output models accepted by the structured-output schema transform, a ledger
+  entry for every text.
+- **Loop**: each stop reason, ties keep the earlier version, provider errors before and after a
+  scored iteration, the mock tailoring reaching 88.3 with no repairs.
+- **Integration**: migration constraints; a mock run after analysis (2 CVs, the golden scores, 0
+  unsupported keywords, audit entries); include-REVIEW; unchanged and forced re-runs with the
+  extraction cache; no master, wrong states and unknown ids; refusals, failures, the stop after 3, a
+  configuration error, a degraded extraction; a scripted invented metric repaired; staleness after a
+  new master; no CV text or prompt in DEBUG logs.
+- **API, worker, frontend helpers** (`lib/ats.ts`) and **E2E** (read-only checks, plus the tailoring
+  workflow behind `E2E_ALLOW_MUTATIONS`).
 
-Acceptance: for each qualifying mock job, a tailored CV + ATS report with iteration history and zero
-unsupported keywords.
+Acceptance:
+- For each qualifying mock job, a tailored CV and an ATS report with its iteration history and zero
+  unsupported keywords. ✔ Verified natively and in the browser (dashboard → Tailor CVs → job card →
+  tailored CV with sources → Re-tailor).
+- With an API key, Claude extracts requirements and tailors through the same code path as the tests.
+  **The live run awaits an `ANTHROPIC_API_KEY`.**
+- DOCX formatting checks are Phase 6 (`ats-score.v2`); v1 checks the structure.
 
 ---
 

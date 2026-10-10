@@ -46,7 +46,7 @@ PHASES: tuple[Phase, ...] = (
     Phase(
         5,
         "ATS engine",
-        "in_progress",
+        "done",
         "Grounded job requirements, deterministic ATS scoring with a supported ceiling, and a "
         "truthful tailoring loop with an evidence ledger",
     ),

@@ -213,7 +213,7 @@ def test_system_info_reports_the_ats_settings(
         10,
     )
     phase = next(item for item in info["phases"] if item["number"] == 5)
-    assert phase["status"] == "in_progress"
+    assert phase["status"] == "done"
 
 
 def test_tailoring_endpoints_require_the_api_token(jobs_settings: Settings) -> None:

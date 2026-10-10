@@ -8,8 +8,8 @@
 | 2 | Candidate profile, master CV upload & parsing, candidate database | ✅ done |
 | 3 | Job model, discovery abstraction, mock source, deduplication, 24-hour filter | ✅ done |
 | 4 | LLM provider (Claude), job analysis, visa classification, matching | ✅ done |
-| 5 | ATS engine, tailoring, iterative optimization | ⏳ next |
-| 6 | DOCX/PDF generation | ⏳ planned |
+| 5 | ATS engine, tailoring, iterative optimization | ✅ done |
+| 6 | DOCX/PDF generation | ⏳ next |
 | 7 | Application question engine | ⏳ planned |
 | 8 | Playwright, mock ATS, browser adapters | ⏳ planned |
 | 9 | Human approval workflow | ⏳ planned |
@@ -21,13 +21,51 @@ applications: **5 → 6 → 10 → 7 → 8 → 9 → 11**.
 
 ## Test status (from `tests.json`)
 
-882 tests, **all passing, none skipped**:
-- 711 backend (unit, API, PostgreSQL/Redis integration);
-- 13 workers;
-- 134 frontend (Vitest);
-- 24 browser E2E (Playwright, including the data-changing CV, discovery and analysis workflows).
+1160 tests, **all passing, none skipped**:
+- 970 backend (unit, API, PostgreSQL/Redis integration);
+- 15 workers;
+- 145 frontend (Vitest);
+- 30 browser E2E (Playwright, including the data-changing CV, discovery, analysis and tailoring
+  workflows).
 
-46 tests are planned for Phases 5–11.
+36 tests are planned for Phases 6–11. The 10 Phase 5 placeholders were replaced by real tests
+(features `ats-engine`, `cv-tailoring`, `ats-loop`, `frontend-ats`, `e2e-tailoring`).
+
+## Phase 5 — what was delivered
+
+- **ATS engine** (`app/ats/`, pure and unit-tested):
+  - one skills taxonomy (terms, categories, aliases, scan flag) shared with the CV evidence and the
+    analysis; text primitives for stems, numbers and proper nouns; master-CV source ids;
+  - job requirements merged from the listed skills, languages, a taxonomy scan and an extraction
+    grounded in the posting (`prompts/job_requirements.v1.md`), cached per posting version;
+  - the deterministic `ats-score.v1` score: 7 weighted components (configurable with
+    `ATS_SCORE_WEIGHTS`), renormalised when a component does not apply, the supported ceiling,
+    keyword classes (matched / available / missing / unsupported), stuffing penalties, feedback for
+    the next iteration and gaps for the candidate.
+- **Truthful tailoring**:
+  - the model returns only a summary, a skill choice, sourced bullet rewrites and a project order
+    (`prompts/cv_tailoring.v1.md`); employers, titles, dates, education, certifications and
+    languages are copied from the master by code;
+  - every sentence cites master-CV source ids from its own entry; the guard reverts any unsupported
+    technology, number, job term, claim or excess new content to its source, then the final gate
+    rejects any version that still breaks a rule; unsupported keywords must be 0;
+  - an evidence ledger records the origin and sources of every text, the unused facts and the
+    repairs.
+- **Optimisation loop**: up to `ATS_MAX_ITERATIONS` calls towards `ATS_TARGET_SCORE`, no call when
+  none can help, six explicit stop reasons, the best valid version kept.
+- **Data model** (migration `0005`): `job_requirements`, `cv_tailorings`, `ats_analyses`, and
+  tailored versions in `cv_versions` (ledger, score, one current version per application).
+- **CV generation run** (`jobs.run_cv_generation`, `POST /runs/cv-generation` with optional
+  `job_ids` / `force`): APPLY jobs by default (REVIEW on request), capped at 10 per run, idempotent,
+  failures isolated per job, QUALIFIED → CV_GENERATED, audited.
+- **API**: tailored CV list and detail (with the resolved ledger), the tailoring on the job detail,
+  the ATS score on jobs, CV generation stats and the ATS settings in system info.
+- **Frontend**: the job page's "Tailored CV & ATS" card with "Tailor CV" / "Re-tailor"; the tailored
+  CV page with origin and source badges, unused facts and repairs; tailored CVs on `/cv`; an ATS
+  column on `/jobs`; a dashboard CV generation card with "Tailor CVs"; an ATS engine card in Settings.
+- **Phase 4 fix**: the analysis input hash now covers the whole rendered posting.
+- **Docs**: architecture §8, §11 (as implemented), §15 and §16, ADRs 49–57; security §7.3; README
+  "Tailor your CV"; `prompts/README.md`; the implementation plan.
 
 ## Phase 4 — what was delivered
 
@@ -158,6 +196,33 @@ applications: **5 → 6 → 10 → 7 → 8 → 9 → 11**.
   `scripts/generate_env.py`, `scripts/export_openapi.py`, `scripts/update_tests_json.py`,
   GitHub Actions CI (lint, types, tests, Docker stack + E2E).
 
+## Verification performed — Phase 5 (2026-10-10)
+
+- **Static checks:** `ruff`, `black --check`, `mypy --strict` (154 files), ESLint, Prettier, `tsc` and
+  `next build` (CI) are all green. `make tests-json`: 1160 passed, 0 failed, 0 skipped.
+- **CI:** every part was pushed on its own and went green before the next one (parts 1–8; part 9
+  with this commit).
+- **Migration `0005`:** hand-cleaned; tests check that the models and migrations are in sync (the
+  `alembic check` comparison), the downgrade / upgrade round trip and the new constraints. Applied on the native database (`0004 → 0005`) and on a
+  fresh Docker stack (`0001 → 0005`).
+- **Golden values** (the sample CV, asserted by tests and seen in the browser): Nova AI "Senior AI
+  Engineer" 82.3 → 88.3 in one mock call, ceiling 88.3, stop reason "only unsupported gains left";
+  Sandstone "AI Research Engineer" 65.7 = its ceiling, so no call and a copy of the master. Both
+  with 0 unsupported keywords. Gaps reported for Nova AI: Python listed but not shown in a role;
+  "Design RAG pipelines", "Evaluate LLM quality" and "Mentor engineers" not covered.
+- **Browser, native stack:** Tailor CVs from the dashboard → run succeeded → the ATS column on
+  `/jobs` → the job's "Tailored CV & ATS" card → the tailored CV with "Experience 1 · bullet 1"
+  source badges → Re-tailor (a new version, the old one superseded) → `/cv` and Settings, in light
+  and dark mode, with no console errors. Fixed: the provenance said "Mock analysis" on a tailoring;
+  long setting names overflowed the Settings cards.
+- **Browser, Docker stack** (fresh volumes, rebuilt images): 30/30 Playwright tests with
+  `E2E_ALLOW_MUTATIONS=1`. The database ended with 1 confirmed master, 2 current tailored CVs and
+  1 superseded one. Backend and worker logs contain no traceback, CV text, prompt, posting text,
+  key or bearer token.
+- **Not verified:** a live Claude extraction or tailoring. No `ANTHROPIC_API_KEY` is configured here;
+  both calls use the provider code verified in Phase 4, and their schemas pass the SDK's
+  structured-output transform in tests.
+
 ## Verification performed — Phase 4 (2026-10-03)
 
 - **Static checks:** `ruff`, `black --check`, `mypy --strict` (135 files), ESLint, Prettier, `tsc` and
@@ -231,6 +296,30 @@ applications: **5 → 6 → 10 → 7 → 8 → 9 → 11**.
 - A real Celery worker processed a diagnostic through the Redis broker (not only eager mode).
 
 ## Log
+
+### 2026-10-10 — Phase 5 completed
+- The user chose "Start Phase 5" and asked for every part to be committed and pushed as soon as it is
+  developed and tested. Phase 5 shipped in nine parts, each green in CI: taxonomy and text; sources
+  and requirements (with the Phase 4 hash fix); scoring; guard, ledger and mock tailoring; the loop;
+  migration `0005`; the service, prompts and settings; the worker and API; the frontend; then E2E
+  and docs.
+- Design choices are recorded as ADRs 49–57. Deviations from the approved plan:
+  - no `UNCHANGED` tailoring status: as in Phase 4, an unchanged input writes no row and is counted
+    in the run summary;
+  - taxonomy category labels never name a term ("Artificial intelligence", "Infrastructure &
+    operations"), so a label cannot count as a keyword match;
+  - stuffing is measured relative to the master CV, so the candidate's own dense summary is not
+    penalised;
+  - score reports carry `assessed_weight`, the share of the 100 points that could be assessed;
+  - the candidate-facing advice is called "gaps", not "recommendations", to avoid confusion with
+    APPLY / REVIEW / SKIP.
+- Found and fixed while building and verifying:
+  - a bullet could cite a title id, and the summary's citation rule was checked in the wrong order
+    (`may_cite` precedence); both fixed with tests;
+  - work evidence matched the education source `ED1`; unused sources counted skill evidence;
+  - the scoring model `Recommendation` clashed with the analysis enum in the OpenAPI schema; renamed
+    `Gap`;
+  - the tailoring provenance said "Mock analysis"; long setting names overflowed the Settings cards.
 
 ### 2026-10-03 — Phase 4 completed
 - The user asked whether the system can already apply to jobs. The answer was not yet. The user
@@ -327,18 +416,26 @@ applications: **5 → 6 → 10 → 7 → 8 → 9 → 11**.
 8. These facts are sent to Claude for each analysis: targets, work authorization, relocation,
    languages, CV-backed skills, experience and project bullets and technologies, degrees and
    certifications. Your name, contact details and employer names are never sent (ADR 46).
+9. For tailoring, Claude receives your master CV's summary, titles, periods, bullets, project names,
+   degrees, certifications, languages and backed skills, with ids; never your name, contact
+   details, employers, schools or locations, and never the raw posting (ADR 56).
+10. By default only **Apply** jobs are tailored in a run; a **Review** job is tailored when you click
+    "Tailor CV" on its page (`CV_GENERATION_INCLUDE_REVIEW=true` includes them all). Experience
+    titles are never changed (`cv_policy.allow_title_changes: false` in your profile).
 
-## Needed from you (not blocking Phase 5)
+## Needed from you (not blocking Phase 6)
 
 - Upload your real master CV at `/cv`, review the draft and confirm it (it stays out of Git).
 - Fill in the highlighted fields at `/candidate`: email, phone, notice period, salary expectations,
   earliest start date, spoken languages, preferred work modes.
 - Replace the fictional watchlist with the companies you follow at `/companies` (name, career URL,
   ATS and board token); their real boards are read from Phase 10.
+- Review the **gaps** a tailored CV reports (on each job page). Add a skill, a bullet or a
+  responsibility to your master CV only if it is true; the tailoring will then use it.
 - Optional: import `n8n/workflows/job-alert-email-import.json` into n8n and connect the mailbox that
   receives your LinkedIn/Indeed job alerts.
-- **`ANTHROPIC_API_KEY` in `.env`** for real analysis by Claude. Without it, mock mode analyses
-  offline with rules, and every result is labelled "Mock analysis". A `.env` created before Phase 4
+- **`ANTHROPIC_API_KEY` in `.env`** for real analysis and tailoring by Claude. Without it, mock mode
+  works offline with rules, and every result is labelled "Mock analysis" or "Mock tailoring". A `.env` created before Phase 4
   keeps `CLAUDE_MODEL=claude-opus-5`; change it to `claude-opus-5-5` to use the new default.
 
 ## Known limitations
@@ -356,6 +453,18 @@ applications: **5 → 6 → 10 → 7 → 8 → 9 → 11**.
   - The mock analysis is rule-based (title and listed skills), not a real judgement.
   - The Batch API (half the cost) is deferred to Phase 11, because it does not support the refusal
     fallback.
+- **ATS engine:**
+  - The score is our deterministic estimate of keyword and structure fit, not any employer's ATS.
+    95 is a target, not a promise: with the sample CV the Nova AI job reaches 88.3, its ceiling.
+  - Formatting is checked on the CV structure only; DOCX checks arrive with Phase 6
+    (`ats-score.v2`). Tailored CVs are not yet downloadable as files (Phase 6).
+  - The mock tailoring only selects, reorders and copies master sentences verbatim (into the skills
+    and the summary); it never rewords. Real rewording needs Claude and passes the same guard. The
+    live path awaits an API key.
+  - A tailored CV stays in the master CV's language; postings in another language are scored as
+    they are.
+  - The guard is deliberately strict: a legitimate paraphrase with several new words is reverted to
+    the master sentence, and the repair is shown.
 - Scanned (image-only) PDFs are rejected: OCR is out of scope. Multi-column PDF layouts may
   interleave columns; DOCX gives the best results. The draft review step exists for these cases.
 - The parser recognises English and French section headings; other languages need manual review.
@@ -363,6 +472,7 @@ applications: **5 → 6 → 10 → 7 → 8 → 9 → 11**.
 
 ## Next step
 
-Phase 5 — ATS engine, tailoring and iterative optimisation: requirement extraction, deterministic ATS
-scoring, a truthful tailored CV with an evidence ledger, and the loop towards `ATS_TARGET_SCORE=95` in
-at most `ATS_MAX_ITERATIONS=3`. Waiting for the go-ahead.
+Phase 6 — DOCX / PDF generation: a deterministic, ATS-friendly DOCX template and PDF conversion for
+each tailored CV, stored per application, with DOCX formatting checks feeding `ats-score.v2`, and
+download and "compare with master" in the UI. Then Phase 10 (real sources), following the chosen
+order 6 → 10 → 7 → 8 → 9 → 11.

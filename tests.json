@@ -1,17 +1,17 @@
 {
   "description": "Test tracking. 'tests' is regenerated from real test runs by scripts/update_tests_json.py (make tests-json); 'planned' lists tests to write before implementing later phases and is maintained by hand.",
-  "generated_at": "2026-10-03T14:47:32+00:00",
+  "generated_at": "2026-10-10T18:33:13+00:00",
   "summary": {
-    "total": 882,
-    "passed": 882,
+    "total": 1160,
+    "passed": 1160,
     "failed": 0,
     "skipped": 0,
-    "planned": 46,
+    "planned": 36,
     "by_suite": {
-      "backend": 711,
-      "e2e": 24,
-      "frontend": 134,
-      "workers": 13
+      "backend": 970,
+      "e2e": 30,
+      "frontend": 145,
+      "workers": 15
     }
   },
   "tests": [
@@ -198,6 +198,720 @@
     {
       "test": "backend/tests/unit/test_application_lifecycle.py::test_withdrawing_is_possible_until_the_outcome_is_known",
       "feature": "application-lifecycle",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_a_genuine_gap_is_missing",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_a_keyword_without_master_evidence_is_unsupported",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_dropping_a_project_makes_its_keywords_available",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_every_nova_keyword_is_matched_by_the_master_cv",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_spoken_languages_match_in_any_language",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_the_candidate_facts_come_from_the_master_cv",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_the_most_recent_experience",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_the_zones_of_a_cv",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_without_a_seniority_word_the_years_decide[2019-SENIOR]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_without_a_seniority_word_the_years_decide[2023-MID]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_without_a_seniority_word_the_years_decide[2025-JUNIOR]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_keywords.py::test_without_a_seniority_word_the_years_decide[None-UNKNOWN]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_a_job_without_stated_years_or_degree",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_citations_are_scoped_to_their_entry",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_education_requirements[A passion for AI.-NONE_STATED-fields4-False]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_education_requirements[Bachelor's degree in Statistics.-BACHELOR-fields2-False]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_education_requirements[Dipl\\xf4me d'ing\\xe9nieur ou Bac+5 en informatique.-MASTER-fields3-False]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_education_requirements[MSc in Computer Science or equivalent experience.-MASTER-fields0-True]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_education_requirements[PhD in Applied Mathematics preferred.-PHD-fields1-False]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_generic_terms_are_never_keywords",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_master_text_leaves_out_contact_data_and_employers",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_source_ids_follow_the_master_cv",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_the_extraction_is_grounded_in_the_posting",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_the_mock_extraction_is_grounded_for_every_fixture_job",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_the_nova_requirements",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_years_of_experience[texts0-5]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_years_of_experience[texts1-3]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_years_of_experience[texts2-4]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_requirements.py::test_years_of_experience[texts3-None]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_a_bullet_made_of_keywords_is_stuffing",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_a_job_without_keywords_scores_the_other_components",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_a_keyword_repeated_outside_the_skills_section_is_stuffing",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_a_posting_that_states_nothing_is_assessed_on_15_points",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_a_summary_full_of_keywords_is_stuffing[Built RAG systems with LLMs; shipped LangGraph agents; deployed FastAPI services on Kubernetes; integrated MCP tools; wrote Python; studied Machine Learning; worked with RAG, LLMs and Python across many different teams and products for several years in demanding production settings.]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_a_summary_full_of_keywords_is_stuffing[Python, LLMs, RAG, LangGraph, FastAPI, Kubernetes and MCP.]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_duplicate_or_too_many_skills_are_stuffing",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_each_formatting_check[F1]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_each_formatting_check[F2]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_each_formatting_check[F3]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_each_formatting_check[F4]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_each_formatting_check[F5]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_each_formatting_check[F6]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_feedback_forbids_genuine_gaps",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_feedback_points_at_unused_evidence",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_gaps_for_nova",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_gaps_for_sandstone",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_listing_the_keywords_the_roles_show_reaches_the_ceiling",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_no_truthful_version_scores_above_the_ceiling",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_sandstone_scores_65_7_and_cannot_do_better",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_scores_are_rounded_half_up",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_stuffing_the_master_cv_already_shows_is_not_the_tailoring",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_education_component[education0-5-1.0]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_education_component[education1-5-1.0]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_education_component[education2-5-0.8]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_education_component[education3-5-0.2]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_education_component[education4-5-0.6]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_education_component[education5-10-0.0]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_education_component[education6-5-None]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_experience_component[-3-None]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_experience_component[0-None]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_experience_component[10-0.7]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_experience_component[5-1.0]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_experience_component[None-None]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_nova_ceiling_is_88_3",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_nova_master_cv_scores_82_3",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_penalty_is_5_points_per_signal_and_at_most_15",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_report_is_deterministic",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_title_component[Lead AI Engineer-LEAD-0.8]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_title_component[Research Scientist-UNKNOWN-0.2]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_title_component[Senior AI Engineer-SENIOR-1.0]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_the_title_component[Senior-SENIOR-None]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_scoring.py::test_weights_name_every_component_and_sum_to_100",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_a_spelling_can_belong_to_one_term_only",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_cv_evidence_reexports_the_taxonomy_matching",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_generic_terms_never_become_keywords",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_matching_respects_word_boundaries_and_synonyms[Built services in Go-Go-True]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_matching_respects_word_boundaries_and_synonyms[Deployed on k8s-Kubernetes-True]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_matching_respects_word_boundaries_and_synonyms[Model trained in C++ and C#-C++-True]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_matching_respects_word_boundaries_and_synonyms[Queries in MySQL-SQL-False]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_matching_respects_word_boundaries_and_synonyms[Repositories on GitHub-Git-False]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_matching_respects_word_boundaries_and_synonyms[Syst\\xe8mes multi-agents-Multi-agent systems-True]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_matching_respects_word_boundaries_and_synonyms[Worked at Google-Go-False]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_scanning_free_text_finds_safe_terms_only",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_skills_section_labels_never_name_a_term",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[Apache Kafka-Kafka]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[Golang-Go]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[Large Language Models-LLMs]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[Postgres-PostgreSQL]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[Python3-Python]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[RESTful-REST APIs]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[W&B-Weights & Biases]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[anglais-English]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[apprentissage automatique-Machine Learning]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_synonyms_share_one_canonical_term[k8s-Kubernetes]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_terms_have_categories[Fintech-domain-False]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_terms_have_categories[French-spoken_language-False]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_terms_have_categories[Kubernetes-devops-True]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_terms_have_categories[PyTorch-framework-True]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_terms_have_categories[Python-programming_language-True]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_terms_have_categories[RAG-ai_ml-True]",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_the_first_terms_are_the_earlier_synonym_groups_in_order",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_the_keys_of_earlier_phases_never_change",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_the_vocabulary_lists_every_spelling",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_taxonomy.py::test_unknown_names_keep_their_own_key_and_display_name",
+      "feature": "ats-engine",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_a_failed_first_call_stores_nothing[False-FAILED]",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_a_failed_first_call_stores_nothing[True-REFUSED]",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_a_failure_after_a_rejection_stores_nothing",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_a_failure_after_a_scored_version_keeps_the_best",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_a_gain_below_half_a_point_stops_the_loop_and_a_tie_keeps_the_earlier",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_a_version_no_better_than_the_master_keeps_the_master_copy",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_an_injected_unsupported_keyword_is_repaired_and_never_counted",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_no_call_when_only_unsupported_gains_remain",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_no_call_when_the_master_cv_reaches_the_target",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_one_rejection_does_not_stop_the_loop",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_steady_gains_run_every_iteration",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_the_first_prompt_carries_the_master_version_and_its_feedback",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_the_mock_tailoring_stops_at_the_nova_ceiling",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_the_target_is_reached_at_the_first_iteration",
+      "feature": "ats-loop",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_loop.py::test_two_rejected_versions_end_the_loop_with_the_master_copy",
+      "feature": "ats-loop",
       "suite": "backend",
       "status": "passed"
     },
@@ -1408,6 +2122,828 @@
       "status": "passed"
     },
     {
+      "test": "backend/tests/integration/test_tailoring.py::test_a_configuration_error_stops_the_run",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_a_master_version_needs_its_file",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_a_refused_extraction_falls_back_to_deterministic_requirements",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_a_refused_tailoring_leaves_the_job_qualified",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_a_tailored_version_needs_its_application_and_base",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_an_application_has_one_current_tailored_version",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_an_invented_metric_is_repaired_and_recorded",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_an_unavailable_extraction_fails_only_that_job",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_an_unchanged_job_is_not_tailored_again_unless_forced",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_deleting_an_application_deletes_its_tailoring_history",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_jobs_that_are_not_qualified_are_reported",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_logs_never_carry_cv_text_or_prompts",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_one_successful_extraction_per_posting_version",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_review_jobs_are_tailored_when_asked",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_statuses_follow_the_kind",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_the_mock_run_tailors_every_apply_job",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_three_consecutive_failures_stop_the_run",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring.py::test_without_a_confirmed_master_cv_nothing_is_tailored",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_a_job_without_a_tailoring_says_so",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_a_new_master_cv_makes_tailored_cvs_stale",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_an_unavailable_queue_fails_the_run",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_invalid_cv_generation_requests_are_rejected",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_starting_a_cv_generation_enqueues_the_worker_task",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_stats_include_cv_generation",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_system_info_reports_the_ats_settings",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_tailored_cvs_with_their_evidence",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_tailoring_endpoints_require_the_api_token",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_the_job_page_shows_the_tailoring",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_tailoring_api.py::test_unknown_tailored_cvs_are_not_found",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_a_retitled_role_never_gains_seniority[AI Engineer-expected0]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_a_retitled_role_never_gains_seniority[AI Engineering Director-expected4]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_a_retitled_role_never_gains_seniority[Head of AI Engineering-expected3]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_a_retitled_role_never_gains_seniority[Lead AI Engineer-expected2]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_a_retitled_role_never_gains_seniority[Senior AI Engineer (RAG platforms)-expected1]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_a_retitled_role_never_gains_seniority[Senior AI Engineer at Contoso-expected5]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_a_summary_over_80_words_is_too_long",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_a_text_must_match_its_ledger_entry",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_every_immutable_fact_is_checked",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[   -sources28-E1-expected28]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Built time-series forecasting models with Spark.-sources5-E1-expected5]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Deployed models on k8s with Docker and FastAPI.-sources3-E1-expected3]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a LangGraph RAG platform with a vector database for 2K users.-sources1-E1-expected1]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform applying computer science.-sources25-E1-expected25]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform for Contoso.-sources12-E1-expected12]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform on Snowflake.-sources10-E1-expected10]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with LangGraph and Kafka.-sources9-E1-expected9]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with LangGraph and a vector database and a vector database and a vector database and a vector database and a vector database and a vector database and a vector database and a vector database and a vector database and a vector database and a vector database and a vector database and a vector database and a vector database for users.-sources27-E1-expected27]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with LangGraph and a vector database serving 2,000 users.-sources0-E1-expected0]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with LangGraph for german users.-sources24-E1-expected24]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with LangGraph for healthcare.-sources23-E1-expected23]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with LangGraph for thousands of users.-sources21-E1-expected21]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with LangGraph serving 2,000 teams.-sources13-E1-expected13]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with LangGraph serving 2,000+ users.-sources2-E1-expected2]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with LangGraph that cut costs by 40%.-sources14-E1-expected14]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform with Spark.-sources11-E1-expected11]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform.-sources6-E1-expected6]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a RAG platform.-sources7-E1-expected7]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Designed a secure, scalable, resilient, multilingual RAG platform with LangGraph.-sources26-E1-expected26]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Evaluated LLM quality in a multi-agent system.-sources16-P1-expected16]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Halved inference latency.-sources22-E2-expected22]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Improved inference latency by 35%.-sources19-E2-expected19]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Led the design of a RAG platform with LangGraph.-sources18-E1-expected18]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Mentored engineers on the RAG platform.-sources17-E1-expected17]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Oversaw a RAG platform with LangGraph.-sources20-E1-expected20]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Reduced inference latency by 35 times.-sources15-E2-expected15]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Reduced inference latency by 35%.-sources4-E2-expected4]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_generated_bullets[Senior AI Engineer building RAG.-sources8-E1-expected8]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_keyword_stuffing_fails_the_gate",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_skills_must_be_backed_and_labels_known",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_generated_summary[AI engineer building LLM and RAG systems in production.-sources0-expected0]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_generated_summary[AI engineer building RAG systems with LangGraph and Kubernetes.-sources5-expected5]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_generated_summary[AI engineer building RAG systems with LangGraph.-sources6-expected6]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_generated_summary[AI engineer with 10 years of experience building LLM and RAG systems.-sources3-expected3]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_generated_summary[AI engineer with 5+ years building LLM and RAG systems in production.-sources2-expected2]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_generated_summary[AI engineer with 7 years of experience building LLM and RAG systems in production.-sources1-expected1]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_generated_summary[AI engineer with a decade of experience building LLM and RAG systems.-sources4-expected4]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_generated_summary[Senior AI engineer building LLM and RAG systems.-sources7-expected7]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_generated_summary[Senior AI engineer building LLM and RAG systems.-sources8-expected8]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_guard.py::test_the_master_copy_passes_the_final_gate",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_a_rejected_bullet_is_reverted_to_its_source",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_a_version_round_trips_through_the_answer_format",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_an_unsupported_keyword_never_reaches_the_version",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_dropped_facts_are_listed_as_unused",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_every_text_has_a_ledger_entry",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_french_cvs_keep_french_headings",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_immutable_facts_always_come_from_the_master",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_no_missing_keyword_survives_assembly",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_skills_must_be_backed_deduplicated_and_labelled",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_the_answer_formats_are_valid_structured_output_schemas[RequirementsOutput]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_the_answer_formats_are_valid_structured_output_schemas[TailoringOutput]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_the_facts_are_deterministic_and_job_independent",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_the_facts_carry_no_personal_data",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_the_mock_tailoring_reaches_the_nova_ceiling_without_a_repair",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_the_plain_text_rendering",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_the_requirements_brief_is_grounded",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_tailoring.py::test_title_changes_follow_the_candidate_policy",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_a_number_needs_the_same_value_unit_and_noun_in_a_source[A RAG platform for 2K users-True]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_a_number_needs_the_same_value_unit_and_noun_in_a_source[Serving 2,000 teams-False]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_a_number_needs_the_same_value_unit_and_noun_in_a_source[Serving 2,000+ active users-False]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_a_number_needs_the_same_value_unit_and_noun_in_a_source[Serving 2,000+ users-True]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_a_number_needs_the_same_value_unit_and_noun_in_a_source[Serving 3,000 users-False]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_content_terms_ignore_stopwords_and_know_synonyms",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[$2M budget-expected9]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[1,5 ans-expected5]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[2.000 utilisateurs-expected6]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[20-30% faster-expected8]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[2M\\u20ac budget-expected10]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[35 per cent-expected2]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[35 percent-expected1]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[35%-expected0]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[35-expected4]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[35\\xa0%-expected3]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[3\\xd7 faster-expected12]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[3x faster-expected11]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[Python 3.11-expected7]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[Sept 2019-expected16]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[one model and un projet-expected17]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[ranked 1st-expected15]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[twenty-five engineers-expected14]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_numbers_are_normalised[two thousand users-expected13]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_percentages_are_not_plain_numbers",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_proper_nouns_are_found_by_their_shape",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_the_first_word_of_a_sentence_is_not_a_name_by_shape",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_thousands_are_one_value_whatever_the_notation[2 000 users]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_thousands_are_one_value_whatever_the_notation[2,000+ users]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_thousands_are_one_value_whatever_the_notation[2K users]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_thousands_are_one_value_whatever_the_notation[for 2000 users]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_thousands_are_one_value_whatever_the_notation[serving 2,000 users]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_tokens_are_matched_as_whole_words[.NET-Worked with .NET services-True]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_tokens_are_matched_as_whole_words[Acme-Acme Analytics-True]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_tokens_are_matched_as_whole_words[Java-Wrote JavaScript-False]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_tokens_are_matched_as_whole_words[PyTorch-Trained models in pytorch-True]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_word_forms_share_a_stem[Deploying-deployed]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_word_forms_share_a_stem[designed-design]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_word_forms_share_a_stem[evaluate-evaluation]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_word_forms_share_a_stem[mentored-mentor]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_ats_text.py::test_word_forms_share_a_stem[pipelines-pipeline]",
+      "feature": "cv-tailoring",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
       "test": "backend/tests/integration/test_master_cv_api.py::test_a_new_confirmation_supersedes_the_previous_master",
       "feature": "cv-upload",
       "suite": "backend",
@@ -1836,6 +3372,12 @@
     {
       "test": "backend/tests/unit/test_health_service.py::test_run_check_turns_exceptions_into_redacted_down_status",
       "feature": "health-checks",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/integration/test_analysis.py::test_a_changed_skill_list_is_analysed_again",
+      "feature": "job-analysis",
       "suite": "backend",
       "status": "passed"
     },
@@ -3304,6 +4846,18 @@
       "status": "passed"
     },
     {
+      "test": "backend/tests/unit/test_llm_prompts.py::test_the_shipped_ats_prompts_state_the_rules[cv_tailoring-rules1]",
+      "feature": "llm-provider",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
+      "test": "backend/tests/unit/test_llm_prompts.py::test_the_shipped_ats_prompts_state_the_rules[job_requirements-rules0]",
+      "feature": "llm-provider",
+      "suite": "backend",
+      "status": "passed"
+    },
+    {
       "test": "backend/tests/unit/test_llm_prompts.py::test_the_shipped_job_analysis_prompt_states_the_rules",
       "feature": "llm-provider",
       "suite": "backend",
@@ -4286,168 +5840,210 @@
       "feature": "e2e-analysis",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "analysis.spec.ts > job analysis (read-only) > settings show the language model, never the key",
       "feature": "e2e-analysis",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "analysis.spec.ts > job analysis (read-only) > the dashboard summarises the analysis and names the engine",
       "feature": "e2e-analysis",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "analysis.spec.ts > job analysis workflow (changes data) > a job can be re-analysed from its page",
       "feature": "e2e-analysis",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "analysis.spec.ts > job analysis workflow (changes data) > a posting that rules out sponsorship is skipped, with the quote",
       "feature": "e2e-analysis",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "analysis.spec.ts > job analysis workflow (changes data) > analyse the new jobs, then read why a job is worth applying to",
       "feature": "e2e-analysis",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "candidate.spec.ts > candidate profile and master CV (read-only) > candidate and CV pages are enabled in the navigation",
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "candidate.spec.ts > candidate profile and master CV (read-only) > the CV page offers an upload and rejects unsupported files",
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "candidate.spec.ts > candidate profile and master CV (read-only) > the profile is loaded and missing values are flagged, never guessed",
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "candidate.spec.ts > master CV workflow (changes data) > profile edits are saved",
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "candidate.spec.ts > master CV workflow (changes data) > upload, review, confirm, then see the skill evidence",
       "feature": "e2e-candidate",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > lists runs and filters them by status",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > runs a system diagnostic end to end",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > settings report secrets without revealing them",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > shows later-phase pages as disabled",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "dashboard.spec.ts > dashboard foundation > shows the safety state and healthy components",
       "feature": "e2e-dashboard",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "jobs.spec.ts > job discovery workflow (changes data) > a job shows its other listings, and an unknown-date job can be tracked",
       "feature": "e2e-jobs",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "jobs.spec.ts > job discovery workflow (changes data) > a pasted LinkedIn URL is imported without being fetched",
       "feature": "e2e-jobs",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "jobs.spec.ts > job discovery workflow (changes data) > a watchlist company can be edited",
       "feature": "e2e-jobs",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "jobs.spec.ts > job discovery workflow (changes data) > filters narrow the list",
       "feature": "e2e-jobs",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "jobs.spec.ts > job discovery workflow (changes data) > import the watchlist seed, run a discovery and browse the jobs",
       "feature": "e2e-jobs",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "jobs.spec.ts > jobs and company watchlist (read-only) > jobs and companies pages are enabled in the navigation",
       "feature": "e2e-jobs",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "jobs.spec.ts > jobs and company watchlist (read-only) > sources show their policy: LinkedIn is manual only",
       "feature": "e2e-jobs",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "jobs.spec.ts > jobs and company watchlist (read-only) > unsafe job URLs are rejected before anything is stored",
       "feature": "e2e-jobs",
       "suite": "e2e",
       "status": "passed",
-      "recorded_at": "2026-10-03T14:46:22.493280+00:00"
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
+    },
+    {
+      "test": "tailoring.spec.ts > CV tailoring (read-only) > settings show the ATS engine and its score weights",
+      "feature": "e2e-tailoring",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
+    },
+    {
+      "test": "tailoring.spec.ts > CV tailoring (read-only) > the CV page has a tailored CVs section",
+      "feature": "e2e-tailoring",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
+    },
+    {
+      "test": "tailoring.spec.ts > CV tailoring (read-only) > the dashboard offers CV generation and calls the target a target",
+      "feature": "e2e-tailoring",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
+    },
+    {
+      "test": "tailoring.spec.ts > CV tailoring workflow (changes data) > a job can be re-tailored from its page",
+      "feature": "e2e-tailoring",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
+    },
+    {
+      "test": "tailoring.spec.ts > CV tailoring workflow (changes data) > tailor the APPLY jobs, then read the ATS report of a job",
+      "feature": "e2e-tailoring",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
+    },
+    {
+      "test": "tailoring.spec.ts > CV tailoring workflow (changes data) > the tailored CV shows where every text comes from",
+      "feature": "e2e-tailoring",
+      "suite": "e2e",
+      "status": "passed",
+      "recorded_at": "2026-10-10T18:30:35.078673+00:00"
     },
     {
       "test": "frontend/src/lib/analysis.test.ts::analysis run outcome reports why a run analysed nothing",
@@ -4548,6 +6144,72 @@
     {
       "test": "frontend/src/lib/analysis.test.ts::recommendation and visa labels says where each piece of visa evidence comes from",
       "feature": "frontend-analysis",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::ATS scores colours a score by the target and the supported ceiling",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::ATS scores says when the posting let the score assess fewer than 100 points",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::ATS scores summarises the score against the master CV",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::ATS scores turns components into rows, redistributing the weights that do not apply",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::keywords groups keywords by what the master CV backs",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::keywords says where a matched keyword appears",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::tailoring outcomes explains a tailoring that stored nothing",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::tailoring outcomes labels every stop reason",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::tailoring outcomes labels gaps, iterations and ledger origins",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::tailoring outcomes names the kind of run in its outcome",
+      "feature": "frontend-ats",
+      "suite": "frontend",
+      "status": "passed"
+    },
+    {
+      "test": "frontend/src/lib/ats.test.ts::tailoring outcomes picks the stored version among the iterations",
+      "feature": "frontend-ats",
       "suite": "frontend",
       "status": "passed"
     },
@@ -5254,6 +6916,18 @@
       "status": "passed"
     },
     {
+      "test": "workers/tests/test_jobs_tasks.py::test_the_cv_generation_task_is_registered",
+      "feature": "cv-tailoring",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
+      "test": "workers/tests/test_jobs_tasks.py::test_the_worker_runs_a_recorded_cv_generation",
+      "feature": "cv-tailoring",
+      "suite": "workers",
+      "status": "passed"
+    },
+    {
       "test": "workers/tests/test_jobs_tasks.py::test_the_analysis_task_is_registered",
       "feature": "job-analysis",
       "suite": "workers",
@@ -5333,66 +7007,6 @@
     }
   ],
   "planned": [
-    {
-      "phase": 5,
-      "feature": "ats-engine",
-      "test": "keyword extraction normalizes synonyms through the skills taxonomy",
-      "status": "planned"
-    },
-    {
-      "phase": 5,
-      "feature": "ats-engine",
-      "test": "scoring is deterministic and uses the configured weights",
-      "status": "planned"
-    },
-    {
-      "phase": 5,
-      "feature": "ats-engine",
-      "test": "keywords are classified as matched, missing or unsupported",
-      "status": "planned"
-    },
-    {
-      "phase": 5,
-      "feature": "ats-engine",
-      "test": "keyword stuffing is detected and penalized",
-      "status": "planned"
-    },
-    {
-      "phase": 5,
-      "feature": "cv-tailoring",
-      "test": "truthfulness guard rejects a new employer, a title change or changed dates",
-      "status": "planned"
-    },
-    {
-      "phase": 5,
-      "feature": "cv-tailoring",
-      "test": "truthfulness guard rejects technologies or metrics absent from the master CV",
-      "status": "planned"
-    },
-    {
-      "phase": 5,
-      "feature": "cv-tailoring",
-      "test": "tailored CV contains zero unsupported keywords",
-      "status": "planned"
-    },
-    {
-      "phase": 5,
-      "feature": "ats-loop",
-      "test": "optimization loop stops when ATS_TARGET_SCORE is reached",
-      "status": "planned"
-    },
-    {
-      "phase": 5,
-      "feature": "ats-loop",
-      "test": "optimization loop stops at ATS_MAX_ITERATIONS and reports genuine gaps",
-      "status": "planned"
-    },
-    {
-      "phase": 5,
-      "feature": "ats-loop",
-      "test": "optimization loop stops when further gains would require unsupported claims",
-      "status": "planned"
-    },
     {
       "phase": 6,
       "feature": "cv-generation",

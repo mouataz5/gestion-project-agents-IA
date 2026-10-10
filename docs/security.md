@@ -96,6 +96,31 @@ Tests assert that these values never appear in log output.
   for analysis/tailoring. Choose a provider/plan whose data-retention terms you accept; a local model
   provider (Ollama) can be added behind `LLMProvider`.
 
+### 7.3 CV tailoring and ATS scoring (Phase 5)
+
+- **What is sent to Anthropic** when `ANTHROPIC_API_KEY` is set, in two kinds of calls:
+  - *Requirement extraction*: the job posting only, inside `<job_posting>` tags, as in §7.2. No
+    candidate data is sent with it, and the result is cached per posting version.
+  - *Tailoring*: the master CV facts with source ids — summary, experience titles and periods,
+    bullets, project names and bullets, degree names, certifications, spoken languages and skills
+    backed by the CV — plus the grounded requirement strings and deterministic feedback. Never sent:
+    the name, email, phone, address, links, employer names, school names, locations, detail lines or
+    other sections, and never the raw posting. The facts are built deterministically
+    (`app/ats/tailoring.py`) and a unit test checks that contact data, employers and schools are
+    absent.
+- **Integrity**: the model never writes employers, titles, dates, education, certifications or
+  languages; they are copied from the confirmed master CV by code. Every generated sentence cites
+  master-CV source ids, and the deterministic guard reverts or rejects any technology, number, claim,
+  job term or skill the cited sources do not contain. Unsupported keywords must be zero. Repairs are
+  stored and shown, never silently dropped.
+- **What is stored**: the tailored CV structure and plain text (personal data: same protection as the
+  master CV in §7.1), the evidence ledger, each iteration's scores, keywords, violations and the
+  validated document, the grounded requirements, token counts, request ids and models. Raw model
+  answers are not stored. Error messages are redacted.
+- **Logs** carry ids, scores and counts only: a test runs a tailoring at `LOG_LEVEL=DEBUG` and checks
+  that no CV text and no prompt reaches the output.
+- **Mock mode** without a key sends nothing anywhere; tailored CVs are labelled "Mock tailoring".
+
 ### 7.2 Job analysis (Phase 4)
 
 - **What is sent to Anthropic** when `ANTHROPIC_API_KEY` is set: the job posting and the *candidate
